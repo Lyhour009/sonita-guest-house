@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\MaintenanceRequestController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentProofController;
 use App\Http\Controllers\ReservationController;
@@ -14,6 +15,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 
     Route::get('payments/{payment}/proof', [PaymentProofController::class, 'show'])->name('payments.proof');
+
+    Route::post('maintenance', [MaintenanceRequestController::class, 'store'])->name('maintenance.store');
 });
 
 Route::middleware(['auth', 'verified', 'role:guest'])->group(function () {
@@ -25,6 +28,8 @@ Route::middleware(['auth', 'verified', 'role:guest'])->group(function () {
 
     Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
     Route::post('payments', [PaymentController::class, 'store'])->name('payments.store');
+
+    Route::get('maintenance', [MaintenanceRequestController::class, 'index'])->name('maintenance.index');
 });
 
 require __DIR__.'/settings.php';

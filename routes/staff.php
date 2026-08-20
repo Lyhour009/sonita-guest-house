@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Staff\HousekeepingController;
+use App\Http\Controllers\Staff\MaintenanceRequestController;
 use App\Http\Controllers\Staff\PaymentController;
 use App\Http\Controllers\Staff\ReservationController;
 use Illuminate\Support\Facades\Route;
@@ -15,4 +17,13 @@ Route::middleware(['auth', 'verified', 'role:receptionist,admin'])->prefix('staf
     Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
     Route::patch('payments/{payment}/confirm', [PaymentController::class, 'confirm'])->name('payments.confirm');
     Route::patch('payments/{payment}/reject', [PaymentController::class, 'reject'])->name('payments.reject');
+});
+
+Route::middleware(['auth', 'verified', 'role:housekeeping,admin'])->prefix('staff')->name('staff.')->group(function () {
+    Route::get('housekeeping', [HousekeepingController::class, 'index'])->name('housekeeping.index');
+    Route::patch('housekeeping/{room}/clean', [HousekeepingController::class, 'markClean'])->name('housekeeping.clean');
+
+    Route::get('maintenance', [MaintenanceRequestController::class, 'index'])->name('maintenance.index');
+    Route::patch('maintenance/{maintenanceRequest}/assign', [MaintenanceRequestController::class, 'assign'])->name('maintenance.assign');
+    Route::patch('maintenance/{maintenanceRequest}/status', [MaintenanceRequestController::class, 'updateStatus'])->name('maintenance.status');
 });

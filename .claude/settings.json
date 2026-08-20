@@ -3,7 +3,16 @@
     "allow": [
       "Bash(npx shadcn@latest add alert-dialog --yes --overwrite)",
       "Bash(echo \"lint exit: $?\")",
-      "Bash(curl -s -o /tmp/home.html -w \"home: %{http_code}\\\\n\" http://127.0.0.1:8123/)"
+      "Bash(curl -s -o /tmp/home.html -w \"home: %{http_code}\\\\n\" http://127.0.0.1:8123/)",
+      "Bash(php artisan serve --port=8001 > /tmp/serve.log 2>&1 & *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:8001/ --max-time 3)",
+      "Bash(curl -s -b /tmp/cookies.txt http://127.0.0.1:8001/staff/maintenance -o /tmp/maint.html -w \"status: %{http_code}\\\\n\")",
+      "Bash(powershell -NoProfile -Command 'Get-Process php -ErrorAction SilentlyContinue | Where-Object {\\($_.CommandLine -match '\\\\''artisan serve'\\\\''\\)} | Stop-Process -Force')",
+      "Bash(taskkill //F //IM php.exe //FI \"WINDOWTITLE eq*\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:8001/ --max-time 2)"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
     ]
   }
 }

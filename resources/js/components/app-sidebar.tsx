@@ -3,10 +3,12 @@ import {
     BedDouble,
     BookOpen,
     CalendarCheck,
+    ClipboardList,
     CreditCard,
     FileText,
     FolderGit2,
     LayoutGrid,
+    Wrench,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -25,8 +27,11 @@ import { dashboard } from '@/routes';
 import { index as adminInvoicesIndex } from '@/routes/admin/invoices';
 import { index as adminRoomsIndex } from '@/routes/admin/rooms';
 import { index as invoicesIndex } from '@/routes/invoices';
+import { index as maintenanceIndex } from '@/routes/maintenance';
 import { index as paymentsIndex } from '@/routes/payments';
 import { index as reservationsIndex } from '@/routes/reservations';
+import { index as staffHousekeepingIndex } from '@/routes/staff/housekeeping';
+import { index as staffMaintenanceIndex } from '@/routes/staff/maintenance';
 import { index as staffPaymentsIndex } from '@/routes/staff/payments';
 import { index as staffReservationsIndex } from '@/routes/staff/reservations';
 import type { NavItem } from '@/types';
@@ -55,6 +60,11 @@ const guestNavItems: NavItem[] = [
         href: paymentsIndex(),
         icon: CreditCard,
     },
+    {
+        title: 'Maintenance',
+        href: maintenanceIndex(),
+        icon: Wrench,
+    },
 ];
 
 const staffNavItems: NavItem[] = [
@@ -67,6 +77,19 @@ const staffNavItems: NavItem[] = [
         title: 'Payments',
         href: staffPaymentsIndex(),
         icon: CreditCard,
+    },
+];
+
+const housekeepingNavItems: NavItem[] = [
+    {
+        title: 'Room Status',
+        href: staffHousekeepingIndex(),
+        icon: ClipboardList,
+    },
+    {
+        title: 'Maintenance',
+        href: staffMaintenanceIndex(),
+        icon: Wrench,
     },
 ];
 
@@ -121,6 +144,13 @@ export function AppSidebar() {
                 {(auth.user?.role === 'receptionist' ||
                     auth.user?.role === 'admin') && (
                     <NavMain items={staffNavItems} label="Staff" />
+                )}
+                {(auth.user?.role === 'housekeeping' ||
+                    auth.user?.role === 'admin') && (
+                    <NavMain
+                        items={housekeepingNavItems}
+                        label="Housekeeping"
+                    />
                 )}
                 {auth.user?.role === 'admin' && (
                     <NavMain items={adminNavItems} label="Admin" />
