@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx shadcn@latest add alert-dialog --yes --overwrite)",
+      "Bash(echo \"lint exit: $?\")",
+      "Bash(curl -s -o /tmp/home.html -w \"home: %{http_code}\\\\n\" http://127.0.0.1:8123/)"
+    ]
+  }
+}

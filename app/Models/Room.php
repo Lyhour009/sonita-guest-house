@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Database\Factories\RoomFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -71,5 +72,28 @@ class Room extends Model
     public function maintenanceRequests(): HasMany
     {
         return $this->hasMany(MaintenanceRequest::class);
+    }
+
+    /**
+     * Scope rooms that have no active reservation overlapping the given date range.
+     *
+     * @param  Builder<Room>  $query
+     * @return Builder<Room>
+     */
+    public function scopeAvailableBetween(Builder $query, string $stayType, Carbon $from, Carbon $to): Builder
+    {
+        return $query->whereDoesntHave('reservations', function (Builder $reservations) use ($stayType, $from, $to) {
+            $reservations->whereIn('status', ['pending', 'confirmed', 'checked_in', 'active']);
+
+            if ($stayType === 'long_stay') {
+                $reservations->where('start_date', '<', $to)
+                    ->where(function (Builder $overlapping) use ($from) {
+                        $overlapping->whereNull('end_date')->orWhere('end_date', '>', $from);
+                    });
+            } else {
+                $reservations->where('check_in_date', '<', $to)
+                    ->where('check_out_date', '>', $from);
+            }
+        });
     }
 }
