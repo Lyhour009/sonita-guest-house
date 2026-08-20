@@ -2,11 +2,16 @@
 
 namespace App\Actions\Maintenance;
 
+use App\Actions\Notifications\NotifyUser;
 use App\Models\MaintenanceRequest;
 use Illuminate\Validation\ValidationException;
 
 class UpdateMaintenanceRequestStatus
 {
+    public function __construct(
+        private readonly NotifyUser $notifyUser,
+    ) {}
+
     public function handle(MaintenanceRequest $maintenanceRequest, string $status): MaintenanceRequest
     {
         if (in_array($maintenanceRequest->status, ['resolved', 'cancelled'], strict: true)) {
@@ -27,6 +32,13 @@ class UpdateMaintenanceRequestStatus
                 $room->update(['status' => 'available']);
             }
         }
+
+        $this->notifyUser->handle(
+            $maintenanceRequest->reporter,
+            'maintenance_status_changed',
+            "Your maintenance request \"{$maintenanceRequest->title}\" is now {$status}.",
+            route('maintenance.index'),
+        );
 
         return $maintenanceRequest;
     }

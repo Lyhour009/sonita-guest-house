@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MaintenanceRequestController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentProofController;
 use App\Http\Controllers\ReservationController;
@@ -17,6 +18,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('payments/{payment}/proof', [PaymentProofController::class, 'show'])->name('payments.proof');
 
     Route::post('maintenance', [MaintenanceRequestController::class, 'store'])->name('maintenance.store');
+
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+    Route::patch('notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
 });
 
 Route::middleware(['auth', 'verified', 'role:guest'])->group(function () {

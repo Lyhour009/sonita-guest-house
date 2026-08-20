@@ -8,6 +8,7 @@ import {
     FileText,
     FolderGit2,
     LayoutGrid,
+    Settings,
     Wrench,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
@@ -26,6 +27,7 @@ import {
 import { dashboard } from '@/routes';
 import { index as adminInvoicesIndex } from '@/routes/admin/invoices';
 import { index as adminRoomsIndex } from '@/routes/admin/rooms';
+import { edit as adminSettingsEdit } from '@/routes/admin/settings';
 import { index as invoicesIndex } from '@/routes/invoices';
 import { index as maintenanceIndex } from '@/routes/maintenance';
 import { index as paymentsIndex } from '@/routes/payments';
@@ -103,6 +105,11 @@ const adminNavItems: NavItem[] = [
         title: 'Invoices',
         href: adminInvoicesIndex(),
         icon: FileText,
+    },
+    {
+        title: 'Settings',
+        href: adminSettingsEdit(),
+        icon: Settings,
     },
 ];
 

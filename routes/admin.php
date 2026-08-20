@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\RoomImageController;
+use App\Http\Controllers\Admin\SettingController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -13,4 +14,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
 
     Route::get('invoices', [InvoiceController::class, 'index'])->name('invoices.index');
     Route::post('invoices', [InvoiceController::class, 'store'])->name('invoices.store');
+
+    Route::get('settings', [SettingController::class, 'edit'])->name('settings.edit');
+    Route::patch('settings', [SettingController::class, 'update'])->name('settings.update');
 });

@@ -2,6 +2,7 @@
 
 namespace App\Actions\Invoices;
 
+use App\Actions\Notifications\NotifyUser;
 use App\Models\Invoice;
 use App\Models\Reservation;
 use App\Models\Setting;
@@ -9,6 +10,10 @@ use Illuminate\Support\Carbon;
 
 class GenerateLongStayInvoice
 {
+    public function __construct(
+        private readonly NotifyUser $notifyUser,
+    ) {}
+
     /**
      * @param  array<string, mixed>  $data
      */
@@ -33,7 +38,7 @@ class GenerateLongStayInvoice
             ? $billingPeriod->copy()->day(min($reservation->monthly_due_day, $billingPeriod->daysInMonth))
             : $billingPeriod->copy()->addDays(7);
 
-        return $reservation->invoices()->create([
+        $invoice = $reservation->invoices()->create([
             'invoice_type' => 'long_stay',
             'billing_period' => $billingPeriod->toDateString(),
             'room_charge' => $roomCharge,
@@ -48,5 +53,14 @@ class GenerateLongStayInvoice
             'status' => 'unpaid',
             'due_date' => $dueDate->toDateString(),
         ]);
+
+        $this->notifyUser->handle(
+            $reservation->guest,
+            'invoice_issued',
+            "A new invoice of \${$invoice->total_amount} has been issued for Room {$reservation->room->room_number}.",
+            route('invoices.index'),
+        );
+
+        return $invoice;
     }
 }
