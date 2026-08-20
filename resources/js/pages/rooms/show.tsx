@@ -1,4 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import ReservationBookDialog from '@/components/reservation-book-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -122,6 +123,18 @@ export default function RoomShow({ room }: Props) {
                             </p>
                         </div>
                     )}
+
+                    <Separator />
+
+                    <div className="max-w-xs">
+                        {auth.user?.role === 'guest' ? (
+                            <ReservationBookDialog room={room} />
+                        ) : !auth.user ? (
+                            <Button asChild className="w-full">
+                                <Link href={login()}>Log in to book</Link>
+                            </Button>
+                        ) : null}
+                    </div>
                 </div>
             </div>
         </>

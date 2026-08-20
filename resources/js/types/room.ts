@@ -34,6 +34,14 @@ export type RoomDetail = {
     images: RoomImage[];
 };
 
+export type RoomOption = {
+    id: string;
+    room_number: string;
+    room_type: string;
+    rental_mode: RentalMode;
+    max_occupants: number;
+};
+
 export type RoomFilters = {
     stay_type: 'short_stay' | 'long_stay' | null;
     from: string | null;
