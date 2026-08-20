@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MaintenanceRequestController;
 use App\Http\Controllers\NotificationController;
@@ -13,7 +14,7 @@ Route::get('/', [RoomController::class, 'index'])->name('home');
 Route::get('rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('payments/{payment}/proof', [PaymentProofController::class, 'show'])->name('payments.proof');
 

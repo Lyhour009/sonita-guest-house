@@ -25,6 +25,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as adminDashboardIndex } from '@/routes/admin/dashboard';
 import { index as adminInvoicesIndex } from '@/routes/admin/invoices';
 import { index as adminRoomsIndex } from '@/routes/admin/rooms';
 import { edit as adminSettingsEdit } from '@/routes/admin/settings';
@@ -37,14 +38,6 @@ import { index as staffMaintenanceIndex } from '@/routes/staff/maintenance';
 import { index as staffPaymentsIndex } from '@/routes/staff/payments';
 import { index as staffReservationsIndex } from '@/routes/staff/reservations';
 import type { NavItem } from '@/types';
-
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-];
 
 const guestNavItems: NavItem[] = [
     {
@@ -128,6 +121,15 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     const { auth } = usePage().props;
+    const dashboardHref =
+        auth.user?.role === 'admin' ? adminDashboardIndex() : dashboard();
+    const mainNavItems: NavItem[] = [
+        {
+            title: 'Dashboard',
+            href: dashboardHref,
+            icon: LayoutGrid,
+        },
+    ];
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -135,7 +137,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href={dashboardHref} prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

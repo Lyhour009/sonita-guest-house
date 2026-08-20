@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\RoomImageController;
@@ -7,6 +8,8 @@ use App\Http\Controllers\Admin\SettingController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
     Route::resource('rooms', RoomController::class)->except(['show', 'create', 'edit']);
 
     Route::post('rooms/{room}/images', [RoomImageController::class, 'store'])->name('rooms.images.store');
