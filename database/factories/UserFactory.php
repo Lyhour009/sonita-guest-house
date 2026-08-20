@@ -25,8 +25,11 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'role' => 'guest',
+            'full_name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
+            'phone_number' => fake()->phoneNumber(),
+            'id_card_image' => null,
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
@@ -34,6 +37,30 @@ class UserFactory extends Factory
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
         ];
+    }
+
+    /**
+     * Indicate that the user is an admin.
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => ['role' => 'admin']);
+    }
+
+    /**
+     * Indicate that the user is a receptionist.
+     */
+    public function receptionist(): static
+    {
+        return $this->state(fn (array $attributes) => ['role' => 'receptionist']);
+    }
+
+    /**
+     * Indicate that the user is a housekeeping staff member.
+     */
+    public function housekeeping(): static
+    {
+        return $this->state(fn (array $attributes) => ['role' => 'housekeeping']);
     }
 
     /**
