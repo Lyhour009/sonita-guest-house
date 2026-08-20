@@ -3,6 +3,8 @@ import {
     BedDouble,
     BookOpen,
     CalendarCheck,
+    CreditCard,
+    FileText,
     FolderGit2,
     LayoutGrid,
 } from 'lucide-react';
@@ -20,8 +22,12 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as adminInvoicesIndex } from '@/routes/admin/invoices';
 import { index as adminRoomsIndex } from '@/routes/admin/rooms';
+import { index as invoicesIndex } from '@/routes/invoices';
+import { index as paymentsIndex } from '@/routes/payments';
 import { index as reservationsIndex } from '@/routes/reservations';
+import { index as staffPaymentsIndex } from '@/routes/staff/payments';
 import { index as staffReservationsIndex } from '@/routes/staff/reservations';
 import type { NavItem } from '@/types';
 
@@ -39,6 +45,16 @@ const guestNavItems: NavItem[] = [
         href: reservationsIndex(),
         icon: CalendarCheck,
     },
+    {
+        title: 'My Invoices',
+        href: invoicesIndex(),
+        icon: FileText,
+    },
+    {
+        title: 'My Payments',
+        href: paymentsIndex(),
+        icon: CreditCard,
+    },
 ];
 
 const staffNavItems: NavItem[] = [
@@ -47,6 +63,11 @@ const staffNavItems: NavItem[] = [
         href: staffReservationsIndex(),
         icon: CalendarCheck,
     },
+    {
+        title: 'Payments',
+        href: staffPaymentsIndex(),
+        icon: CreditCard,
+    },
 ];
 
 const adminNavItems: NavItem[] = [
@@ -54,6 +75,11 @@ const adminNavItems: NavItem[] = [
         title: 'Rooms',
         href: adminRoomsIndex(),
         icon: BedDouble,
+    },
+    {
+        title: 'Invoices',
+        href: adminInvoicesIndex(),
+        icon: FileText,
     },
 ];
 
