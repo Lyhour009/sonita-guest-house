@@ -81,9 +81,9 @@ immediately. All seeded accounts share the password **`password`**.
 | Role | Email | Notes |
 |---|---|---|
 | Admin | `admin@example.com` | Full access — rooms, invoices, services, staff accounts, settings, reports dashboard. |
-| Receptionist | `receptionist@sonita.com` | Front-desk: reservations, payments, room status. |
-| Housekeeping | `housekeeping@sonita.com` | Room-cleaning board and assigned maintenance requests. |
-| Guest | `guest@sonita.com` | Has a completed stay with a partially-paid invoice, an active reservation, and a few notifications. |
+| Receptionist | `receptionist@example.com` | Front-desk: reservations, payments, room status. |
+| Housekeeping | `housekeeping@example.com` | Room-cleaning board and assigned maintenance requests. |
+| Guest | `guest@example.com` | Has a completed stay with a partially-paid invoice, an active reservation, and a few notifications. |
 
 A few additional anonymous guest accounts (random emails, same `password`) are also seeded for
 volume — see `database/seeders/DatabaseSeeder.php`.
