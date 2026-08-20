@@ -6,4 +6,6 @@ export type * from './navigation';
 export type * from './notification';
 export type * from './reservation';
 export type * from './room';
+export type * from './service';
+export type * from './staff';
 export type * from './ui';

@@ -4,11 +4,13 @@ import {
     BookOpen,
     CalendarCheck,
     ClipboardList,
+    ConciergeBell,
     CreditCard,
     FileText,
     FolderGit2,
     LayoutGrid,
     Settings,
+    Users,
     Wrench,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
@@ -28,7 +30,9 @@ import { dashboard } from '@/routes';
 import { index as adminDashboardIndex } from '@/routes/admin/dashboard';
 import { index as adminInvoicesIndex } from '@/routes/admin/invoices';
 import { index as adminRoomsIndex } from '@/routes/admin/rooms';
+import { index as adminServicesIndex } from '@/routes/admin/services';
 import { edit as adminSettingsEdit } from '@/routes/admin/settings';
+import { index as adminStaffIndex } from '@/routes/admin/staff';
 import { index as invoicesIndex } from '@/routes/invoices';
 import { index as maintenanceIndex } from '@/routes/maintenance';
 import { index as paymentsIndex } from '@/routes/payments';
@@ -98,6 +102,16 @@ const adminNavItems: NavItem[] = [
         title: 'Invoices',
         href: adminInvoicesIndex(),
         icon: FileText,
+    },
+    {
+        title: 'Services',
+        href: adminServicesIndex(),
+        icon: ConciergeBell,
+    },
+    {
+        title: 'Staff Accounts',
+        href: adminStaffIndex(),
+        icon: Users,
     },
     {
         title: 'Settings',

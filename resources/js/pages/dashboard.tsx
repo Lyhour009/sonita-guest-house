@@ -193,6 +193,16 @@ function ReceptionistDashboard({
                         </TableRow>
                     </TableHeader>
                     <TableBody>
+                        {rooms.length === 0 && (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={2}
+                                    className="text-center text-muted-foreground"
+                                >
+                                    No rooms have been added yet.
+                                </TableCell>
+                            </TableRow>
+                        )}
                         {rooms.map((room) => (
                             <TableRow key={room.id}>
                                 <TableCell>{room.room_number}</TableCell>
