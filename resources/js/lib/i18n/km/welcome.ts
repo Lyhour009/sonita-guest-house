@@ -2,7 +2,7 @@ import type { welcome as welcomeEn } from '../en/welcome';
 
 export const welcome: typeof welcomeEn = {
     header: {
-        brand: 'ផ្ទះសំណាក់សូនីតា',
+        brand: 'ផ្ទះសំណាក់ ហួរ',
         address: 'ផ្លូវលេខ 644, សង្កាត់ចាក់អង្រែទី១, ខណ្ឌចាក់អង្រែ, ភ្នំពេញ',
     },
     filters: {

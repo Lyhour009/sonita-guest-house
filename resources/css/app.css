@@ -9,9 +9,11 @@
 
 @theme {
     --font-sans:
-        'Instrument Sans', 'Noto Sans Khmer', ui-sans-serif, system-ui,
-        sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+        'Inter', 'Kantumruy Pro', ui-sans-serif, system-ui,
+        sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-khmer: 'Kantumruy Pro', sans-serif;
+    --font-inter: 'Inter', sans-serif;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);

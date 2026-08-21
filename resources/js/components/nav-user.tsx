@@ -1,57 +1,51 @@
-import { usePage } from '@inertiajs/react';
-import { ChevronsUpDown } from 'lucide-react';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { Link, router, usePage } from '@inertiajs/react';
+import { LogOut } from 'lucide-react';
 import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    useSidebar,
 } from '@/components/ui/sidebar';
-import { UserInfo } from '@/components/user-info';
-import { UserMenuContent } from '@/components/user-menu-content';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
+import { useTranslation } from '@/hooks/use-translation';
+import { logout } from '@/routes';
 
 export function NavUser() {
     const { auth } = usePage().props;
-    const { state } = useSidebar();
-    const isMobile = useIsMobile();
+    const cleanup = useMobileNavigation();
+    const { t } = useTranslation();
 
     if (!auth.user) {
         return null;
     }
 
+    const handleLogout = () => {
+        cleanup();
+        router.flushAll();
+    };
+
     return (
         <SidebarMenu>
             <SidebarMenuItem>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton
-                            size="lg"
-                            className="group text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent"
-                            data-test="sidebar-menu-button"
-                        >
-                            <UserInfo user={auth.user} />
-                            <ChevronsUpDown className="ml-auto size-4" />
-                        </SidebarMenuButton>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-                        align="end"
-                        side={
-                            isMobile
-                                ? 'bottom'
-                                : state === 'collapsed'
-                                  ? 'left'
-                                  : 'bottom'
-                        }
+                <SidebarMenuButton
+                    asChild
+                    size="lg"
+                    tooltip={{ children: t('nav.logout') }}
+                    className="group relative flex h-10.5 w-full items-center gap-3 rounded-xl border border-sidebar-border/60 bg-sidebar-accent/20 px-3 text-sm font-medium text-muted-foreground shadow-2xs transition-all duration-200 hover:border-destructive/30 hover:bg-destructive/10 hover:text-destructive active:scale-[0.98] dark:hover:bg-destructive/20"
+                    data-test="sidebar-logout-button"
+                >
+                    <Link
+                        href={logout()}
+                        as="button"
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-3 cursor-pointer"
+                        data-test="logout-button"
                     >
-                        <UserMenuContent user={auth.user} />
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                        <LogOut className="size-4.5 shrink-0 transition-transform duration-200 group-hover:scale-110 group-hover:-translate-x-0.5 text-muted-foreground group-hover:text-destructive" />
+                        <span className="truncate font-sans font-medium text-left">
+                            {t('nav.logout')}
+                        </span>
+                    </Link>
+                </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>
     );

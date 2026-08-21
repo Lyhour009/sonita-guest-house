@@ -1,10 +1,6 @@
 import { Form, Head } from '@inertiajs/react';
-import {
-    index as confirmOptions,
-    store as confirmStore,
-} from '@/actions/Laravel/Passkeys/Http/Controllers/PasskeyConfirmationController';
+import { Lock } from 'lucide-react';
 import InputError from '@/components/input-error';
-import PasskeyVerify from '@/components/passkey-verify';
 import PasswordInput from '@/components/password-input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -19,46 +15,38 @@ export default function ConfirmPassword() {
         <>
             <Head title={t('auth.confirmPassword.headTitle')} />
 
-            <PasskeyVerify
-                routes={{
-                    options: confirmOptions(),
-                    submit: confirmStore(),
-                }}
-                label={t('auth.confirmPassword.passkeyLabel')}
-                loadingLabel={t('auth.confirmPassword.passkeyLoadingLabel')}
-                separator={t('auth.confirmPassword.passkeySeparator')}
-            />
-
             <Form {...store.form()} resetOnSuccess={['password']}>
                 {({ processing, errors }) => (
-                    <div className="space-y-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="password">
+                    <div className="space-y-5">
+                        <div className="space-y-1.5">
+                            <Label htmlFor="password" className="text-xs font-semibold text-foreground/85">
                                 {t('auth.confirmPassword.passwordLabel')}
                             </Label>
-                            <PasswordInput
-                                id="password"
-                                name="password"
-                                placeholder={t(
-                                    'auth.confirmPassword.passwordPlaceholder',
-                                )}
-                                autoComplete="current-password"
-                                autoFocus
-                            />
-
+                            <div className="relative">
+                                <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3 text-muted-foreground">
+                                    <Lock className="size-4" />
+                                </div>
+                                <PasswordInput
+                                    id="password"
+                                    name="password"
+                                    placeholder={t('auth.confirmPassword.passwordPlaceholder')}
+                                    autoComplete="current-password"
+                                    autoFocus
+                                    className="h-10.5 rounded-xl pl-9.5 text-sm transition-all focus-visible:ring-primary/20"
+                                />
+                            </div>
                             <InputError message={errors.password} />
                         </div>
 
-                        <div className="flex items-center">
-                            <Button
-                                className="w-full"
-                                disabled={processing}
-                                data-test="confirm-password-button"
-                            >
-                                {processing && <Spinner />}
-                                {t('auth.confirmPassword.submitButton')}
-                            </Button>
-                        </div>
+                        <Button
+                            type="submit"
+                            className="h-11 w-full rounded-xl text-sm font-semibold shadow-md shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.99] cursor-pointer"
+                            disabled={processing}
+                            data-test="confirm-password-button"
+                        >
+                            {processing && <Spinner className="mr-2" />}
+                            {t('auth.confirmPassword.submitButton')}
+                        </Button>
                     </div>
                 )}
             </Form>

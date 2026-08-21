@@ -252,21 +252,30 @@ function SidebarTrigger({
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { toggleSidebar, isMobile, state } = useSidebar()
+  const isCollapsed = isMobile || state === "collapsed"
 
   return (
     <Button
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
-      variant="ghost"
+      variant="outline"
       size="icon"
-      className={cn("h-7 w-7", className)}
+      className={cn(
+        "group relative h-9 w-9 rounded-lg border-sidebar-border/80 bg-background/80 shadow-2xs backdrop-blur-xs transition-all duration-200 hover:border-sidebar-border hover:bg-accent hover:text-accent-foreground active:scale-95",
+        className
+      )}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      {isMobile || state === "collapsed" ? <PanelLeftOpenIcon /> : <PanelLeftCloseIcon />}
+      <PanelLeftCloseIcon
+        className={cn(
+          "size-4.5 transition-all duration-300 ease-out group-hover:scale-110",
+          isCollapsed ? "rotate-180 text-muted-foreground" : "rotate-0 text-foreground"
+        )}
+      />
       <span className="sr-only">Toggle sidebar</span>
     </Button>
   )

@@ -42,7 +42,7 @@
     <table class="header">
         <tr>
             <td>
-                <div class="brand">Sonita Guest House</div>
+                <div class="brand">Hour Guest House</div>
                 <div class="muted">Invoice</div>
             </td>
             <td style="text-align: right;">
@@ -142,6 +142,6 @@
         <p class="muted" style="margin-top: 24px;">{{ $settings->payment_instruction }}</p>
     @endif
 
-    <div class="footer">Sonita Guest House &middot; Thank you for staying with us.</div>
+    <div class="footer">Hour Guest House &middot; Thank you for staying with us.</div>
 </body>
 </html>

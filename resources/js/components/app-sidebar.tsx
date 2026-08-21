@@ -1,20 +1,17 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
     BedDouble,
-    BookOpen,
     CalendarCheck,
     ClipboardList,
     ConciergeBell,
     CreditCard,
     FileText,
-    FolderGit2,
     LayoutGrid,
     Settings,
     Users,
     Wrench,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -44,24 +41,12 @@ import { index as staffPaymentsIndex } from '@/routes/staff/payments';
 import { index as staffReservationsIndex } from '@/routes/staff/reservations';
 import type { NavItem } from '@/types';
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
-];
-
 export function AppSidebar() {
     const { auth } = usePage().props;
     const { t } = useTranslation();
     const dashboardHref =
         auth.user?.role === 'admin' ? adminDashboardIndex() : dashboard();
+
     const mainNavItems: NavItem[] = [
         {
             title: t('nav.dashboard'),
@@ -148,12 +133,12 @@ export function AppSidebar() {
     ];
 
     return (
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
+        <Sidebar collapsible="icon" variant="inset" className="border-r border-sidebar-border/60">
+            <SidebarHeader className="border-b border-sidebar-border/50 p-3">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboardHref} prefetch>
+                        <SidebarMenuButton size="lg" asChild className="h-auto p-1.5 hover:bg-sidebar-accent/50 rounded-xl transition-all">
+                            <Link href={dashboardHref} prefetch className="group/logo">
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -161,7 +146,7 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
+            <SidebarContent className="gap-1 py-3">
                 <NavMain items={mainNavItems} />
                 {auth.user?.role === 'guest' && (
                     <NavMain
@@ -191,8 +176,7 @@ export function AppSidebar() {
                 )}
             </SidebarContent>
 
-            <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+            <SidebarFooter className="border-t border-sidebar-border/50 p-3">
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

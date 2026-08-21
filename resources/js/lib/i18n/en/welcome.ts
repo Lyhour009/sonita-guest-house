@@ -1,6 +1,6 @@
 export const welcome = {
     header: {
-        brand: 'Sonita Guest House',
+        brand: 'Hour Guest House',
         address:
             'Street 644, Sangkat Chak Angre Ti 1, Khan Chak Angre, Phnom Penh',
     },
