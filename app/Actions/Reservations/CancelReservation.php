@@ -3,6 +3,7 @@
 namespace App\Actions\Reservations;
 
 use App\Models\Reservation;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class CancelReservation
@@ -17,12 +18,14 @@ class CancelReservation
 
         $heldRoom = in_array($reservation->status, ['confirmed', 'active'], strict: true);
 
-        $reservation->update(['status' => 'cancelled']);
+        return DB::transaction(function () use ($reservation, $heldRoom) {
+            $reservation->update(['status' => 'cancelled']);
 
-        if ($heldRoom) {
-            $reservation->room->update(['status' => 'available']);
-        }
+            if ($heldRoom) {
+                $reservation->room->update(['status' => 'available']);
+            }
 
-        return $reservation;
+            return $reservation;
+        });
     }
 }

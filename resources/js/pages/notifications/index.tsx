@@ -42,7 +42,7 @@ export default function NotificationsIndex({ notifications }: Props) {
 
     return (
         <>
-            <Head title="Notifications" />
+            <Head title={t('notifications.page.title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">

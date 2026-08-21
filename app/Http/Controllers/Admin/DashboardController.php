@@ -65,7 +65,7 @@ class DashboardController extends Controller
                 'status' => $room->status,
                 'rental_mode' => $room->rental_mode,
                 'price_per_night' => (float) $room->price_per_night,
-                'monthly_rate' => (float) $room->monthly_rate,
+                'monthly_rate' => (float) $room->price_per_month,
             ])
             ->all();
 

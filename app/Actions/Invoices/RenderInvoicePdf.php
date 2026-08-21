@@ -13,16 +13,14 @@ class RenderInvoicePdf
     {
         $invoice->loadMissing('reservation.room', 'reservation.guest', 'payments');
 
-        $confirmedPaid = (float) $invoice->payments->where('status', 'confirmed')->sum('amount');
-
         return Pdf::loadView('invoices.pdf', [
             'invoice' => $invoice,
             'reservation' => $invoice->reservation,
             'room' => $invoice->reservation->room,
             'guest' => $invoice->reservation->guest,
             'settings' => Setting::first(),
-            'confirmedPaid' => $confirmedPaid,
-            'outstandingBalance' => round((float) $invoice->total_amount - $confirmedPaid, 2),
+            'confirmedPaid' => $invoice->confirmedPaidTotal(),
+            'outstandingBalance' => $invoice->outstandingBalance(),
         ])->setPaper('a4');
     }
 }

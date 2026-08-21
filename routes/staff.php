@@ -24,6 +24,6 @@ Route::middleware(['auth', 'verified', 'role:housekeeping,admin'])->prefix('staf
     Route::patch('housekeeping/{room}/clean', [HousekeepingController::class, 'markClean'])->name('housekeeping.clean');
 
     Route::get('maintenance', [MaintenanceRequestController::class, 'index'])->name('maintenance.index');
-    Route::patch('maintenance/{maintenanceRequest}/assign', [MaintenanceRequestController::class, 'assign'])->name('maintenance.assign');
+    Route::patch('maintenance/{maintenanceRequest}/assign', [MaintenanceRequestController::class, 'assign'])->middleware('role:admin')->name('maintenance.assign');
     Route::patch('maintenance/{maintenanceRequest}/status', [MaintenanceRequestController::class, 'updateStatus'])->name('maintenance.status');
 });

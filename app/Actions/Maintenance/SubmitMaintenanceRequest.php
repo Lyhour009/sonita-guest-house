@@ -5,6 +5,7 @@ namespace App\Actions\Maintenance;
 use App\Models\MaintenanceRequest;
 use App\Models\Room;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class SubmitMaintenanceRequest
 {
@@ -15,18 +16,20 @@ class SubmitMaintenanceRequest
     {
         $room = Room::findOrFail((string) $data['room_id']);
 
-        $request = $room->maintenanceRequests()->create([
-            'reporter_id' => $reporter->id,
-            'title' => $data['title'],
-            'description' => $data['description'] ?? null,
-            'priority' => $data['priority'],
-            'status' => 'pending',
-        ]);
+        return DB::transaction(function () use ($room, $reporter, $data) {
+            $request = $room->maintenanceRequests()->create([
+                'reporter_id' => $reporter->id,
+                'title' => $data['title'],
+                'description' => $data['description'] ?? null,
+                'priority' => $data['priority'],
+                'status' => 'pending',
+            ]);
 
-        if (in_array($room->status, ['available', 'cleaning'], strict: true)) {
-            $room->update(['status' => 'maintenance']);
-        }
+            if (in_array($room->status, ['available', 'cleaning'], strict: true)) {
+                $room->update(['status' => 'maintenance']);
+            }
 
-        return $request;
+            return $request;
+        });
     }
 }

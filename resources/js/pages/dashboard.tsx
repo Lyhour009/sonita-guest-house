@@ -281,11 +281,12 @@ function HousekeepingDashboard({
 
 export default function Dashboard(props: Props) {
     const { auth } = usePage().props;
+    const { t } = useTranslation();
     const role = auth.user?.role;
 
     return (
         <>
-            <Head title="Dashboard" />
+            <Head title={t('nav.dashboard')} />
             {(role === 'receptionist' || role === 'admin') && (
                 <ReceptionistDashboard
                     arrivals={props.arrivals}

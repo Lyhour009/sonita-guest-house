@@ -23,6 +23,7 @@ export const rooms: typeof roomsEn = {
     },
     detail: {
         backToRooms: '← ត្រឡប់ទៅបញ្ជីបន្ទប់',
+        heading: '{{type}} · បន្ទប់ {{number}}',
         floor: 'ជាន់ទី {{floor}}',
         perNight: 'តម្លៃក្នុងមួយយប់',
         perMonth: 'តម្លៃក្នុងមួយខែ',

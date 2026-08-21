@@ -82,8 +82,6 @@ class MaintenanceRequestController extends Controller
      */
     public function assign(MaintenanceRequest $maintenanceRequest, MaintenanceAssignRequest $request, AssignMaintenanceRequest $action): RedirectResponse
     {
-        abort_unless($request->user()->role === 'admin', 403);
-
         $assignee = User::findOrFail((string) $request->validated('assigned_to'));
 
         $action->handle($maintenanceRequest, $assignee);

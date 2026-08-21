@@ -5,6 +5,7 @@ namespace App\Actions\Payments;
 use App\Actions\Invoices\RecalculateInvoiceStatus;
 use App\Actions\Notifications\NotifyUser;
 use App\Models\Payment;
+use Illuminate\Support\Facades\DB;
 
 class ConfirmPayment
 {
@@ -15,20 +16,22 @@ class ConfirmPayment
 
     public function handle(Payment $payment): Payment
     {
-        $payment->update([
-            'status' => 'confirmed',
-            'paid_at' => now(),
-        ]);
+        return DB::transaction(function () use ($payment) {
+            $payment->update([
+                'status' => 'confirmed',
+                'paid_at' => now(),
+            ]);
 
-        $this->recalculateInvoiceStatus->handle($payment->invoice);
+            $this->recalculateInvoiceStatus->handle($payment->invoice);
 
-        $this->notifyUser->handle(
-            $payment->guest,
-            'payment_confirmed',
-            "Your payment of \${$payment->amount} has been confirmed.",
-            route('invoices.index'),
-        );
+            $this->notifyUser->handle(
+                $payment->guest,
+                'payment_confirmed',
+                "Your payment of \${$payment->amount} has been confirmed.",
+                route('invoices.index'),
+            );
 
-        return $payment;
+            return $payment;
+        });
     }
 }

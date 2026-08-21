@@ -204,16 +204,20 @@ export default function ReservationDetailsDrawer({
                                 </span>
                                 <div>
                                     <p className="text-sm font-bold text-foreground capitalize">
-                                        {reservation.room.room_type} Room
+                                        {t('staff.reservations.details.roomLabel', {
+                                            type: reservation.room.room_type,
+                                        })}
                                     </p>
                                     <p className="text-xs text-muted-foreground capitalize">
-                                        {reservation.reservation_type === 'short_stay' ? 'Daily Rental' : 'Monthly Lease'}
+                                        {t(`staff.reservations.billingCadence.${reservation.reservation_type}`)}
                                     </p>
                                 </div>
                             </div>
 
                             <div className="text-right text-xs">
-                                <span className="text-muted-foreground block text-[11px]">Rate</span>
+                                <span className="text-muted-foreground block text-[11px]">
+                                    {t('staff.reservations.details.roomRate')}
+                                </span>
                                 <span className="font-bold text-foreground">
                                     ${reservation.reservation_type === 'short_stay' ? `${reservation.room.price_per_night}/night` : `${reservation.room.price_per_month}/mo`}
                                 </span>

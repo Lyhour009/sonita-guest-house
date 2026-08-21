@@ -113,7 +113,7 @@ export default function ReservationTimelineView({
                     <div className="grid grid-cols-[200px_repeat(14,minmax(0,1fr))] border-b border-border bg-muted/40">
                         <div className="p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider pl-5 flex items-center gap-2">
                             <Hotel className="size-4 text-primary" />
-                            <span>Room</span>
+                            <span>{t('common.labels.room')}</span>
                         </div>
                         {days.map((day) => (
                             <div

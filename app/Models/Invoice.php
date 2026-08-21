@@ -77,4 +77,22 @@ class Invoice extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    /**
+     * Sum of this invoice's confirmed payments. Uses the loaded `payments`
+     * relation when available, otherwise queries it directly.
+     */
+    public function confirmedPaidTotal(): float
+    {
+        $payments = $this->relationLoaded('payments')
+            ? $this->payments->where('status', 'confirmed')
+            : $this->payments()->where('status', 'confirmed')->get();
+
+        return (float) $payments->sum('amount');
+    }
+
+    public function outstandingBalance(): float
+    {
+        return round((float) $this->total_amount - $this->confirmedPaidTotal(), 2);
+    }
 }

@@ -1,13 +1,12 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import LanguageToggle from '@/components/language-toggle';
+import PublicHeader from '@/components/public-header';
 import ReservationBookDialog from '@/components/reservation-book-dialog';
 import RoomAvailabilityCalendar from '@/components/room-availability-calendar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from '@/hooks/use-translation';
-import { dashboard, home, login } from '@/routes';
-import { register } from '@/routes';
+import { home, login } from '@/routes';
 import type { RoomBookedRange, RoomDetail } from '@/types';
 
 type Props = {
@@ -23,35 +22,17 @@ export default function RoomShow({ room, bookedRanges }: Props) {
         <>
             <Head title={`${room.room_type} · ${room.room_number}`} />
             <div className="min-h-screen bg-background p-6 lg:p-10">
-                <header className="mx-auto mb-8 flex w-full max-w-4xl items-center justify-between">
-                    <Link
-                        href={home()}
-                        className="text-sm text-muted-foreground hover:underline"
-                    >
-                        {t('rooms.detail.backToRooms')}
-                    </Link>
-                    <nav className="flex items-center gap-3 text-sm">
-                        <LanguageToggle />
-                        {auth.user ? (
-                            <Button asChild size="sm">
-                                <Link href={dashboard()}>
-                                    {t('nav.dashboard')}
-                                </Link>
-                            </Button>
-                        ) : (
-                            <>
-                                <Button asChild variant="ghost" size="sm">
-                                    <Link href={login()}>{t('nav.login')}</Link>
-                                </Button>
-                                <Button asChild size="sm">
-                                    <Link href={register()}>
-                                        {t('nav.register')}
-                                    </Link>
-                                </Button>
-                            </>
-                        )}
-                    </nav>
-                </header>
+                <PublicHeader
+                    className="max-w-4xl"
+                    left={
+                        <Link
+                            href={home()}
+                            className="text-sm text-muted-foreground hover:underline"
+                        >
+                            {t('rooms.detail.backToRooms')}
+                        </Link>
+                    }
+                />
 
                 <div className="mx-auto w-full max-w-4xl space-y-6">
                     {room.images.length > 0 ? (
@@ -76,7 +57,10 @@ export default function RoomShow({ room, bookedRanges }: Props) {
                     <div className="flex flex-wrap items-start justify-between gap-4">
                         <div>
                             <h1 className="text-2xl font-semibold">
-                                {room.room_type} · Room {room.room_number}
+                                {t('rooms.detail.heading', {
+                                    type: room.room_type,
+                                    number: room.room_number,
+                                })}
                             </h1>
                             <p className="text-sm text-muted-foreground">
                                 {room.floor

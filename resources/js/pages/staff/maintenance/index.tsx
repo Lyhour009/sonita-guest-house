@@ -21,6 +21,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { useTranslation } from '@/hooks/use-translation';
 import { index as staffMaintenanceIndex } from '@/routes/staff/maintenance';
 import type {
@@ -78,12 +79,12 @@ export default function StaffMaintenanceIndex({
         );
     };
 
-    useEffect(() => {
-        const timeout = setTimeout(() => applyFilters({ search }), 300);
+    const debouncedSearch = useDebouncedValue(search, 300);
 
-        return () => clearTimeout(timeout);
+    useEffect(() => {
+        applyFilters({ search: debouncedSearch });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [search]);
+    }, [debouncedSearch]);
 
     const assign = (requestId: string, assignedTo: string) => {
         router.patch(

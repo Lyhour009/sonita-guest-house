@@ -27,7 +27,7 @@ export default function InvoicesIndex({ invoices }: Props) {
 
     return (
         <>
-            <Head title="My invoices" />
+            <Head title={t('invoices.page.title')} />
 
             <div className="space-y-6 p-4">
                 <h1 className="text-xl font-semibold">

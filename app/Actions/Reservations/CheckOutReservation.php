@@ -4,6 +4,7 @@ namespace App\Actions\Reservations;
 
 use App\Actions\Invoices\GenerateShortStayInvoice;
 use App\Models\Reservation;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class CheckOutReservation
@@ -20,11 +21,13 @@ class CheckOutReservation
             ]);
         }
 
-        $reservation->update(['status' => 'checked_out']);
-        $reservation->room->update(['status' => 'cleaning']);
+        return DB::transaction(function () use ($reservation) {
+            $reservation->update(['status' => 'checked_out']);
+            $reservation->room->update(['status' => 'cleaning']);
 
-        $this->generateShortStayInvoice->handle($reservation);
+            $this->generateShortStayInvoice->handle($reservation);
 
-        return $reservation;
+            return $reservation;
+        });
     }
 }

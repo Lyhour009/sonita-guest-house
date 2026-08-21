@@ -22,7 +22,7 @@ export default function PaymentsIndex({ payments }: Props) {
 
     return (
         <>
-            <Head title="My payments" />
+            <Head title={t('payments.page.title')} />
 
             <div className="space-y-6 p-4">
                 <h1 className="text-xl font-semibold">

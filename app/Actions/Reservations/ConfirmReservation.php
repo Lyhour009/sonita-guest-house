@@ -4,6 +4,7 @@ namespace App\Actions\Reservations;
 
 use App\Actions\Notifications\NotifyUser;
 use App\Models\Reservation;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class ConfirmReservation
@@ -22,21 +23,23 @@ class ConfirmReservation
 
         $isLongStay = $reservation->reservation_type === 'long_stay';
 
-        $reservation->update([
-            'status' => $isLongStay ? 'active' : 'confirmed',
-        ]);
+        return DB::transaction(function () use ($reservation, $isLongStay) {
+            $reservation->update([
+                'status' => $isLongStay ? 'active' : 'confirmed',
+            ]);
 
-        $reservation->room->update([
-            'status' => $isLongStay ? 'occupied' : 'reserved',
-        ]);
+            $reservation->room->update([
+                'status' => $isLongStay ? 'occupied' : 'reserved',
+            ]);
 
-        $this->notifyUser->handle(
-            $reservation->guest,
-            'reservation_confirmed',
-            "Your reservation for Room {$reservation->room->room_number} has been confirmed.",
-            route('reservations.index'),
-        );
+            $this->notifyUser->handle(
+                $reservation->guest,
+                'reservation_confirmed',
+                "Your reservation for Room {$reservation->room->room_number} has been confirmed.",
+                route('reservations.index'),
+            );
 
-        return $reservation;
+            return $reservation;
+        });
     }
 }

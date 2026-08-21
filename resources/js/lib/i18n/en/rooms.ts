@@ -21,6 +21,7 @@ export const rooms = {
     },
     detail: {
         backToRooms: '← Back to rooms',
+        heading: '{{type}} · Room {{number}}',
         floor: 'Floor {{floor}}',
         perNight: 'Per night',
         perMonth: 'Per month',

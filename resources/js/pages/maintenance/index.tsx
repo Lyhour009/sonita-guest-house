@@ -28,7 +28,7 @@ export default function MaintenanceIndex({ requests, rooms }: Props) {
 
     return (
         <>
-            <Head title="My maintenance requests" />
+            <Head title={t('maintenance.page.title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">

@@ -45,8 +45,6 @@ class InvoiceController extends Controller
      */
     private function invoicePayload(Invoice $invoice): array
     {
-        $confirmedTotal = (float) $invoice->payments()->where('status', 'confirmed')->sum('amount');
-
         return [
             'id' => $invoice->id,
             'invoice_type' => $invoice->invoice_type,
@@ -58,7 +56,7 @@ class InvoiceController extends Controller
             'total_amount' => $invoice->total_amount,
             'status' => $invoice->status,
             'due_date' => $invoice->due_date?->toDateString(),
-            'outstanding_balance' => round((float) $invoice->total_amount - $confirmedTotal, 2),
+            'outstanding_balance' => $invoice->outstandingBalance(),
             'room' => [
                 'room_number' => $invoice->reservation->room->room_number,
                 'room_type' => $invoice->reservation->room->room_type,

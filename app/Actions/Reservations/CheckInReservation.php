@@ -3,6 +3,7 @@
 namespace App\Actions\Reservations;
 
 use App\Models\Reservation;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class CheckInReservation
@@ -15,9 +16,11 @@ class CheckInReservation
             ]);
         }
 
-        $reservation->update(['status' => 'checked_in']);
-        $reservation->room->update(['status' => 'occupied']);
+        return DB::transaction(function () use ($reservation) {
+            $reservation->update(['status' => 'checked_in']);
+            $reservation->room->update(['status' => 'occupied']);
 
-        return $reservation;
+            return $reservation;
+        });
     }
 }

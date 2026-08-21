@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use App\Models\Reservation;
 use App\Models\Setting;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class GenerateLongStayInvoice
 {
@@ -38,29 +39,31 @@ class GenerateLongStayInvoice
             ? $billingPeriod->copy()->day(min($reservation->monthly_due_day, $billingPeriod->daysInMonth))
             : $billingPeriod->copy()->addDays(7);
 
-        $invoice = $reservation->invoices()->create([
-            'invoice_type' => 'long_stay',
-            'billing_period' => $billingPeriod->toDateString(),
-            'room_charge' => $roomCharge,
-            'service_charge' => $serviceCharge,
-            'utility_charge' => $utilityCharge,
-            'elec_meter_start' => $data['elec_meter_start'],
-            'elec_meter_end' => $data['elec_meter_end'],
-            'water_meter_start' => $data['water_meter_start'],
-            'water_meter_end' => $data['water_meter_end'],
-            'tax_amount' => $taxAmount,
-            'total_amount' => $roomCharge + $serviceCharge + $utilityCharge + $taxAmount,
-            'status' => 'unpaid',
-            'due_date' => $dueDate->toDateString(),
-        ]);
+        return DB::transaction(function () use ($reservation, $data, $billingPeriod, $roomCharge, $serviceCharge, $utilityCharge, $taxAmount, $dueDate) {
+            $invoice = $reservation->invoices()->create([
+                'invoice_type' => 'long_stay',
+                'billing_period' => $billingPeriod->toDateString(),
+                'room_charge' => $roomCharge,
+                'service_charge' => $serviceCharge,
+                'utility_charge' => $utilityCharge,
+                'elec_meter_start' => $data['elec_meter_start'],
+                'elec_meter_end' => $data['elec_meter_end'],
+                'water_meter_start' => $data['water_meter_start'],
+                'water_meter_end' => $data['water_meter_end'],
+                'tax_amount' => $taxAmount,
+                'total_amount' => $roomCharge + $serviceCharge + $utilityCharge + $taxAmount,
+                'status' => 'unpaid',
+                'due_date' => $dueDate->toDateString(),
+            ]);
 
-        $this->notifyUser->handle(
-            $reservation->guest,
-            'invoice_issued',
-            "A new invoice of \${$invoice->total_amount} has been issued for Room {$reservation->room->room_number}.",
-            route('invoices.index'),
-        );
+            $this->notifyUser->handle(
+                $reservation->guest,
+                'invoice_issued',
+                "A new invoice of \${$invoice->total_amount} has been issued for Room {$reservation->room->room_number}.",
+                route('invoices.index'),
+            );
 
-        return $invoice;
+            return $invoice;
+        });
     }
 }

@@ -20,6 +20,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { useTranslation } from '@/hooks/use-translation';
 import { proof as proofShow } from '@/routes/payments';
 import { index as staffPaymentsIndex } from '@/routes/staff/payments';
@@ -58,12 +59,12 @@ export default function StaffPaymentsIndex({ payments, filters }: Props) {
         );
     };
 
-    useEffect(() => {
-        const timeout = setTimeout(() => applyFilters({ search }), 300);
+    const debouncedSearch = useDebouncedValue(search, 300);
 
-        return () => clearTimeout(timeout);
+    useEffect(() => {
+        applyFilters({ search: debouncedSearch });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [search]);
+    }, [debouncedSearch]);
 
     const runAction = (url: string) => {
         router.patch(url, {}, { preserveScroll: true, only: ['payments'] });

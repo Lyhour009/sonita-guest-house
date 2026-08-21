@@ -54,7 +54,7 @@ export default function ReservationsIndex({ reservations }: Props) {
 
     return (
         <>
-            <Head title="My reservations" />
+            <Head title={t('reservations.page.title')} />
 
             <div className="space-y-6 p-4">
                 <h1 className="text-xl font-semibold">

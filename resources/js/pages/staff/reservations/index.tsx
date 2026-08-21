@@ -40,6 +40,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { useTranslation } from '@/hooks/use-translation';
 import { index as staffReservationsIndex } from '@/routes/staff/reservations';
 import type { Paginated, RoomOption } from '@/types';
@@ -111,12 +112,12 @@ export default function StaffReservationsIndex({
         );
     };
 
-    useEffect(() => {
-        const timeout = setTimeout(() => applyFilters({ search }), 300);
+    const debouncedSearch = useDebouncedValue(search, 300);
 
-        return () => clearTimeout(timeout);
+    useEffect(() => {
+        applyFilters({ search: debouncedSearch });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [search]);
+    }, [debouncedSearch]);
 
     const runAction = (url: string) => {
         router.patch(url, {}, { preserveScroll: true, only: ['reservations', 'statusCounts', 'timelineRooms'] });
@@ -419,9 +420,7 @@ export default function StaffReservationsIndex({
                                                     <div className="text-[11px] text-muted-foreground flex items-center gap-1">
                                                         <Clock className="size-3" />
                                                         <span>
-                                                            {reservation.reservation_type === 'short_stay'
-                                                                ? 'Daily Booking'
-                                                                : 'Monthly Lease'}
+                                                            {t(`staff.reservations.billingCadence.${reservation.reservation_type}`)}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -540,7 +539,10 @@ export default function StaffReservationsIndex({
                 {viewMode === 'table' && (
                     <div className="flex items-center justify-between">
                         <p className="text-xs text-muted-foreground font-sans">
-                            Showing {reservations.data.length} of {reservations.total} reservations
+                            {t('staff.reservations.showingCount', {
+                                shown: reservations.data.length,
+                                total: reservations.total,
+                            })}
                         </p>
                         <Pagination meta={reservations} />
                     </div>

@@ -47,6 +47,11 @@ export const staff = {
         subtitle: 'Manage guest arrivals, front-desk check-ins, room assignments, and reservations.',
         searchPlaceholder: 'Search by guest or room...',
         anyStatus: 'Any status',
+        showingCount: 'Showing {{shown}} of {{total}} reservations',
+        billingCadence: {
+            short_stay: 'Daily Booking',
+            long_stay: 'Monthly Lease',
+        },
         table: {
             dates: 'Dates',
             payment: 'Payment',
@@ -80,6 +85,7 @@ export const staff = {
             phone: 'Phone Number',
             email: 'Email Address',
             guestsCount: 'Total Guests',
+            roomLabel: '{{type}} Room',
             roomRate: 'Room Rate',
             deposit: 'Deposit Amount',
             totalAmount: 'Total Amount',

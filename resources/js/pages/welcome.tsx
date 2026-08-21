@@ -1,9 +1,9 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { BedDouble } from 'lucide-react';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
-import LanguageToggle from '@/components/language-toggle';
 import Pagination from '@/components/pagination';
+import PublicHeader from '@/components/public-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,8 +23,7 @@ import {
 } from '@/components/ui/select';
 import { DatePicker } from '@/components/ui/date-picker';
 import { useTranslation } from '@/hooks/use-translation';
-import { dashboard, home, login } from '@/routes';
-import { register } from '@/routes';
+import { home } from '@/routes';
 import { show } from '@/routes/rooms';
 import type { Paginated, RoomFilters, RoomSummary } from '@/types';
 
@@ -34,7 +33,6 @@ type Props = {
 };
 
 export default function Welcome({ rooms, filters }: Props) {
-    const { auth } = usePage().props;
     const { t } = useTranslation();
     const [stayType, setStayType] = useState(filters.stay_type ?? 'any');
     const [from, setFrom] = useState(filters.from ?? '');
@@ -56,39 +54,21 @@ export default function Welcome({ rooms, filters }: Props) {
 
     return (
         <>
-            <Head title="Rooms" />
+            <Head title={t('welcome.header.brand')} />
             <div className="min-h-screen bg-background p-6 lg:p-10">
-                <header className="mx-auto mb-8 flex w-full max-w-6xl items-center justify-between">
-                    <div>
-                        <h1 className="text-lg font-semibold">
-                            {t('welcome.header.brand')}
-                        </h1>
-                        <p className="text-sm text-muted-foreground">
-                            {t('welcome.header.address')}
-                        </p>
-                    </div>
-                    <nav className="flex items-center gap-3 text-sm">
-                        <LanguageToggle />
-                        {auth.user ? (
-                            <Button asChild size="sm">
-                                <Link href={dashboard()}>
-                                    {t('nav.dashboard')}
-                                </Link>
-                            </Button>
-                        ) : (
-                            <>
-                                <Button asChild variant="ghost" size="sm">
-                                    <Link href={login()}>{t('nav.login')}</Link>
-                                </Button>
-                                <Button asChild size="sm">
-                                    <Link href={register()}>
-                                        {t('nav.register')}
-                                    </Link>
-                                </Button>
-                            </>
-                        )}
-                    </nav>
-                </header>
+                <PublicHeader
+                    className="max-w-6xl"
+                    left={
+                        <div>
+                            <h1 className="text-lg font-semibold">
+                                {t('welcome.header.brand')}
+                            </h1>
+                            <p className="text-sm text-muted-foreground">
+                                {t('welcome.header.address')}
+                            </p>
+                        </div>
+                    }
+                />
 
                 <form
                     onSubmit={submitFilters}

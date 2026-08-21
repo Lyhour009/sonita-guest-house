@@ -49,6 +49,11 @@ export const staff: Dictionary['staff'] = {
         subtitle: 'គ្រប់គ្រងការមកដល់របស់ភ្ញៀវ ការចុះឈ្មោះចូលស្នាក់នៅ និងការកក់បន្ទប់។',
         searchPlaceholder: 'ស្វែងរកតាមភ្ញៀវ ឬបន្ទប់...',
         anyStatus: 'គ្រប់ស្ថានភាព',
+        showingCount: 'កំពុងបង្ហាញ {{shown}} នៃ {{total}} ការកក់',
+        billingCadence: {
+            short_stay: 'ការកក់តាមថ្ងៃ',
+            long_stay: 'ជួលតាមខែ',
+        },
         table: {
             dates: 'កាលបរិច្ឆេទ',
             payment: 'ការទូទាត់',
@@ -82,6 +87,7 @@ export const staff: Dictionary['staff'] = {
             phone: 'លេខទូរស័ព្ទ',
             email: 'អ៊ីមែល',
             guestsCount: 'ចំនួនភ្ញៀវ',
+            roomLabel: 'បន្ទប់ {{type}}',
             roomRate: 'តម្លៃបន្ទប់',
             deposit: 'ប្រាក់កក់ធានា',
             totalAmount: 'ទឹកប្រាក់សរុប',
