@@ -26,7 +26,7 @@ export default function Login({ status, canResetPassword }: Props) {
             <Head title={t('auth.login.headTitle')} />
 
             {status && (
-                <div className="mb-4 rounded-xl border border-green-500/20 bg-green-500/10 p-3 text-center text-sm font-medium text-green-600 dark:text-green-400 animate-in fade-in-0 duration-200">
+                <div className="mb-5 rounded-xl border border-green-500/20 bg-green-500/10 p-3.5 text-center text-sm font-medium text-green-600 dark:text-green-400 animate-in fade-in-0 duration-200">
                     {status}
                 </div>
             )}
@@ -34,19 +34,19 @@ export default function Login({ status, canResetPassword }: Props) {
             <Form
                 {...store.form()}
                 resetOnSuccess={['password']}
-                className="flex flex-col gap-5"
+                className="flex flex-col gap-6"
             >
                 {({ processing, errors }) => (
                     <>
-                        <div className="space-y-4">
+                        <div className="space-y-4.5">
                             {/* Email */}
-                            <div className="space-y-1.5">
-                                <Label htmlFor="email" className="text-xs font-semibold text-foreground/85">
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-sm font-semibold text-foreground/90 font-sans">
                                     {t('auth.login.emailLabel')}
                                 </Label>
                                 <div className="relative">
-                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
-                                        <Mail className="size-4" />
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-muted-foreground">
+                                        <Mail className="size-5" />
                                     </div>
                                     <Input
                                         id="email"
@@ -57,22 +57,22 @@ export default function Login({ status, canResetPassword }: Props) {
                                         tabIndex={1}
                                         autoComplete="email"
                                         placeholder={t('auth.login.emailPlaceholder')}
-                                        className="h-10.5 rounded-xl pl-9.5 text-sm transition-all focus-visible:ring-primary/20"
+                                        className="h-12 rounded-xl pl-11 text-[15px] font-sans transition-all focus-visible:ring-primary/20"
                                     />
                                 </div>
                                 <InputError message={errors.email} />
                             </div>
 
                             {/* Password */}
-                            <div className="space-y-1.5">
+                            <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <Label htmlFor="password" className="text-xs font-semibold text-foreground/85">
+                                    <Label htmlFor="password" className="text-sm font-semibold text-foreground/90 font-sans">
                                         {t('auth.login.passwordLabel')}
                                     </Label>
                                     {canResetPassword && (
                                         <TextLink
                                             href={request()}
-                                            className="text-xs text-primary font-medium hover:underline"
+                                            className="text-sm text-primary font-medium hover:underline font-sans"
                                             tabIndex={5}
                                         >
                                             {t('auth.login.forgotPasswordLink')}
@@ -80,8 +80,8 @@ export default function Login({ status, canResetPassword }: Props) {
                                     )}
                                 </div>
                                 <div className="relative">
-                                    <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3 text-muted-foreground">
-                                        <Lock className="size-4" />
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3.5 text-muted-foreground">
+                                        <Lock className="size-5" />
                                     </div>
                                     <PasswordInput
                                         id="password"
@@ -90,21 +90,21 @@ export default function Login({ status, canResetPassword }: Props) {
                                         tabIndex={2}
                                         autoComplete="current-password"
                                         placeholder={t('auth.login.passwordPlaceholder')}
-                                        className="h-10.5 rounded-xl pl-9.5 text-sm transition-all focus-visible:ring-primary/20"
+                                        className="h-12 rounded-xl pl-11 text-[15px] font-sans transition-all focus-visible:ring-primary/20"
                                     />
                                 </div>
                                 <InputError message={errors.password} />
                             </div>
 
                             {/* Remember Me */}
-                            <div className="flex items-center space-x-2 pt-1">
+                            <div className="flex items-center space-x-2.5 pt-1">
                                 <Checkbox
                                     id="remember"
                                     name="remember"
                                     tabIndex={3}
-                                    className="rounded-md border-border/80 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                                    className="size-4.5 rounded-md border-border/80 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
                                 />
-                                <Label htmlFor="remember" className="cursor-pointer text-xs font-normal text-muted-foreground select-none">
+                                <Label htmlFor="remember" className="cursor-pointer text-sm font-normal text-muted-foreground select-none font-sans">
                                     {t('auth.login.rememberMe')}
                                 </Label>
                             </div>
@@ -112,7 +112,7 @@ export default function Login({ status, canResetPassword }: Props) {
                             {/* Submit Button */}
                             <Button
                                 type="submit"
-                                className="h-11 w-full rounded-xl text-sm font-semibold shadow-md shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.99] cursor-pointer"
+                                className="h-12 w-full rounded-xl text-base font-semibold shadow-md shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.99] cursor-pointer mt-1 font-sans"
                                 tabIndex={4}
                                 disabled={processing}
                                 data-test="login-button"
@@ -123,7 +123,7 @@ export default function Login({ status, canResetPassword }: Props) {
                         </div>
 
                         {/* Sign Up Link */}
-                        <div className="border-t border-border/50 pt-4 text-center text-xs text-muted-foreground">
+                        <div className="border-t border-border/60 pt-5 text-center text-sm text-muted-foreground font-sans">
                             {t('auth.login.noAccountPrefix')}{' '}
                             <TextLink href={register()} tabIndex={6} className="font-semibold text-primary hover:underline">
                                 {t('auth.login.signUpLink')}

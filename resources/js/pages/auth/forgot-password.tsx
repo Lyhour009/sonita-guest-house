@@ -18,22 +18,22 @@ export default function ForgotPassword({ status }: { status?: string }) {
             <Head title={t('auth.forgotPassword.headTitle')} />
 
             {status && (
-                <div className="mb-4 rounded-xl border border-green-500/20 bg-green-500/10 p-3 text-center text-sm font-medium text-green-600 dark:text-green-400 animate-in fade-in-0 duration-200">
+                <div className="mb-5 rounded-xl border border-green-500/20 bg-green-500/10 p-3.5 text-center text-sm font-medium text-green-600 dark:text-green-400 animate-in fade-in-0 duration-200">
                     {status}
                 </div>
             )}
 
-            <div className="space-y-5">
+            <div className="space-y-6">
                 <Form {...email.form()}>
                     {({ processing, errors }) => (
-                        <div className="space-y-4">
-                            <div className="space-y-1.5">
-                                <Label htmlFor="email" className="text-xs font-semibold text-foreground/85">
+                        <div className="space-y-4.5">
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-sm font-semibold text-foreground/90 font-sans">
                                     {t('auth.forgotPassword.emailLabel')}
                                 </Label>
                                 <div className="relative">
-                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
-                                        <Mail className="size-4" />
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-muted-foreground">
+                                        <Mail className="size-5" />
                                     </div>
                                     <Input
                                         id="email"
@@ -42,7 +42,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                         autoComplete="off"
                                         autoFocus
                                         placeholder={t('auth.forgotPassword.emailPlaceholder')}
-                                        className="h-10.5 rounded-xl pl-9.5 text-sm transition-all focus-visible:ring-primary/20"
+                                        className="h-12 rounded-xl pl-11 text-[15px] font-sans transition-all focus-visible:ring-primary/20"
                                     />
                                 </div>
                                 <InputError message={errors.email} />
@@ -50,7 +50,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
 
                             <Button
                                 type="submit"
-                                className="h-11 w-full rounded-xl text-sm font-semibold shadow-md shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.99] cursor-pointer"
+                                className="h-12 w-full rounded-xl text-base font-semibold shadow-md shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.99] cursor-pointer mt-1 font-sans"
                                 disabled={processing}
                                 data-test="email-password-reset-link-button"
                             >
@@ -61,7 +61,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                     )}
                 </Form>
 
-                <div className="border-t border-border/50 pt-4 text-center text-xs text-muted-foreground">
+                <div className="border-t border-border/60 pt-5 text-center text-sm text-muted-foreground font-sans">
                     <span>{t('auth.forgotPassword.returnPrefix')}</span>{' '}
                     <TextLink href={login()} className="font-semibold text-primary hover:underline">
                         {t('auth.forgotPassword.returnLink')}

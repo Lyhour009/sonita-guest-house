@@ -15,13 +15,11 @@ const languages = [
         code: 'km',
         name: 'ភាសាខ្មែរ',
         shortName: 'ខ្មែរ',
-        flag: '🇰🇭',
     },
     {
         code: 'en',
         name: 'English',
         shortName: 'EN',
-        flag: '🇬🇧',
     },
 ] as const;
 
@@ -39,31 +37,28 @@ export default function LanguageToggle({
                     <Button
                         variant="outline"
                         size="sm"
-                        className="group flex h-9 items-center gap-2 rounded-lg border-sidebar-border/80 bg-background/80 px-2.5 text-xs font-medium shadow-2xs backdrop-blur-xs transition-all duration-200 hover:border-sidebar-border hover:bg-accent hover:text-accent-foreground data-[state=open]:border-primary/50 data-[state=open]:bg-accent"
+                        className="group flex h-9.5 items-center gap-2 rounded-lg border-sidebar-border/80 bg-background/80 px-3 text-[13.5px] font-medium shadow-2xs backdrop-blur-xs transition-all duration-200 hover:border-sidebar-border hover:bg-accent hover:text-accent-foreground data-[state=open]:border-primary/50 data-[state=open]:bg-accent"
                     >
-                        <span className="text-base leading-none select-none">{currentLang.flag}</span>
+                        <Globe className="size-4 text-muted-foreground transition-colors group-hover:text-foreground" />
                         <span className="font-semibold">{currentLang.shortName}</span>
                         <ChevronDown className="size-3.5 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-44 rounded-xl p-1.5 shadow-lg border-sidebar-border/80">
-                    {languages.map(({ code, name, flag }) => {
+                <DropdownMenuContent align="end" className="w-40 rounded-xl p-1.5 shadow-lg border-sidebar-border/80">
+                    {languages.map(({ code, name }) => {
                         const isSelected = locale === code;
                         return (
                             <DropdownMenuItem
                                 key={code}
                                 onClick={() => updateLocale(code)}
                                 className={cn(
-                                    'flex cursor-pointer items-center justify-between gap-2.5 rounded-lg px-2.5 py-2 text-xs font-medium transition-colors',
+                                    'flex cursor-pointer items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-[13.5px] font-medium transition-colors',
                                     isSelected
                                         ? 'bg-primary/10 font-semibold text-primary dark:bg-primary/20 dark:text-primary-foreground'
                                         : 'hover:bg-accent hover:text-accent-foreground',
                                 )}
                             >
-                                <div className="flex items-center gap-2.5">
-                                    <span className="text-base leading-none select-none">{flag}</span>
-                                    <span>{name}</span>
-                                </div>
+                                <span className="font-sans">{name}</span>
                                 {isSelected && (
                                     <Check className="size-4 text-primary animate-in fade-in-0 zoom-in-75 duration-150" />
                                 )}

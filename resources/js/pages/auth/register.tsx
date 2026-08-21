@@ -25,19 +25,19 @@ export default function Register({ passwordRules }: Props) {
                 {...store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
-                className="flex flex-col gap-5"
+                className="flex flex-col gap-6"
             >
                 {({ processing, errors }) => (
                     <>
-                        <div className="space-y-3.5">
+                        <div className="space-y-4">
                             {/* Full Name */}
-                            <div className="space-y-1.5">
-                                <Label htmlFor="full_name" className="text-xs font-semibold text-foreground/85">
+                            <div className="space-y-2">
+                                <Label htmlFor="full_name" className="text-sm font-semibold text-foreground/90 font-sans">
                                     {t('auth.register.nameLabel')}
                                 </Label>
                                 <div className="relative">
-                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
-                                        <UserIcon className="size-4" />
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-muted-foreground">
+                                        <UserIcon className="size-5" />
                                     </div>
                                     <Input
                                         id="full_name"
@@ -48,20 +48,20 @@ export default function Register({ passwordRules }: Props) {
                                         autoComplete="name"
                                         name="full_name"
                                         placeholder={t('auth.register.namePlaceholder')}
-                                        className="h-10.5 rounded-xl pl-9.5 text-sm transition-all focus-visible:ring-primary/20"
+                                        className="h-12 rounded-xl pl-11 text-[15px] font-sans transition-all focus-visible:ring-primary/20"
                                     />
                                 </div>
                                 <InputError message={errors.full_name} />
                             </div>
 
                             {/* Email */}
-                            <div className="space-y-1.5">
-                                <Label htmlFor="email" className="text-xs font-semibold text-foreground/85">
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-sm font-semibold text-foreground/90 font-sans">
                                     {t('auth.register.emailLabel')}
                                 </Label>
                                 <div className="relative">
-                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
-                                        <Mail className="size-4" />
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-muted-foreground">
+                                        <Mail className="size-5" />
                                     </div>
                                     <Input
                                         id="email"
@@ -71,20 +71,20 @@ export default function Register({ passwordRules }: Props) {
                                         autoComplete="email"
                                         name="email"
                                         placeholder={t('auth.register.emailPlaceholder')}
-                                        className="h-10.5 rounded-xl pl-9.5 text-sm transition-all focus-visible:ring-primary/20"
+                                        className="h-12 rounded-xl pl-11 text-[15px] font-sans transition-all focus-visible:ring-primary/20"
                                     />
                                 </div>
                                 <InputError message={errors.email} />
                             </div>
 
                             {/* Password */}
-                            <div className="space-y-1.5">
-                                <Label htmlFor="password" className="text-xs font-semibold text-foreground/85">
+                            <div className="space-y-2">
+                                <Label htmlFor="password" className="text-sm font-semibold text-foreground/90 font-sans">
                                     {t('auth.register.passwordLabel')}
                                 </Label>
                                 <div className="relative">
-                                    <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3 text-muted-foreground">
-                                        <Lock className="size-4" />
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3.5 text-muted-foreground">
+                                        <Lock className="size-5" />
                                     </div>
                                     <PasswordInput
                                         id="password"
@@ -94,20 +94,20 @@ export default function Register({ passwordRules }: Props) {
                                         name="password"
                                         placeholder={t('auth.register.passwordPlaceholder')}
                                         passwordrules={passwordRules}
-                                        className="h-10.5 rounded-xl pl-9.5 text-sm transition-all focus-visible:ring-primary/20"
+                                        className="h-12 rounded-xl pl-11 text-[15px] font-sans transition-all focus-visible:ring-primary/20"
                                     />
                                 </div>
                                 <InputError message={errors.password} />
                             </div>
 
                             {/* Confirm Password */}
-                            <div className="space-y-1.5">
-                                <Label htmlFor="password_confirmation" className="text-xs font-semibold text-foreground/85">
+                            <div className="space-y-2">
+                                <Label htmlFor="password_confirmation" className="text-sm font-semibold text-foreground/90 font-sans">
                                     {t('auth.register.confirmPasswordLabel')}
                                 </Label>
                                 <div className="relative">
-                                    <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3 text-muted-foreground">
-                                        <Lock className="size-4" />
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3.5 text-muted-foreground">
+                                        <Lock className="size-5" />
                                     </div>
                                     <PasswordInput
                                         id="password_confirmation"
@@ -117,7 +117,7 @@ export default function Register({ passwordRules }: Props) {
                                         name="password_confirmation"
                                         placeholder={t('auth.register.confirmPasswordPlaceholder')}
                                         passwordrules={passwordRules}
-                                        className="h-10.5 rounded-xl pl-9.5 text-sm transition-all focus-visible:ring-primary/20"
+                                        className="h-12 rounded-xl pl-11 text-[15px] font-sans transition-all focus-visible:ring-primary/20"
                                     />
                                 </div>
                                 <InputError message={errors.password_confirmation} />
@@ -126,7 +126,7 @@ export default function Register({ passwordRules }: Props) {
                             {/* Submit Button */}
                             <Button
                                 type="submit"
-                                className="h-11 w-full rounded-xl text-sm font-semibold shadow-md shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.99] cursor-pointer mt-2"
+                                className="h-12 w-full rounded-xl text-base font-semibold shadow-md shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.99] cursor-pointer mt-2 font-sans"
                                 tabIndex={5}
                                 disabled={processing}
                                 data-test="register-user-button"
@@ -137,7 +137,7 @@ export default function Register({ passwordRules }: Props) {
                         </div>
 
                         {/* Login Link */}
-                        <div className="border-t border-border/50 pt-4 text-center text-xs text-muted-foreground">
+                        <div className="border-t border-border/60 pt-5 text-center text-sm text-muted-foreground font-sans">
                             {t('auth.register.hasAccountPrefix')}{' '}
                             <TextLink href={login()} tabIndex={6} className="font-semibold text-primary hover:underline">
                                 {t('auth.register.loginLink')}
