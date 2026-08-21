@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslation } from '@/hooks/use-translation';
 import { edit as settingsEdit } from '@/routes/admin/settings';
 import type { AppSettings } from '@/types';
 
@@ -14,14 +15,16 @@ type Props = {
 };
 
 export default function AdminSettingsEdit({ setting }: Props) {
+    const { t } = useTranslation();
+
     return (
         <>
-            <Head title="Settings" />
+            <Head title={t('settingsPage.title')} />
 
             <div className="max-w-2xl space-y-6 p-4">
                 <Heading
-                    title="Settings"
-                    description="Rates, tax, check-in/out times, and payment instructions"
+                    title={t('settingsPage.title')}
+                    description={t('settingsPage.description')}
                 />
 
                 <Form
@@ -33,7 +36,9 @@ export default function AdminSettingsEdit({ setting }: Props) {
                         <>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-1.5">
-                                    <Label htmlFor="currency">Currency</Label>
+                                    <Label htmlFor="currency">
+                                        {t('settingsPage.fields.currency')}
+                                    </Label>
                                     <Input
                                         id="currency"
                                         name="currency"
@@ -45,7 +50,7 @@ export default function AdminSettingsEdit({ setting }: Props) {
                                 </div>
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="tax_rate">
-                                        Tax rate (%)
+                                        {t('settingsPage.fields.taxRate')}
                                     </Label>
                                     <Input
                                         id="tax_rate"
@@ -63,7 +68,9 @@ export default function AdminSettingsEdit({ setting }: Props) {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="default_checkin_time">
-                                        Default check-in time
+                                        {t(
+                                            'settingsPage.fields.defaultCheckinTime',
+                                        )}
                                     </Label>
                                     <Input
                                         id="default_checkin_time"
@@ -80,7 +87,9 @@ export default function AdminSettingsEdit({ setting }: Props) {
                                 </div>
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="default_checkout_time">
-                                        Default check-out time
+                                        {t(
+                                            'settingsPage.fields.defaultCheckoutTime',
+                                        )}
                                     </Label>
                                     <Input
                                         id="default_checkout_time"
@@ -100,7 +109,7 @@ export default function AdminSettingsEdit({ setting }: Props) {
                             <div className="grid grid-cols-3 gap-4">
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="electric_rate">
-                                        Electric rate (per unit)
+                                        {t('settingsPage.fields.electricRate')}
                                     </Label>
                                     <Input
                                         id="electric_rate"
@@ -117,7 +126,7 @@ export default function AdminSettingsEdit({ setting }: Props) {
                                 </div>
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="water_rate">
-                                        Water rate (per unit)
+                                        {t('settingsPage.fields.waterRate')}
                                     </Label>
                                     <Input
                                         id="water_rate"
@@ -131,7 +140,9 @@ export default function AdminSettingsEdit({ setting }: Props) {
                                     <InputError message={errors.water_rate} />
                                 </div>
                                 <div className="grid gap-1.5">
-                                    <Label htmlFor="late_fee">Late fee</Label>
+                                    <Label htmlFor="late_fee">
+                                        {t('settingsPage.fields.lateFee')}
+                                    </Label>
                                     <Input
                                         id="late_fee"
                                         name="late_fee"
@@ -147,7 +158,7 @@ export default function AdminSettingsEdit({ setting }: Props) {
 
                             <div className="grid gap-1.5">
                                 <Label htmlFor="payment_qr_url">
-                                    Payment QR URL (optional)
+                                    {t('settingsPage.fields.paymentQrUrl')}
                                 </Label>
                                 <Input
                                     id="payment_qr_url"
@@ -160,7 +171,9 @@ export default function AdminSettingsEdit({ setting }: Props) {
 
                             <div className="grid gap-1.5">
                                 <Label htmlFor="payment_instruction">
-                                    Payment instructions (optional)
+                                    {t(
+                                        'settingsPage.fields.paymentInstruction',
+                                    )}
                                 </Label>
                                 <Textarea
                                     id="payment_instruction"
@@ -175,7 +188,9 @@ export default function AdminSettingsEdit({ setting }: Props) {
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <Button disabled={processing}>Save</Button>
+                                <Button disabled={processing}>
+                                    {t('common.actions.save')}
+                                </Button>
                             </div>
                         </>
                     )}

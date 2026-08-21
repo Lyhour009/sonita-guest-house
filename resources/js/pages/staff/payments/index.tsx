@@ -20,6 +20,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import { proof as proofShow } from '@/routes/payments';
 import { index as staffPaymentsIndex } from '@/routes/staff/payments';
 import type { Paginated, StaffPayment } from '@/types';
@@ -35,6 +36,7 @@ type Props = {
 };
 
 export default function StaffPaymentsIndex({ payments, filters }: Props) {
+    const { t } = useTranslation();
     const [search, setSearch] = useState(filters.search ?? '');
     const [status, setStatus] = useState(filters.status ?? 'any');
 
@@ -69,14 +71,16 @@ export default function StaffPaymentsIndex({ payments, filters }: Props) {
 
     return (
         <>
-            <Head title="Payments" />
+            <Head title={t('nav.staff.payments')} />
 
             <div className="space-y-6 p-4">
-                <h1 className="text-xl font-semibold">Payments</h1>
+                <h1 className="text-xl font-semibold">
+                    {t('nav.staff.payments')}
+                </h1>
 
                 <div className="flex flex-wrap items-center gap-3">
                     <Input
-                        placeholder="Search by guest..."
+                        placeholder={t('staff.payments.searchPlaceholder')}
                         value={search}
                         onChange={(event) => setSearch(event.target.value)}
                         className="max-w-xs"
@@ -90,14 +94,26 @@ export default function StaffPaymentsIndex({ payments, filters }: Props) {
                         }}
                     >
                         <SelectTrigger className="w-48">
-                            <SelectValue placeholder="Status" />
+                            <SelectValue
+                                placeholder={t('common.labels.status')}
+                            />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="any">Any status</SelectItem>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="confirmed">Confirmed</SelectItem>
-                            <SelectItem value="failed">Failed</SelectItem>
-                            <SelectItem value="refunded">Refunded</SelectItem>
+                            <SelectItem value="any">
+                                {t('staff.payments.anyStatus')}
+                            </SelectItem>
+                            <SelectItem value="pending">
+                                {t('common.paymentStatus.pending')}
+                            </SelectItem>
+                            <SelectItem value="confirmed">
+                                {t('common.paymentStatus.confirmed')}
+                            </SelectItem>
+                            <SelectItem value="failed">
+                                {t('common.paymentStatus.failed')}
+                            </SelectItem>
+                            <SelectItem value="refunded">
+                                {t('common.paymentStatus.refunded')}
+                            </SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -106,14 +122,24 @@ export default function StaffPaymentsIndex({ payments, filters }: Props) {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Guest</TableHead>
-                                <TableHead>Room</TableHead>
-                                <TableHead>Amount</TableHead>
-                                <TableHead>Method</TableHead>
-                                <TableHead>Proof</TableHead>
-                                <TableHead>Status</TableHead>
+                                <TableHead>
+                                    {t('common.labels.guest')}
+                                </TableHead>
+                                <TableHead>{t('common.labels.room')}</TableHead>
+                                <TableHead>
+                                    {t('staff.payments.table.amount')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('staff.payments.table.method')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('staff.payments.table.proof')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('common.labels.status')}
+                                </TableHead>
                                 <TableHead className="text-right">
-                                    Actions
+                                    {t('common.actions.actions')}
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -124,7 +150,7 @@ export default function StaffPaymentsIndex({ payments, filters }: Props) {
                                         colSpan={7}
                                         className="text-center text-muted-foreground"
                                     >
-                                        No payments match your filters.
+                                        {t('staff.payments.empty')}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -139,7 +165,9 @@ export default function StaffPaymentsIndex({ payments, filters }: Props) {
                                     <TableCell>${payment.amount}</TableCell>
                                     <TableCell>
                                         <Badge variant="secondary">
-                                            {payment.method}
+                                            {t(
+                                                `staff.payments.method.${payment.method}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
@@ -149,7 +177,7 @@ export default function StaffPaymentsIndex({ payments, filters }: Props) {
                                                 target="_blank"
                                                 className="text-sm underline"
                                             >
-                                                View
+                                                {t('staff.payments.viewProof')}
                                             </Link>
                                         ) : (
                                             '—'
@@ -157,7 +185,9 @@ export default function StaffPaymentsIndex({ payments, filters }: Props) {
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="outline">
-                                            {payment.status}
+                                            {t(
+                                                `common.paymentStatus.${payment.status}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -173,7 +203,9 @@ export default function StaffPaymentsIndex({ payments, filters }: Props) {
                                                         )
                                                     }
                                                 >
-                                                    Confirm
+                                                    {t(
+                                                        'common.actions.confirm',
+                                                    )}
                                                 </Button>
                                                 <Button
                                                     variant="destructive"
@@ -186,7 +218,7 @@ export default function StaffPaymentsIndex({ payments, filters }: Props) {
                                                         )
                                                     }
                                                 >
-                                                    Reject
+                                                    {t('staff.payments.reject')}
                                                 </Button>
                                             </div>
                                         )}

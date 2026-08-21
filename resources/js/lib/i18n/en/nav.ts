@@ -1,0 +1,32 @@
+export const nav = {
+    dashboard: 'Dashboard',
+    groups: {
+        reservations: 'Reservations',
+        staff: 'Staff',
+        housekeeping: 'Housekeeping',
+        admin: 'Admin',
+    },
+    guest: {
+        myReservations: 'My Reservations',
+        myInvoices: 'My Invoices',
+        myPayments: 'My Payments',
+        maintenance: 'Maintenance',
+    },
+    staff: {
+        reservations: 'Reservations',
+        payments: 'Payments',
+        roomStatus: 'Room Status',
+        maintenance: 'Maintenance',
+    },
+    admin: {
+        rooms: 'Rooms',
+        invoices: 'Invoices',
+        services: 'Services',
+        staffAccounts: 'Staff Accounts',
+        settings: 'Settings',
+    },
+    login: 'Log in',
+    logout: 'Log out',
+    register: 'Register',
+    logInToBook: 'Log in to book',
+};

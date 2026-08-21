@@ -1,0 +1,77 @@
+import type { Dictionary } from '../translate';
+
+export const staff: Dictionary['staff'] = {
+    housekeeping: {
+        pageTitle: 'ស្ថានភាពបន្ទប់',
+        heading: 'បន្ទប់ដែលត្រូវសម្អាត',
+        table: {
+            floor: 'ជាន់',
+        },
+        empty: 'បច្ចុប្បន្នមិនមានបន្ទប់ត្រូវសម្អាតទេ។',
+        markClean: 'សម្គាល់ថាស្អាត',
+    },
+    maintenance: {
+        pageTitle: 'សំណើជួសជុល',
+        searchPlaceholder: 'ស្វែងរកតាមចំណងជើង ឬបន្ទប់...',
+        anyStatus: 'គ្រប់ស្ថានភាព',
+        priorityPlaceholder: 'អាទិភាព',
+        anyPriority: 'គ្រប់អាទិភាព',
+        table: {
+            title: 'ចំណងជើង',
+            reporter: 'អ្នករាយការណ៍',
+            assignee: 'អ្នកទទួលបន្ទុក',
+        },
+        empty: 'មិនមានសំណើជួសជុលត្រូវនឹងតម្រងរបស់អ្នកទេ។',
+        assignPlaceholder: 'ចាត់តាំង',
+        unassigned: 'មិនទាន់ចាត់តាំង',
+        start: 'ចាប់ផ្តើម',
+        resolve: 'ដោះស្រាយ',
+    },
+    payments: {
+        searchPlaceholder: 'ស្វែងរកតាមភ្ញៀវ...',
+        anyStatus: 'គ្រប់ស្ថានភាព',
+        table: {
+            amount: 'ចំនួនទឹកប្រាក់',
+            method: 'វិធីបង់ប្រាក់',
+            proof: 'ភស្តុតាង',
+        },
+        method: {
+            cash: 'សាច់ប្រាក់',
+            bank_transfer: 'ផ្ទេរប្រាក់តាមធនាគារ',
+            qr: 'ស្កេន QR',
+        },
+        empty: 'មិនមានការបង់ប្រាក់ត្រូវនឹងតម្រងរបស់អ្នកទេ។',
+        viewProof: 'មើល',
+        reject: 'បដិសេធ',
+    },
+    reservations: {
+        searchPlaceholder: 'ស្វែងរកតាមភ្ញៀវ ឬបន្ទប់...',
+        anyStatus: 'គ្រប់ស្ថានភាព',
+        table: {
+            dates: 'កាលបរិច្ឆេទ',
+        },
+        openEnded: 'មិនកំណត់ថ្ងៃបញ្ចប់',
+        empty: 'មិនមានការកក់ត្រូវនឹងតម្រងរបស់អ្នកទេ។',
+        checkIn: 'ចូលស្នាក់នៅ',
+        checkOut: 'ចេញពីស្នាក់នៅ',
+    },
+    walkinDialog: {
+        newBooking: 'ការកក់ថ្មី',
+        title: 'ការកក់ភ្ញៀវមកដល់ផ្ទាល់ថ្មី',
+        roomLabel: 'បន្ទប់',
+        stayTypeLabel: 'ប្រភេទស្នាក់នៅ',
+        shortStayOption: 'ស្នាក់នៅរយៈពេលខ្លី (គិតជាយប់)',
+        longStayOption: 'ស្នាក់នៅរយៈពេលវែង (គិតជាខែ)',
+        checkInLabel: 'ថ្ងៃចូល',
+        checkOutLabel: 'ថ្ងៃចេញ',
+        numGuestsLabel: 'ចំនួនភ្ញៀវ',
+        moveInDateLabel: 'ថ្ងៃចូលនៅ',
+        moveOutDateLabel: 'ថ្ងៃចេញ (ស្រេចចិត្ត)',
+        newGuestToggle: 'ភ្ញៀវថ្មី (មិនទាន់មានគណនី)',
+        guestFullNameLabel: 'ឈ្មោះពេញរបស់ភ្ញៀវ',
+        guestEmailLabel: 'អ៊ីមែលរបស់ភ្ញៀវ',
+        guestSelectLabel: 'ភ្ញៀវ',
+        selectGuestPlaceholder: 'ជ្រើសរើសភ្ញៀវ',
+        createBooking: 'បង្កើតការកក់',
+    },
+};

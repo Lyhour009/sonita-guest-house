@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/hooks/use-translation';
 import type { Service } from '@/types';
 
 type Props = {
@@ -19,11 +20,17 @@ type Props = {
 };
 
 export default function ServiceEditDialog({ service, onOpenChange }: Props) {
+    const { t } = useTranslation();
+
     return (
         <Dialog open={service !== null} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Edit {service?.name}</DialogTitle>
+                    <DialogTitle>
+                        {t('services.editService', {
+                            name: service?.name ?? '',
+                        })}
+                    </DialogTitle>
                 </DialogHeader>
 
                 {service && (
@@ -35,7 +42,9 @@ export default function ServiceEditDialog({ service, onOpenChange }: Props) {
                         {({ processing, errors }) => (
                             <>
                                 <div className="grid gap-1.5">
-                                    <Label htmlFor="name">Name</Label>
+                                    <Label htmlFor="name">
+                                        {t('services.form.name')}
+                                    </Label>
                                     <Input
                                         id="name"
                                         name="name"
@@ -46,7 +55,9 @@ export default function ServiceEditDialog({ service, onOpenChange }: Props) {
                                 </div>
 
                                 <div className="grid gap-1.5">
-                                    <Label htmlFor="price">Price ($)</Label>
+                                    <Label htmlFor="price">
+                                        {t('services.form.price')}
+                                    </Label>
                                     <Input
                                         id="price"
                                         name="price"
@@ -61,7 +72,7 @@ export default function ServiceEditDialog({ service, onOpenChange }: Props) {
 
                                 <DialogFooter>
                                     <Button type="submit" disabled={processing}>
-                                        Save changes
+                                        {t('common.actions.saveChanges')}
                                     </Button>
                                 </DialogFooter>
                             </>

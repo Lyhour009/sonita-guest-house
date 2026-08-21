@@ -11,6 +11,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
+import { useTranslation } from '@/hooks/use-translation';
 import type { RoomDetail } from '@/types';
 
 type Props = {
@@ -19,11 +20,17 @@ type Props = {
 };
 
 export default function RoomEditDialog({ room, onOpenChange }: Props) {
+    const { t } = useTranslation();
+
     return (
         <Dialog open={room !== null} onOpenChange={onOpenChange}>
             <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Edit room {room?.room_number}</DialogTitle>
+                    <DialogTitle>
+                        {t('adminRooms.editRoom', {
+                            roomNumber: room?.room_number ?? '',
+                        })}
+                    </DialogTitle>
                 </DialogHeader>
 
                 {room && (
@@ -42,7 +49,7 @@ export default function RoomEditDialog({ room, onOpenChange }: Props) {
                                             type="submit"
                                             disabled={processing}
                                         >
-                                            Save changes
+                                            {t('common.actions.saveChanges')}
                                         </Button>
                                     </DialogFooter>
                                 </>
@@ -52,7 +59,9 @@ export default function RoomEditDialog({ room, onOpenChange }: Props) {
                         <Separator />
 
                         <div className="space-y-4">
-                            <h3 className="text-sm font-medium">Images</h3>
+                            <h3 className="text-sm font-medium">
+                                {t('adminRooms.images')}
+                            </h3>
                             <RoomImageManager
                                 roomId={room.id}
                                 images={room.images}

@@ -1,0 +1,206 @@
+export const auth = {
+    confirmPassword: {
+        headTitle: 'Confirm password',
+        passkeyLabel: 'Confirm with passkey',
+        passkeyLoadingLabel: 'Confirming...',
+        passkeySeparator: 'Or confirm with password',
+        passwordLabel: 'Password',
+        passwordPlaceholder: 'Password',
+        submitButton: 'Confirm password',
+    },
+    forgotPassword: {
+        headTitle: 'Forgot password',
+        emailLabel: 'Email address',
+        emailPlaceholder: 'email@example.com',
+        submitButton: 'Email password reset link',
+        returnPrefix: 'Or, return to',
+        returnLink: 'log in',
+    },
+    login: {
+        headTitle: 'Log in',
+        emailLabel: 'Email address',
+        emailPlaceholder: 'email@example.com',
+        passwordLabel: 'Password',
+        passwordPlaceholder: 'Password',
+        forgotPasswordLink: 'Forgot your password?',
+        rememberMe: 'Remember me',
+        submitButton: 'Log in',
+        noAccountPrefix: "Don't have an account?",
+        signUpLink: 'Sign up',
+    },
+    register: {
+        headTitle: 'Register',
+        nameLabel: 'Name',
+        namePlaceholder: 'Full name',
+        emailLabel: 'Email address',
+        emailPlaceholder: 'email@example.com',
+        passwordLabel: 'Password',
+        passwordPlaceholder: 'Password',
+        confirmPasswordLabel: 'Confirm password',
+        confirmPasswordPlaceholder: 'Confirm password',
+        submitButton: 'Create account',
+        hasAccountPrefix: 'Already have an account?',
+        loginLink: 'Log in',
+    },
+    resetPassword: {
+        headTitle: 'Reset password',
+        emailLabel: 'Email',
+        passwordLabel: 'Password',
+        passwordPlaceholder: 'Password',
+        confirmPasswordLabel: 'Confirm password',
+        confirmPasswordPlaceholder: 'Confirm password',
+        submitButton: 'Reset password',
+    },
+    twoFactorChallenge: {
+        headTitle: 'Two-factor authentication',
+        recoveryCodeTitle: 'Recovery code',
+        recoveryCodeDescription:
+            'Please confirm access to your account by entering one of your emergency recovery codes.',
+        recoveryCodeToggleText: 'login using an authentication code',
+        authCodeTitle: 'Authentication code',
+        authCodeDescription:
+            'Enter the authentication code provided by your authenticator application.',
+        authCodeToggleText: 'login using a recovery code',
+        recoveryCodePlaceholder: 'Enter recovery code',
+        continueButton: 'Continue',
+        orPrefix: 'or you can',
+    },
+    verifyEmail: {
+        headTitle: 'Email verification',
+        verificationSentMessage:
+            'A new verification link has been sent to the email address you provided during registration.',
+        resendButton: 'Resend verification email',
+        logoutLink: 'Log out',
+    },
+    passwordInput: {
+        showPassword: 'Show password',
+        hidePassword: 'Hide password',
+    },
+    passkeys: {
+        verify: {
+            signInLabel: 'Sign in with a passkey',
+            authenticatingLabel: 'Authenticating...',
+            orContinueWithEmail: 'Or continue with email',
+        },
+        manage: {
+            heading: 'Passkeys',
+            description: 'Manage your passkeys for passwordless sign-in',
+            emptyTitle: 'No passkeys yet',
+            emptyDescription: 'Add a passkey to sign in without a password',
+        },
+        item: {
+            removeAriaLabel: 'Remove',
+            removeDialogTitle: 'Remove passkey',
+            removeDialogDescription:
+                'Are you sure you want to remove the "{{name}}" passkey? You will no longer be able to use it to sign in.',
+            removingButton: 'Removing...',
+            removeButton: 'Remove passkey',
+            addedPrefix: 'Added {{when}}',
+            lastUsedPrefix: 'Last used {{when}}',
+        },
+        register: {
+            notSupported: 'Passkeys are not supported in this browser.',
+            addButton: 'Add passkey',
+            nameLabel: 'Passkey name',
+            namePlaceholder: 'e.g., MacBook Pro, iPhone',
+            nameHint: 'A name helps you identify this passkey later.',
+            registeringButton: 'Registering...',
+            registerButton: 'Register passkey',
+        },
+    },
+    twoFactor: {
+        manage: {
+            heading: 'Two-factor authentication',
+            description: 'Manage your two-factor authentication settings',
+            enabledInfo:
+                'You will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.',
+            disabledInfo:
+                'When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.',
+            disableButton: 'Disable 2FA',
+            continueSetupButton: 'Continue setup',
+            enableButton: 'Enable 2FA',
+        },
+        recoveryCodes: {
+            title: '2FA recovery codes',
+            description:
+                'Recovery codes let you regain access if you lose your 2FA device. Store them in a secure password manager.',
+            viewButton: 'View recovery codes',
+            hideButton: 'Hide recovery codes',
+            regenerateButton: 'Regenerate codes',
+            listAriaLabel: 'Recovery codes',
+            loadingAriaLabel: 'Loading recovery codes',
+            warningPrefix:
+                'Each recovery code can be used once to access your account and will be removed after use. If you need more, click',
+            warningHighlight: 'Regenerate codes',
+            warningSuffix: 'above.',
+        },
+        setup: {
+            manualEntryHint: 'or, enter the code manually',
+            backButton: 'Back',
+            confirmButton: 'Confirm',
+            continueButton: 'Continue',
+            enabledTitle: 'Two-factor authentication enabled',
+            enabledDescription:
+                'Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.',
+            closeButton: 'Close',
+            verifyTitle: 'Verify authentication code',
+            verifyDescription:
+                'Enter the 6-digit code from your authenticator app',
+            enableTitle: 'Enable two-factor authentication',
+            enableDescription:
+                'To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app',
+        },
+    },
+    settings: {
+        profile: {
+            headTitle: 'Profile settings',
+            title: 'Profile',
+            description: 'Update your name and email address',
+            nameLabel: 'Name',
+            namePlaceholder: 'Full name',
+            emailLabel: 'Email address',
+            emailPlaceholder: 'Email address',
+            saveButton: 'Save',
+            unverifiedPrefix: 'Your email address is unverified.',
+            resendLinkText: 'Click here to re-send the verification email.',
+            verificationSentMessage:
+                'A new verification link has been sent to your email address.',
+        },
+        security: {
+            headTitle: 'Security settings',
+            updatePasswordTitle: 'Update password',
+            updatePasswordDescription:
+                'Ensure your account is using a long, random password to stay secure',
+            currentPasswordLabel: 'Current password',
+            currentPasswordPlaceholder: 'Current password',
+            newPasswordLabel: 'New password',
+            newPasswordPlaceholder: 'New password',
+            confirmPasswordLabel: 'Confirm password',
+            confirmPasswordPlaceholder: 'Confirm password',
+            saveButton: 'Save',
+        },
+        appearance: {
+            headTitle: 'Appearance settings',
+            title: 'Appearance settings',
+            description: 'Update the appearance settings for your account',
+            tabs: {
+                light: 'Light',
+                dark: 'Dark',
+                system: 'System',
+            },
+        },
+        deleteAccount: {
+            title: 'Delete account',
+            description: 'Delete your account and all of its resources',
+            warningTitle: 'Warning',
+            warningMessage:
+                'Please proceed with caution, this cannot be undone.',
+            deleteButton: 'Delete account',
+            confirmTitle: 'Are you sure you want to delete your account?',
+            confirmDescription:
+                'Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.',
+            passwordLabel: 'Password',
+            passwordPlaceholder: 'Password',
+        },
+    },
+};

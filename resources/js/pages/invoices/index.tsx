@@ -12,6 +12,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as invoicesIndex, pdf as invoicePdf } from '@/routes/invoices';
 import type { Invoice, Paginated } from '@/types';
 
@@ -22,25 +23,37 @@ type Props = {
 const payableStatuses = ['unpaid', 'partial'];
 
 export default function InvoicesIndex({ invoices }: Props) {
+    const { t } = useTranslation();
+
     return (
         <>
             <Head title="My invoices" />
 
             <div className="space-y-6 p-4">
-                <h1 className="text-xl font-semibold">My invoices</h1>
+                <h1 className="text-xl font-semibold">
+                    {t('invoices.page.title')}
+                </h1>
 
                 <div className="rounded-xl border">
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Room</TableHead>
-                                <TableHead>Type</TableHead>
-                                <TableHead>Total</TableHead>
-                                <TableHead>Outstanding</TableHead>
-                                <TableHead>Due date</TableHead>
-                                <TableHead>Status</TableHead>
+                                <TableHead>{t('common.labels.room')}</TableHead>
+                                <TableHead>{t('common.labels.type')}</TableHead>
+                                <TableHead>
+                                    {t('common.labels.total')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('invoices.table.outstanding')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('common.labels.dueDate')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('common.labels.status')}
+                                </TableHead>
                                 <TableHead className="text-right">
-                                    Actions
+                                    {t('common.actions.actions')}
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -51,7 +64,7 @@ export default function InvoicesIndex({ invoices }: Props) {
                                         colSpan={7}
                                         className="text-center text-muted-foreground"
                                     >
-                                        You have no invoices yet.
+                                        {t('invoices.page.empty')}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -62,7 +75,9 @@ export default function InvoicesIndex({ invoices }: Props) {
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="secondary">
-                                            {invoice.invoice_type}
+                                            {t(
+                                                `common.reservationType.${invoice.invoice_type}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
@@ -76,7 +91,9 @@ export default function InvoicesIndex({ invoices }: Props) {
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="outline">
-                                            {invoice.status}
+                                            {t(
+                                                `common.invoiceStatus.${invoice.status}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -85,7 +102,9 @@ export default function InvoicesIndex({ invoices }: Props) {
                                                 asChild
                                                 variant="outline"
                                                 size="icon"
-                                                title="Download PDF"
+                                                title={t(
+                                                    'common.actions.downloadPdf',
+                                                )}
                                             >
                                                 <a
                                                     href={

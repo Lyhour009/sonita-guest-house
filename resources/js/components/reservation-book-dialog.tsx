@@ -20,6 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useTranslation } from '@/hooks/use-translation';
 import type { ReservationType, RoomDetail } from '@/types';
 
 type Props = {
@@ -27,6 +28,7 @@ type Props = {
 };
 
 export default function ReservationBookDialog({ room }: Props) {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const [type, setType] = useState<ReservationType>(
         room.rental_mode === 'long_stay' ? 'long_stay' : 'short_stay',
@@ -40,11 +42,17 @@ export default function ReservationBookDialog({ room }: Props) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="w-full">Book this room</Button>
+                <Button className="w-full">
+                    {t('reservations.bookDialog.trigger')}
+                </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Book room {room.room_number}</DialogTitle>
+                    <DialogTitle>
+                        {t('reservations.bookDialog.title', {
+                            roomNumber: room.room_number,
+                        })}
+                    </DialogTitle>
                 </DialogHeader>
 
                 <Form
@@ -63,7 +71,7 @@ export default function ReservationBookDialog({ room }: Props) {
                             {availableTypes.length > 1 && (
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="reservation_type">
-                                        Stay type
+                                        {t('rooms.stayType.label')}
                                     </Label>
                                     <Select
                                         name="reservation_type"
@@ -80,10 +88,14 @@ export default function ReservationBookDialog({ room }: Props) {
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="short_stay">
-                                                Short stay (nightly)
+                                                {t(
+                                                    'rooms.stayType.shortStayNightly',
+                                                )}
                                             </SelectItem>
                                             <SelectItem value="long_stay">
-                                                Long stay (monthly)
+                                                {t(
+                                                    'rooms.stayType.longStayMonthly',
+                                                )}
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -105,7 +117,9 @@ export default function ReservationBookDialog({ room }: Props) {
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="grid gap-1.5">
                                             <Label htmlFor="check_in_date">
-                                                Check-in
+                                                {t(
+                                                    'reservations.bookDialog.checkIn',
+                                                )}
                                             </Label>
                                             <Input
                                                 id="check_in_date"
@@ -119,7 +133,9 @@ export default function ReservationBookDialog({ room }: Props) {
                                         </div>
                                         <div className="grid gap-1.5">
                                             <Label htmlFor="check_out_date">
-                                                Check-out
+                                                {t(
+                                                    'reservations.bookDialog.checkOut',
+                                                )}
                                             </Label>
                                             <Input
                                                 id="check_out_date"
@@ -134,7 +150,9 @@ export default function ReservationBookDialog({ room }: Props) {
                                     </div>
                                     <div className="grid gap-1.5">
                                         <Label htmlFor="num_guests">
-                                            Guests
+                                            {t(
+                                                'reservations.bookDialog.guests',
+                                            )}
                                         </Label>
                                         <Input
                                             id="num_guests"
@@ -154,7 +172,9 @@ export default function ReservationBookDialog({ room }: Props) {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="grid gap-1.5">
                                         <Label htmlFor="start_date">
-                                            Move-in date
+                                            {t(
+                                                'reservations.bookDialog.moveInDate',
+                                            )}
                                         </Label>
                                         <Input
                                             id="start_date"
@@ -168,7 +188,9 @@ export default function ReservationBookDialog({ room }: Props) {
                                     </div>
                                     <div className="grid gap-1.5">
                                         <Label htmlFor="end_date">
-                                            Move-out date (optional)
+                                            {t(
+                                                'reservations.bookDialog.moveOutDateOptional',
+                                            )}
                                         </Label>
                                         <Input
                                             id="end_date"
@@ -184,7 +206,7 @@ export default function ReservationBookDialog({ room }: Props) {
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
-                                    Request booking
+                                    {t('reservations.bookDialog.submit')}
                                 </Button>
                             </DialogFooter>
                         </>

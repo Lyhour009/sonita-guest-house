@@ -20,6 +20,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import {
     index as adminInvoicesIndex,
     pdf as adminInvoicePdf,
@@ -46,14 +47,17 @@ export default function AdminInvoicesIndex({
     activeLongStayReservations,
 }: Props) {
     const [status, setStatus] = useState(filters.status ?? 'any');
+    const { t } = useTranslation();
 
     return (
         <>
-            <Head title="Invoices" />
+            <Head title={t('adminInvoices.title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-xl font-semibold">Invoices</h1>
+                    <h1 className="text-xl font-semibold">
+                        {t('adminInvoices.title')}
+                    </h1>
                     <LongStayInvoiceDialog
                         reservations={activeLongStayReservations}
                     />
@@ -75,13 +79,25 @@ export default function AdminInvoicesIndex({
                     }}
                 >
                     <SelectTrigger className="w-48">
-                        <SelectValue placeholder="Status" />
+                        <SelectValue
+                            placeholder={t(
+                                'adminInvoices.statusFilter.placeholder',
+                            )}
+                        />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="any">Any status</SelectItem>
-                        <SelectItem value="unpaid">Unpaid</SelectItem>
-                        <SelectItem value="partial">Partial</SelectItem>
-                        <SelectItem value="paid">Paid</SelectItem>
+                        <SelectItem value="any">
+                            {t('adminInvoices.statusFilter.any')}
+                        </SelectItem>
+                        <SelectItem value="unpaid">
+                            {t('common.invoiceStatus.unpaid')}
+                        </SelectItem>
+                        <SelectItem value="partial">
+                            {t('common.invoiceStatus.partial')}
+                        </SelectItem>
+                        <SelectItem value="paid">
+                            {t('common.invoiceStatus.paid')}
+                        </SelectItem>
                     </SelectContent>
                 </Select>
 
@@ -89,15 +105,25 @@ export default function AdminInvoicesIndex({
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Guest</TableHead>
-                                <TableHead>Room</TableHead>
-                                <TableHead>Type</TableHead>
-                                <TableHead>Billing period</TableHead>
-                                <TableHead>Total</TableHead>
-                                <TableHead>Due date</TableHead>
-                                <TableHead>Status</TableHead>
+                                <TableHead>
+                                    {t('common.labels.guest')}
+                                </TableHead>
+                                <TableHead>{t('common.labels.room')}</TableHead>
+                                <TableHead>{t('common.labels.type')}</TableHead>
+                                <TableHead>
+                                    {t('adminInvoices.table.billingPeriod')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('common.labels.total')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('common.labels.dueDate')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('common.labels.status')}
+                                </TableHead>
                                 <TableHead className="text-right">
-                                    Actions
+                                    {t('common.actions.actions')}
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -108,7 +134,7 @@ export default function AdminInvoicesIndex({
                                         colSpan={8}
                                         className="text-center text-muted-foreground"
                                     >
-                                        No invoices match your filters.
+                                        {t('adminInvoices.empty')}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -122,7 +148,9 @@ export default function AdminInvoicesIndex({
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="secondary">
-                                            {invoice.invoice_type}
+                                            {t(
+                                                `common.reservationType.${invoice.invoice_type}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
@@ -136,7 +164,9 @@ export default function AdminInvoicesIndex({
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="outline">
-                                            {invoice.status}
+                                            {t(
+                                                `common.invoiceStatus.${invoice.status}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -144,7 +174,9 @@ export default function AdminInvoicesIndex({
                                             asChild
                                             variant="outline"
                                             size="icon"
-                                            title="Download PDF"
+                                            title={t(
+                                                'common.actions.downloadPdf',
+                                            )}
                                         >
                                             <a
                                                 href={

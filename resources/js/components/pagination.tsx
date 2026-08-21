@@ -1,31 +1,34 @@
 import { Link } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/hooks/use-translation';
 import type { Paginated } from '@/types';
 
 type Props<T> = {
     meta: Omit<Paginated<T>, 'data'>;
 };
 
-function labelFor(label: string) {
-    if (label.includes('Previous')) {
-        return '‹ Previous';
-    }
-
-    if (label.includes('Next')) {
-        return 'Next ›';
-    }
-
-    return label;
-}
-
 export default function Pagination<T>({ meta }: Props<T>) {
+    const { t } = useTranslation();
+
+    const labelFor = (label: string) => {
+        if (label.includes('Previous')) {
+            return t('common.pagination.previous');
+        }
+
+        if (label.includes('Next')) {
+            return t('common.pagination.next');
+        }
+
+        return label;
+    };
+
     if (meta.last_page <= 1) {
         return null;
     }
 
     return (
         <nav
-            aria-label="Pagination"
+            aria-label={t('common.pagination.ariaLabel')}
             className="flex flex-wrap items-center justify-center gap-1"
         >
             {meta.links.map((link, index) => (

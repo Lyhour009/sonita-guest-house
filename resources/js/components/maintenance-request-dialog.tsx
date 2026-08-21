@@ -21,6 +21,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslation } from '@/hooks/use-translation';
 import type { MaintenanceRoomSummary } from '@/types';
 
 type Props = {
@@ -28,17 +29,22 @@ type Props = {
 };
 
 export default function MaintenanceRequestDialog({ rooms }: Props) {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const [roomId, setRoomId] = useState(rooms[0]?.id ?? '');
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button disabled={rooms.length === 0}>Report an issue</Button>
+                <Button disabled={rooms.length === 0}>
+                    {t('maintenance.requestDialog.trigger')}
+                </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Report a maintenance issue</DialogTitle>
+                    <DialogTitle>
+                        {t('maintenance.requestDialog.title')}
+                    </DialogTitle>
                 </DialogHeader>
 
                 <Form
@@ -49,7 +55,9 @@ export default function MaintenanceRequestDialog({ rooms }: Props) {
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-1.5">
-                                <Label htmlFor="room_id">Room</Label>
+                                <Label htmlFor="room_id">
+                                    {t('common.labels.room')}
+                                </Label>
                                 <Select
                                     name="room_id"
                                     value={roomId}
@@ -67,7 +75,13 @@ export default function MaintenanceRequestDialog({ rooms }: Props) {
                                                 key={room.id}
                                                 value={room.id}
                                             >
-                                                Room {room.room_number}
+                                                {t(
+                                                    'maintenance.requestDialog.roomOption',
+                                                    {
+                                                        roomNumber:
+                                                            room.room_number,
+                                                    },
+                                                )}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -76,7 +90,9 @@ export default function MaintenanceRequestDialog({ rooms }: Props) {
                             </div>
 
                             <div className="grid gap-1.5">
-                                <Label htmlFor="title">Title</Label>
+                                <Label htmlFor="title">
+                                    {t('maintenance.requestDialog.titleLabel')}
+                                </Label>
                                 <Input
                                     id="title"
                                     name="title"
@@ -88,14 +104,18 @@ export default function MaintenanceRequestDialog({ rooms }: Props) {
 
                             <div className="grid gap-1.5">
                                 <Label htmlFor="description">
-                                    Description (optional)
+                                    {t(
+                                        'maintenance.requestDialog.descriptionOptional',
+                                    )}
                                 </Label>
                                 <Textarea id="description" name="description" />
                                 <InputError message={errors.description} />
                             </div>
 
                             <div className="grid gap-1.5">
-                                <Label htmlFor="priority">Priority</Label>
+                                <Label htmlFor="priority">
+                                    {t('maintenance.table.priority')}
+                                </Label>
                                 <Select name="priority" defaultValue="medium">
                                     <SelectTrigger
                                         id="priority"
@@ -104,12 +124,20 @@ export default function MaintenanceRequestDialog({ rooms }: Props) {
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="low">Low</SelectItem>
+                                        <SelectItem value="low">
+                                            {t(
+                                                'common.maintenancePriority.low',
+                                            )}
+                                        </SelectItem>
                                         <SelectItem value="medium">
-                                            Medium
+                                            {t(
+                                                'common.maintenancePriority.medium',
+                                            )}
                                         </SelectItem>
                                         <SelectItem value="high">
-                                            High
+                                            {t(
+                                                'common.maintenancePriority.high',
+                                            )}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -118,7 +146,7 @@ export default function MaintenanceRequestDialog({ rooms }: Props) {
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
-                                    Submit
+                                    {t('common.actions.submit')}
                                 </Button>
                             </DialogFooter>
                         </>

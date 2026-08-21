@@ -20,6 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useTranslation } from '@/hooks/use-translation';
 import type { ActiveLongStayReservationOption } from '@/types';
 
 type Props = {
@@ -27,6 +28,7 @@ type Props = {
 };
 
 export default function LongStayInvoiceDialog({ reservations }: Props) {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const [reservationId, setReservationId] = useState(
         reservations[0]?.id ?? '',
@@ -36,12 +38,12 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button disabled={reservations.length === 0}>
-                    Generate invoice
+                    {t('adminInvoices.generateInvoice')}
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Generate long-stay invoice</DialogTitle>
+                    <DialogTitle>{t('adminInvoices.dialog.title')}</DialogTitle>
                 </DialogHeader>
 
                 <Form
@@ -52,7 +54,9 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-1.5">
-                                <Label htmlFor="reservation_id">Tenant</Label>
+                                <Label htmlFor="reservation_id">
+                                    {t('adminInvoices.dialog.tenant')}
+                                </Label>
                                 <Select
                                     name="reservation_id"
                                     value={reservationId}
@@ -70,7 +74,8 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
                                                 key={reservation.id}
                                                 value={reservation.id}
                                             >
-                                                {reservation.guest_name} · Room{' '}
+                                                {reservation.guest_name} ·{' '}
+                                                {t('common.labels.room')}{' '}
                                                 {reservation.room_number}
                                             </SelectItem>
                                         ))}
@@ -81,8 +86,7 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
 
                             <div className="grid gap-1.5">
                                 <Label htmlFor="billing_period">
-                                    Billing month (optional, defaults to current
-                                    month)
+                                    {t('adminInvoices.dialog.billingMonth')}
                                 </Label>
                                 <Input
                                     id="billing_period"
@@ -95,7 +99,9 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="elec_meter_start">
-                                        Electric meter start
+                                        {t(
+                                            'adminInvoices.dialog.electricMeterStart',
+                                        )}
                                     </Label>
                                     <Input
                                         id="elec_meter_start"
@@ -111,7 +117,9 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
                                 </div>
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="elec_meter_end">
-                                        Electric meter end
+                                        {t(
+                                            'adminInvoices.dialog.electricMeterEnd',
+                                        )}
                                     </Label>
                                     <Input
                                         id="elec_meter_end"
@@ -127,7 +135,9 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
                                 </div>
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="water_meter_start">
-                                        Water meter start
+                                        {t(
+                                            'adminInvoices.dialog.waterMeterStart',
+                                        )}
                                     </Label>
                                     <Input
                                         id="water_meter_start"
@@ -143,7 +153,9 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
                                 </div>
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="water_meter_end">
-                                        Water meter end
+                                        {t(
+                                            'adminInvoices.dialog.waterMeterEnd',
+                                        )}
                                     </Label>
                                     <Input
                                         id="water_meter_end"
@@ -161,7 +173,7 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
-                                    Generate
+                                    {t('adminInvoices.dialog.submit')}
                                 </Button>
                             </DialogFooter>
                         </>

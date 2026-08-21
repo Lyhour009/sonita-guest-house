@@ -21,6 +21,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as staffMaintenanceIndex } from '@/routes/staff/maintenance';
 import type {
     HousekeepingStaffOption,
@@ -52,6 +53,7 @@ export default function StaffMaintenanceIndex({
     housekeepingStaff,
     rooms,
 }: Props) {
+    const { t } = useTranslation();
     const [search, setSearch] = useState(filters.search ?? '');
     const [status, setStatus] = useState(filters.status ?? 'any');
     const [priority, setPriority] = useState(filters.priority ?? 'any');
@@ -101,19 +103,19 @@ export default function StaffMaintenanceIndex({
 
     return (
         <>
-            <Head title="Maintenance requests" />
+            <Head title={t('staff.maintenance.pageTitle')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-xl font-semibold">
-                        Maintenance requests
+                        {t('staff.maintenance.pageTitle')}
                     </h1>
                     <MaintenanceRequestDialog rooms={rooms} />
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
                     <Input
-                        placeholder="Search by title or room..."
+                        placeholder={t('staff.maintenance.searchPlaceholder')}
                         value={search}
                         onChange={(event) => setSearch(event.target.value)}
                         className="max-w-xs"
@@ -127,16 +129,26 @@ export default function StaffMaintenanceIndex({
                         }}
                     >
                         <SelectTrigger className="w-48">
-                            <SelectValue placeholder="Status" />
+                            <SelectValue
+                                placeholder={t('common.labels.status')}
+                            />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="any">Any status</SelectItem>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="in_progress">
-                                In progress
+                            <SelectItem value="any">
+                                {t('staff.maintenance.anyStatus')}
                             </SelectItem>
-                            <SelectItem value="resolved">Resolved</SelectItem>
-                            <SelectItem value="cancelled">Cancelled</SelectItem>
+                            <SelectItem value="pending">
+                                {t('common.maintenanceStatus.pending')}
+                            </SelectItem>
+                            <SelectItem value="in_progress">
+                                {t('common.maintenanceStatus.in_progress')}
+                            </SelectItem>
+                            <SelectItem value="resolved">
+                                {t('common.maintenanceStatus.resolved')}
+                            </SelectItem>
+                            <SelectItem value="cancelled">
+                                {t('common.maintenanceStatus.cancelled')}
+                            </SelectItem>
                         </SelectContent>
                     </Select>
 
@@ -148,13 +160,25 @@ export default function StaffMaintenanceIndex({
                         }}
                     >
                         <SelectTrigger className="w-48">
-                            <SelectValue placeholder="Priority" />
+                            <SelectValue
+                                placeholder={t(
+                                    'staff.maintenance.priorityPlaceholder',
+                                )}
+                            />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="any">Any priority</SelectItem>
-                            <SelectItem value="low">Low</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="any">
+                                {t('staff.maintenance.anyPriority')}
+                            </SelectItem>
+                            <SelectItem value="low">
+                                {t('common.maintenancePriority.low')}
+                            </SelectItem>
+                            <SelectItem value="medium">
+                                {t('common.maintenancePriority.medium')}
+                            </SelectItem>
+                            <SelectItem value="high">
+                                {t('common.maintenancePriority.high')}
+                            </SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -163,14 +187,24 @@ export default function StaffMaintenanceIndex({
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Room</TableHead>
-                                <TableHead>Title</TableHead>
-                                <TableHead>Reporter</TableHead>
-                                <TableHead>Priority</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Assignee</TableHead>
+                                <TableHead>{t('common.labels.room')}</TableHead>
+                                <TableHead>
+                                    {t('staff.maintenance.table.title')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('staff.maintenance.table.reporter')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('staff.maintenance.priorityPlaceholder')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('common.labels.status')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('staff.maintenance.table.assignee')}
+                                </TableHead>
                                 <TableHead className="text-right">
-                                    Actions
+                                    {t('common.actions.actions')}
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -181,8 +215,7 @@ export default function StaffMaintenanceIndex({
                                         colSpan={7}
                                         className="text-center text-muted-foreground"
                                     >
-                                        No maintenance requests match your
-                                        filters.
+                                        {t('staff.maintenance.empty')}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -197,12 +230,16 @@ export default function StaffMaintenanceIndex({
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="secondary">
-                                            {request.priority}
+                                            {t(
+                                                `common.maintenancePriority.${request.priority}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="outline">
-                                            {request.status}
+                                            {t(
+                                                `common.maintenanceStatus.${request.status}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
@@ -220,14 +257,20 @@ export default function StaffMaintenanceIndex({
                                                 }
                                             >
                                                 <SelectTrigger className="w-40">
-                                                    <SelectValue placeholder="Assign" />
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'staff.maintenance.assignPlaceholder',
+                                                        )}
+                                                    />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem
                                                         value="unassigned"
                                                         disabled
                                                     >
-                                                        Unassigned
+                                                        {t(
+                                                            'staff.maintenance.unassigned',
+                                                        )}
                                                     </SelectItem>
                                                     {housekeepingStaff.map(
                                                         (staff) => (
@@ -263,7 +306,9 @@ export default function StaffMaintenanceIndex({
                                                             )
                                                         }
                                                     >
-                                                        Start
+                                                        {t(
+                                                            'staff.maintenance.start',
+                                                        )}
                                                     </Button>
                                                 )}
                                                 <Button
@@ -275,7 +320,9 @@ export default function StaffMaintenanceIndex({
                                                         )
                                                     }
                                                 >
-                                                    Resolve
+                                                    {t(
+                                                        'staff.maintenance.resolve',
+                                                    )}
                                                 </Button>
                                                 <Button
                                                     variant="destructive"
@@ -287,7 +334,7 @@ export default function StaffMaintenanceIndex({
                                                         )
                                                     }
                                                 >
-                                                    Cancel
+                                                    {t('common.actions.cancel')}
                                                 </Button>
                                             </div>
                                         )}

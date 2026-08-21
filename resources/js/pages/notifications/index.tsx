@@ -3,6 +3,7 @@ import NotificationController from '@/actions/App/Http/Controllers/NotificationC
 import Pagination from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 import { index as notificationsIndex } from '@/routes/notifications';
 import type { AppNotification, Paginated } from '@/types';
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export default function NotificationsIndex({ notifications }: Props) {
+    const { t } = useTranslation();
     const markRead = (id: string) => {
         router.patch(
             NotificationController.markRead.url(id),
@@ -44,14 +46,16 @@ export default function NotificationsIndex({ notifications }: Props) {
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-xl font-semibold">Notifications</h1>
+                    <h1 className="text-xl font-semibold">
+                        {t('notifications.page.title')}
+                    </h1>
                     {hasUnread && (
                         <Button
                             variant="outline"
                             size="sm"
                             onClick={markAllRead}
                         >
-                            Mark all as read
+                            {t('notifications.page.markAllRead')}
                         </Button>
                     )}
                 </div>
@@ -59,7 +63,7 @@ export default function NotificationsIndex({ notifications }: Props) {
                 <div className="divide-y rounded-xl border">
                     {notifications.data.length === 0 && (
                         <p className="p-4 text-center text-muted-foreground">
-                            You have no notifications yet.
+                            {t('notifications.page.empty')}
                         </p>
                     )}
                     {notifications.data.map((notification) => (
@@ -76,7 +80,9 @@ export default function NotificationsIndex({ notifications }: Props) {
                                         {notification.type.replaceAll('_', ' ')}
                                     </Badge>
                                     {!notification.is_read && (
-                                        <Badge variant="default">New</Badge>
+                                        <Badge variant="default">
+                                            {t('notifications.page.newBadge')}
+                                        </Badge>
                                     )}
                                 </div>
                                 {notification.link ? (
@@ -101,7 +107,7 @@ export default function NotificationsIndex({ notifications }: Props) {
                                     variant="outline"
                                     onClick={() => markRead(notification.id)}
                                 >
-                                    Mark read
+                                    {t('notifications.page.markRead')}
                                 </Button>
                             )}
                         </div>

@@ -18,6 +18,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useTranslation } from '@/hooks/use-translation';
 import type { StaffAccount } from '@/types';
 
 type Props = {
@@ -26,11 +27,17 @@ type Props = {
 };
 
 export default function StaffEditDialog({ staff, onOpenChange }: Props) {
+    const { t } = useTranslation();
+
     return (
         <Dialog open={staff !== null} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Edit {staff?.full_name}</DialogTitle>
+                    <DialogTitle>
+                        {t('staffAccounts.editAccount', {
+                            name: staff?.full_name ?? '',
+                        })}
+                    </DialogTitle>
                 </DialogHeader>
 
                 {staff && (
@@ -42,7 +49,9 @@ export default function StaffEditDialog({ staff, onOpenChange }: Props) {
                         {({ processing, errors }) => (
                             <>
                                 <div className="grid gap-1.5">
-                                    <Label htmlFor="full_name">Full name</Label>
+                                    <Label htmlFor="full_name">
+                                        {t('staffAccounts.form.fullName')}
+                                    </Label>
                                     <Input
                                         id="full_name"
                                         name="full_name"
@@ -53,7 +62,9 @@ export default function StaffEditDialog({ staff, onOpenChange }: Props) {
                                 </div>
 
                                 <div className="grid gap-1.5">
-                                    <Label htmlFor="email">Email</Label>
+                                    <Label htmlFor="email">
+                                        {t('staffAccounts.form.email')}
+                                    </Label>
                                     <Input
                                         id="email"
                                         name="email"
@@ -66,7 +77,7 @@ export default function StaffEditDialog({ staff, onOpenChange }: Props) {
 
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="phone_number">
-                                        Phone number (optional)
+                                        {t('staffAccounts.form.phoneNumber')}
                                     </Label>
                                     <Input
                                         id="phone_number"
@@ -77,7 +88,9 @@ export default function StaffEditDialog({ staff, onOpenChange }: Props) {
                                 </div>
 
                                 <div className="grid gap-1.5">
-                                    <Label htmlFor="role">Role</Label>
+                                    <Label htmlFor="role">
+                                        {t('staffAccounts.form.role')}
+                                    </Label>
                                     <Select
                                         name="role"
                                         defaultValue={staff.role}
@@ -90,10 +103,14 @@ export default function StaffEditDialog({ staff, onOpenChange }: Props) {
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="receptionist">
-                                                Receptionist
+                                                {t(
+                                                    'staffAccounts.roles.receptionist',
+                                                )}
                                             </SelectItem>
                                             <SelectItem value="housekeeping">
-                                                Housekeeping
+                                                {t(
+                                                    'staffAccounts.roles.housekeeping',
+                                                )}
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -102,20 +119,24 @@ export default function StaffEditDialog({ staff, onOpenChange }: Props) {
 
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="password">
-                                        New password (optional)
+                                        {t('staffAccounts.form.newPassword')}
                                     </Label>
                                     <Input
                                         id="password"
                                         name="password"
                                         type="password"
-                                        placeholder="Leave blank to keep current password"
+                                        placeholder={t(
+                                            'staffAccounts.form.newPasswordPlaceholder',
+                                        )}
                                     />
                                     <InputError message={errors.password} />
                                 </div>
 
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="password_confirmation">
-                                        Confirm new password
+                                        {t(
+                                            'staffAccounts.form.confirmNewPassword',
+                                        )}
                                     </Label>
                                     <Input
                                         id="password_confirmation"
@@ -126,7 +147,7 @@ export default function StaffEditDialog({ staff, onOpenChange }: Props) {
 
                                 <DialogFooter>
                                     <Button type="submit" disabled={processing}>
-                                        Save changes
+                                        {t('common.actions.saveChanges')}
                                     </Button>
                                 </DialogFooter>
                             </>

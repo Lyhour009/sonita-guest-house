@@ -21,6 +21,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as staffReservationsIndex } from '@/routes/staff/reservations';
 import type {
     Paginated,
@@ -41,20 +42,22 @@ type Props = {
     rooms: RoomOption[];
 };
 
-function dateRange(reservation: StaffReservation) {
-    if (reservation.reservation_type === 'short_stay') {
-        return `${reservation.check_in_date} → ${reservation.check_out_date}`;
-    }
-
-    return `${reservation.start_date} → ${reservation.end_date ?? 'open-ended'}`;
-}
-
 export default function StaffReservationsIndex({
     reservations,
     filters,
     guests,
     rooms,
 }: Props) {
+    const { t } = useTranslation();
+
+    const dateRange = (reservation: StaffReservation) => {
+        if (reservation.reservation_type === 'short_stay') {
+            return `${reservation.check_in_date} → ${reservation.check_out_date}`;
+        }
+
+        return `${reservation.start_date} → ${reservation.end_date ?? t('staff.reservations.openEnded')}`;
+    };
+
     const [search, setSearch] = useState(filters.search ?? '');
     const [status, setStatus] = useState(filters.status ?? 'any');
 
@@ -89,17 +92,19 @@ export default function StaffReservationsIndex({
 
     return (
         <>
-            <Head title="Reservations" />
+            <Head title={t('nav.staff.reservations')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-xl font-semibold">Reservations</h1>
+                    <h1 className="text-xl font-semibold">
+                        {t('nav.staff.reservations')}
+                    </h1>
                     <ReservationWalkinDialog guests={guests} rooms={rooms} />
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
                     <Input
-                        placeholder="Search by guest or room..."
+                        placeholder={t('staff.reservations.searchPlaceholder')}
                         value={search}
                         onChange={(event) => setSearch(event.target.value)}
                         className="max-w-xs"
@@ -113,20 +118,32 @@ export default function StaffReservationsIndex({
                         }}
                     >
                         <SelectTrigger className="w-48">
-                            <SelectValue placeholder="Status" />
+                            <SelectValue
+                                placeholder={t('common.labels.status')}
+                            />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="any">Any status</SelectItem>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="confirmed">Confirmed</SelectItem>
+                            <SelectItem value="any">
+                                {t('staff.reservations.anyStatus')}
+                            </SelectItem>
+                            <SelectItem value="pending">
+                                {t('common.reservationStatus.pending')}
+                            </SelectItem>
+                            <SelectItem value="confirmed">
+                                {t('common.reservationStatus.confirmed')}
+                            </SelectItem>
                             <SelectItem value="checked_in">
-                                Checked in
+                                {t('common.reservationStatus.checked_in')}
                             </SelectItem>
                             <SelectItem value="checked_out">
-                                Checked out
+                                {t('common.reservationStatus.checked_out')}
                             </SelectItem>
-                            <SelectItem value="active">Active</SelectItem>
-                            <SelectItem value="cancelled">Cancelled</SelectItem>
+                            <SelectItem value="active">
+                                {t('common.reservationStatus.active')}
+                            </SelectItem>
+                            <SelectItem value="cancelled">
+                                {t('common.reservationStatus.cancelled')}
+                            </SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -135,13 +152,19 @@ export default function StaffReservationsIndex({
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Guest</TableHead>
-                                <TableHead>Room</TableHead>
-                                <TableHead>Type</TableHead>
-                                <TableHead>Dates</TableHead>
-                                <TableHead>Status</TableHead>
+                                <TableHead>
+                                    {t('common.labels.guest')}
+                                </TableHead>
+                                <TableHead>{t('common.labels.room')}</TableHead>
+                                <TableHead>{t('common.labels.type')}</TableHead>
+                                <TableHead>
+                                    {t('staff.reservations.table.dates')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('common.labels.status')}
+                                </TableHead>
                                 <TableHead className="text-right">
-                                    Actions
+                                    {t('common.actions.actions')}
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -152,7 +175,7 @@ export default function StaffReservationsIndex({
                                         colSpan={6}
                                         className="text-center text-muted-foreground"
                                     >
-                                        No reservations match your filters.
+                                        {t('staff.reservations.empty')}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -166,7 +189,9 @@ export default function StaffReservationsIndex({
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="secondary">
-                                            {reservation.reservation_type}
+                                            {t(
+                                                `common.reservationType.${reservation.reservation_type}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
@@ -174,7 +199,9 @@ export default function StaffReservationsIndex({
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="outline">
-                                            {reservation.status}
+                                            {t(
+                                                `common.reservationStatus.${reservation.status}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -191,7 +218,9 @@ export default function StaffReservationsIndex({
                                                         )
                                                     }
                                                 >
-                                                    Confirm
+                                                    {t(
+                                                        'common.actions.confirm',
+                                                    )}
                                                 </Button>
                                             )}
                                             {reservation.status ===
@@ -208,7 +237,9 @@ export default function StaffReservationsIndex({
                                                             )
                                                         }
                                                     >
-                                                        Check in
+                                                        {t(
+                                                            'staff.reservations.checkIn',
+                                                        )}
                                                     </Button>
                                                 )}
                                             {reservation.status ===
@@ -223,7 +254,9 @@ export default function StaffReservationsIndex({
                                                         )
                                                     }
                                                 >
-                                                    Check out
+                                                    {t(
+                                                        'staff.reservations.checkOut',
+                                                    )}
                                                 </Button>
                                             )}
                                             {[
@@ -242,7 +275,7 @@ export default function StaffReservationsIndex({
                                                         )
                                                     }
                                                 >
-                                                    Cancel
+                                                    {t('common.actions.cancel')}
                                                 </Button>
                                             )}
                                         </div>

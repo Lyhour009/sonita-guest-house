@@ -23,6 +23,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import { destroy, index as adminServicesIndex } from '@/routes/admin/services';
 import type { Paginated, Service } from '@/types';
 
@@ -31,6 +32,7 @@ type Props = {
 };
 
 export default function AdminServicesIndex({ services }: Props) {
+    const { t } = useTranslation();
     const [editingServiceId, setEditingServiceId] = useState<string | null>(
         null,
     );
@@ -48,11 +50,13 @@ export default function AdminServicesIndex({ services }: Props) {
 
     return (
         <>
-            <Head title="Services" />
+            <Head title={t('services.title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-xl font-semibold">Services</h1>
+                    <h1 className="text-xl font-semibold">
+                        {t('services.title')}
+                    </h1>
                     <ServiceCreateDialog />
                 </div>
 
@@ -60,10 +64,14 @@ export default function AdminServicesIndex({ services }: Props) {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Price</TableHead>
+                                <TableHead>
+                                    {t('services.table.name')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('services.table.price')}
+                                </TableHead>
                                 <TableHead className="text-right">
-                                    Actions
+                                    {t('common.actions.actions')}
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -74,7 +82,7 @@ export default function AdminServicesIndex({ services }: Props) {
                                         colSpan={3}
                                         className="text-center text-muted-foreground"
                                     >
-                                        No services yet.
+                                        {t('services.empty')}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -93,7 +101,7 @@ export default function AdminServicesIndex({ services }: Props) {
                                                     )
                                                 }
                                             >
-                                                Edit
+                                                {t('common.actions.edit')}
                                             </Button>
                                             <AlertDialog>
                                                 <AlertDialogTrigger asChild>
@@ -101,23 +109,32 @@ export default function AdminServicesIndex({ services }: Props) {
                                                         variant="destructive"
                                                         size="sm"
                                                     >
-                                                        Delete
+                                                        {t(
+                                                            'common.actions.delete',
+                                                        )}
                                                     </Button>
                                                 </AlertDialogTrigger>
                                                 <AlertDialogContent>
                                                     <AlertDialogHeader>
                                                         <AlertDialogTitle>
-                                                            Delete{' '}
-                                                            {service.name}?
+                                                            {t(
+                                                                'services.deleteService.title',
+                                                                {
+                                                                    name: service.name,
+                                                                },
+                                                            )}
                                                         </AlertDialogTitle>
                                                         <AlertDialogDescription>
-                                                            This cannot be
-                                                            undone.
+                                                            {t(
+                                                                'services.deleteService.description',
+                                                            )}
                                                         </AlertDialogDescription>
                                                     </AlertDialogHeader>
                                                     <AlertDialogFooter>
                                                         <AlertDialogCancel>
-                                                            Cancel
+                                                            {t(
+                                                                'common.actions.cancel',
+                                                            )}
                                                         </AlertDialogCancel>
                                                         <AlertDialogAction
                                                             variant="destructive"
@@ -127,7 +144,9 @@ export default function AdminServicesIndex({ services }: Props) {
                                                                 )
                                                             }
                                                         >
-                                                            Delete
+                                                            {t(
+                                                                'common.actions.delete',
+                                                            )}
                                                         </AlertDialogAction>
                                                     </AlertDialogFooter>
                                                 </AlertDialogContent>

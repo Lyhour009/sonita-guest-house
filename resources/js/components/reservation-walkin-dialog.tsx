@@ -21,6 +21,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { useTranslation } from '@/hooks/use-translation';
 import type {
     ReservationGuestSummary,
     ReservationType,
@@ -33,6 +34,7 @@ type Props = {
 };
 
 export default function ReservationWalkinDialog({ guests, rooms }: Props) {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const [isNewGuest, setIsNewGuest] = useState(false);
     const [roomId, setRoomId] = useState<string>(rooms[0]?.id ?? '');
@@ -54,11 +56,11 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>New booking</Button>
+                <Button>{t('staff.walkinDialog.newBooking')}</Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
                 <DialogHeader>
-                    <DialogTitle>New walk-in booking</DialogTitle>
+                    <DialogTitle>{t('staff.walkinDialog.title')}</DialogTitle>
                 </DialogHeader>
 
                 <Form
@@ -69,7 +71,9 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-1.5">
-                                <Label htmlFor="room_id">Room</Label>
+                                <Label htmlFor="room_id">
+                                    {t('staff.walkinDialog.roomLabel')}
+                                </Label>
                                 <Select
                                     name="room_id"
                                     value={roomId}
@@ -98,7 +102,7 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
 
                             <div className="grid gap-1.5">
                                 <Label htmlFor="reservation_type">
-                                    Stay type
+                                    {t('staff.walkinDialog.stayTypeLabel')}
                                 </Label>
                                 <Select
                                     name="reservation_type"
@@ -118,14 +122,18 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                             'short_stay',
                                         ) && (
                                             <SelectItem value="short_stay">
-                                                Short stay (nightly)
+                                                {t(
+                                                    'staff.walkinDialog.shortStayOption',
+                                                )}
                                             </SelectItem>
                                         )}
                                         {availableTypes.includes(
                                             'long_stay',
                                         ) && (
                                             <SelectItem value="long_stay">
-                                                Long stay (monthly)
+                                                {t(
+                                                    'staff.walkinDialog.longStayOption',
+                                                )}
                                             </SelectItem>
                                         )}
                                     </SelectContent>
@@ -138,7 +146,9 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="grid gap-1.5">
                                             <Label htmlFor="check_in_date">
-                                                Check-in
+                                                {t(
+                                                    'staff.walkinDialog.checkInLabel',
+                                                )}
                                             </Label>
                                             <Input
                                                 id="check_in_date"
@@ -152,7 +162,9 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                         </div>
                                         <div className="grid gap-1.5">
                                             <Label htmlFor="check_out_date">
-                                                Check-out
+                                                {t(
+                                                    'staff.walkinDialog.checkOutLabel',
+                                                )}
                                             </Label>
                                             <Input
                                                 id="check_out_date"
@@ -167,7 +179,9 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                     </div>
                                     <div className="grid gap-1.5">
                                         <Label htmlFor="num_guests">
-                                            Guests
+                                            {t(
+                                                'staff.walkinDialog.numGuestsLabel',
+                                            )}
                                         </Label>
                                         <Input
                                             id="num_guests"
@@ -187,7 +201,9 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="grid gap-1.5">
                                         <Label htmlFor="start_date">
-                                            Move-in date
+                                            {t(
+                                                'staff.walkinDialog.moveInDateLabel',
+                                            )}
                                         </Label>
                                         <Input
                                             id="start_date"
@@ -201,7 +217,9 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                     </div>
                                     <div className="grid gap-1.5">
                                         <Label htmlFor="end_date">
-                                            Move-out date (optional)
+                                            {t(
+                                                'staff.walkinDialog.moveOutDateLabel',
+                                            )}
                                         </Label>
                                         <Input
                                             id="end_date"
@@ -215,7 +233,7 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
 
                             <div className="flex items-center justify-between">
                                 <Label htmlFor="is_new_guest">
-                                    New guest (no account yet)
+                                    {t('staff.walkinDialog.newGuestToggle')}
                                 </Label>
                                 <Switch
                                     id="is_new_guest"
@@ -228,7 +246,9 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                 <div className="grid gap-4">
                                     <div className="grid gap-1.5">
                                         <Label htmlFor="new_guest_full_name">
-                                            Guest full name
+                                            {t(
+                                                'staff.walkinDialog.guestFullNameLabel',
+                                            )}
                                         </Label>
                                         <Input
                                             id="new_guest_full_name"
@@ -243,7 +263,9 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                     </div>
                                     <div className="grid gap-1.5">
                                         <Label htmlFor="new_guest_email">
-                                            Guest email
+                                            {t(
+                                                'staff.walkinDialog.guestEmailLabel',
+                                            )}
                                         </Label>
                                         <Input
                                             id="new_guest_email"
@@ -258,13 +280,21 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                 </div>
                             ) : (
                                 <div className="grid gap-1.5">
-                                    <Label htmlFor="guest_id">Guest</Label>
+                                    <Label htmlFor="guest_id">
+                                        {t(
+                                            'staff.walkinDialog.guestSelectLabel',
+                                        )}
+                                    </Label>
                                     <Select name="guest_id">
                                         <SelectTrigger
                                             id="guest_id"
                                             className="w-full"
                                         >
-                                            <SelectValue placeholder="Select a guest" />
+                                            <SelectValue
+                                                placeholder={t(
+                                                    'staff.walkinDialog.selectGuestPlaceholder',
+                                                )}
+                                            />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {guests.map((guest) => (
@@ -284,7 +314,7 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
-                                    Create booking
+                                    {t('staff.walkinDialog.createBooking')}
                                 </Button>
                             </DialogFooter>
                         </>

@@ -9,6 +9,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as staffHousekeepingIndex } from '@/routes/staff/housekeeping';
 import type { CleaningRoom } from '@/types';
 
@@ -17,6 +18,8 @@ type Props = {
 };
 
 export default function StaffHousekeepingIndex({ rooms }: Props) {
+    const { t } = useTranslation();
+
     const markClean = (roomId: string) => {
         router.patch(
             HousekeepingController.markClean.url(roomId),
@@ -27,22 +30,24 @@ export default function StaffHousekeepingIndex({ rooms }: Props) {
 
     return (
         <>
-            <Head title="Room status" />
+            <Head title={t('staff.housekeeping.pageTitle')} />
 
             <div className="space-y-6 p-4">
                 <h1 className="text-xl font-semibold">
-                    Rooms awaiting cleaning
+                    {t('staff.housekeeping.heading')}
                 </h1>
 
                 <div className="rounded-xl border">
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Room</TableHead>
-                                <TableHead>Type</TableHead>
-                                <TableHead>Floor</TableHead>
+                                <TableHead>{t('common.labels.room')}</TableHead>
+                                <TableHead>{t('common.labels.type')}</TableHead>
+                                <TableHead>
+                                    {t('staff.housekeeping.table.floor')}
+                                </TableHead>
                                 <TableHead className="text-right">
-                                    Actions
+                                    {t('common.actions.actions')}
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -53,7 +58,7 @@ export default function StaffHousekeepingIndex({ rooms }: Props) {
                                         colSpan={4}
                                         className="text-center text-muted-foreground"
                                     >
-                                        No rooms currently need cleaning.
+                                        {t('staff.housekeeping.empty')}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -67,7 +72,7 @@ export default function StaffHousekeepingIndex({ rooms }: Props) {
                                             size="sm"
                                             onClick={() => markClean(room.id)}
                                         >
-                                            Mark clean
+                                            {t('staff.housekeeping.markClean')}
                                         </Button>
                                     </TableCell>
                                 </TableRow>

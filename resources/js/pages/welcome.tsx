@@ -1,6 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
+import LanguageToggle from '@/components/language-toggle';
 import Pagination from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,6 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useTranslation } from '@/hooks/use-translation';
 import { dashboard, home, login } from '@/routes';
 import { register } from '@/routes';
 import { show } from '@/routes/rooms';
@@ -31,6 +33,7 @@ type Props = {
 
 export default function Welcome({ rooms, filters }: Props) {
     const { auth } = usePage().props;
+    const { t } = useTranslation();
     const [stayType, setStayType] = useState(filters.stay_type ?? 'any');
     const [from, setFrom] = useState(filters.from ?? '');
     const [to, setTo] = useState(filters.to ?? '');
@@ -56,25 +59,29 @@ export default function Welcome({ rooms, filters }: Props) {
                 <header className="mx-auto mb-8 flex w-full max-w-6xl items-center justify-between">
                     <div>
                         <h1 className="text-lg font-semibold">
-                            Sonita Guest House
+                            {t('welcome.header.brand')}
                         </h1>
                         <p className="text-sm text-muted-foreground">
-                            Street 644, Sangkat Chak Angre Ti 1, Khan Chak
-                            Angre, Phnom Penh
+                            {t('welcome.header.address')}
                         </p>
                     </div>
                     <nav className="flex items-center gap-3 text-sm">
+                        <LanguageToggle />
                         {auth.user ? (
                             <Button asChild size="sm">
-                                <Link href={dashboard()}>Dashboard</Link>
+                                <Link href={dashboard()}>
+                                    {t('nav.dashboard')}
+                                </Link>
                             </Button>
                         ) : (
                             <>
                                 <Button asChild variant="ghost" size="sm">
-                                    <Link href={login()}>Log in</Link>
+                                    <Link href={login()}>{t('nav.login')}</Link>
                                 </Button>
                                 <Button asChild size="sm">
-                                    <Link href={register()}>Register</Link>
+                                    <Link href={register()}>
+                                        {t('nav.register')}
+                                    </Link>
                                 </Button>
                             </>
                         )}
@@ -86,25 +93,31 @@ export default function Welcome({ rooms, filters }: Props) {
                     className="mx-auto mb-8 flex w-full max-w-6xl flex-wrap items-end gap-4 rounded-xl border p-4"
                 >
                     <div className="grid gap-1.5">
-                        <Label htmlFor="stay_type">Stay type</Label>
+                        <Label htmlFor="stay_type">
+                            {t('rooms.stayType.label')}
+                        </Label>
                         <Select value={stayType} onValueChange={setStayType}>
                             <SelectTrigger id="stay_type" className="w-44">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="any">Any</SelectItem>
+                                <SelectItem value="any">
+                                    {t('rooms.stayType.any')}
+                                </SelectItem>
                                 <SelectItem value="short_stay">
-                                    Short stay (nightly)
+                                    {t('rooms.stayType.shortStayNightly')}
                                 </SelectItem>
                                 <SelectItem value="long_stay">
-                                    Long stay (monthly)
+                                    {t('rooms.stayType.longStayMonthly')}
                                 </SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
 
                     <div className="grid gap-1.5">
-                        <Label htmlFor="from">From</Label>
+                        <Label htmlFor="from">
+                            {t('welcome.filters.from')}
+                        </Label>
                         <input
                             id="from"
                             type="date"
@@ -115,7 +128,7 @@ export default function Welcome({ rooms, filters }: Props) {
                     </div>
 
                     <div className="grid gap-1.5">
-                        <Label htmlFor="to">To</Label>
+                        <Label htmlFor="to">{t('welcome.filters.to')}</Label>
                         <input
                             id="to"
                             type="date"
@@ -125,13 +138,13 @@ export default function Welcome({ rooms, filters }: Props) {
                         />
                     </div>
 
-                    <Button type="submit">Search</Button>
+                    <Button type="submit">{t('common.actions.search')}</Button>
                 </form>
 
                 <div className="mx-auto w-full max-w-6xl">
                     {rooms.data.length === 0 ? (
                         <p className="py-12 text-center text-sm text-muted-foreground">
-                            No rooms match your search.
+                            {t('welcome.empty.noResults')}
                         </p>
                     ) : (
                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -156,21 +169,28 @@ export default function Welcome({ rooms, filters }: Props) {
                                                 {room.room_number}
                                             </CardTitle>
                                             <Badge variant="secondary">
-                                                {room.rental_mode === 'both'
-                                                    ? 'Short & long stay'
-                                                    : room.rental_mode ===
-                                                        'short_stay'
-                                                      ? 'Short stay'
-                                                      : 'Long stay'}
+                                                {t(
+                                                    `rooms.rentalModeBadge.${room.rental_mode}`,
+                                                )}
                                             </Badge>
                                         </div>
                                     </CardHeader>
                                     <CardContent className="space-y-1 text-sm text-muted-foreground">
-                                        <p>${room.price_per_night} / night</p>
-                                        <p>${room.price_per_month} / month</p>
                                         <p>
-                                            Up to {room.max_occupants} guest
-                                            {room.max_occupants > 1 ? 's' : ''}
+                                            ${room.price_per_night}{' '}
+                                            {t('welcome.card.perNightSuffix')}
+                                        </p>
+                                        <p>
+                                            ${room.price_per_month}{' '}
+                                            {t('welcome.card.perMonthSuffix')}
+                                        </p>
+                                        <p>
+                                            {t(
+                                                room.max_occupants > 1
+                                                    ? 'rooms.maxOccupants.other'
+                                                    : 'rooms.maxOccupants.one',
+                                                { count: room.max_occupants },
+                                            )}
                                         </p>
                                     </CardContent>
                                     <CardFooter className="pb-6">
@@ -180,7 +200,7 @@ export default function Welcome({ rooms, filters }: Props) {
                                             className="w-full"
                                         >
                                             <Link href={show(room.id)}>
-                                                View room
+                                                {t('welcome.card.viewRoom')}
                                             </Link>
                                         </Button>
                                     </CardFooter>

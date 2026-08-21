@@ -22,6 +22,9 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import type { Locale } from '@/hooks/use-locale';
+import { useTranslation } from '@/hooks/use-translation';
+import { translate } from '@/lib/i18n/translate';
 import { index as reservationsIndex } from '@/routes/reservations';
 import type { Paginated, Reservation } from '@/types';
 
@@ -31,15 +34,16 @@ type Props = {
 
 const cancellableStatuses = ['pending', 'confirmed', 'active'];
 
-function dateRange(reservation: Reservation) {
+function dateRange(reservation: Reservation, locale: Locale) {
     if (reservation.reservation_type === 'short_stay') {
         return `${reservation.check_in_date} → ${reservation.check_out_date}`;
     }
 
-    return `${reservation.start_date} → ${reservation.end_date ?? 'open-ended'}`;
+    return `${reservation.start_date} → ${reservation.end_date ?? translate(locale, 'reservations.dateRange.openEnded')}`;
 }
 
 export default function ReservationsIndex({ reservations }: Props) {
+    const { t, locale } = useTranslation();
     const cancel = (reservationId: string) => {
         router.patch(
             ReservationController.cancel.url(reservationId),
@@ -53,18 +57,24 @@ export default function ReservationsIndex({ reservations }: Props) {
             <Head title="My reservations" />
 
             <div className="space-y-6 p-4">
-                <h1 className="text-xl font-semibold">My reservations</h1>
+                <h1 className="text-xl font-semibold">
+                    {t('reservations.page.title')}
+                </h1>
 
                 <div className="rounded-xl border">
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Room</TableHead>
-                                <TableHead>Type</TableHead>
-                                <TableHead>Dates</TableHead>
-                                <TableHead>Status</TableHead>
+                                <TableHead>{t('common.labels.room')}</TableHead>
+                                <TableHead>{t('common.labels.type')}</TableHead>
+                                <TableHead>
+                                    {t('reservations.table.dates')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('common.labels.status')}
+                                </TableHead>
                                 <TableHead className="text-right">
-                                    Actions
+                                    {t('common.actions.actions')}
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -75,7 +85,7 @@ export default function ReservationsIndex({ reservations }: Props) {
                                         colSpan={5}
                                         className="text-center text-muted-foreground"
                                     >
-                                        You have no reservations yet.
+                                        {t('reservations.page.empty')}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -87,15 +97,19 @@ export default function ReservationsIndex({ reservations }: Props) {
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="secondary">
-                                            {reservation.reservation_type}
+                                            {t(
+                                                `common.reservationType.${reservation.reservation_type}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
-                                        {dateRange(reservation)}
+                                        {dateRange(reservation, locale)}
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="outline">
-                                            {reservation.status}
+                                            {t(
+                                                `common.reservationStatus.${reservation.status}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -108,23 +122,29 @@ export default function ReservationsIndex({ reservations }: Props) {
                                                         variant="destructive"
                                                         size="sm"
                                                     >
-                                                        Cancel
+                                                        {t(
+                                                            'common.actions.cancel',
+                                                        )}
                                                     </Button>
                                                 </AlertDialogTrigger>
                                                 <AlertDialogContent>
                                                     <AlertDialogHeader>
                                                         <AlertDialogTitle>
-                                                            Cancel this
-                                                            reservation?
+                                                            {t(
+                                                                'reservations.cancelDialog.title',
+                                                            )}
                                                         </AlertDialogTitle>
                                                         <AlertDialogDescription>
-                                                            This cannot be
-                                                            undone.
+                                                            {t(
+                                                                'reservations.cancelDialog.description',
+                                                            )}
                                                         </AlertDialogDescription>
                                                     </AlertDialogHeader>
                                                     <AlertDialogFooter>
                                                         <AlertDialogCancel>
-                                                            Keep it
+                                                            {t(
+                                                                'reservations.cancelDialog.keepIt',
+                                                            )}
                                                         </AlertDialogCancel>
                                                         <AlertDialogAction
                                                             variant="destructive"
@@ -134,7 +154,9 @@ export default function ReservationsIndex({ reservations }: Props) {
                                                                 )
                                                             }
                                                         >
-                                                            Cancel reservation
+                                                            {t(
+                                                                'reservations.cancelDialog.confirm',
+                                                            )}
                                                         </AlertDialogAction>
                                                     </AlertDialogFooter>
                                                 </AlertDialogContent>

@@ -6,16 +6,18 @@ import {
     ChartTooltipContent,
 } from '@/components/ui/chart';
 import type { ChartConfig } from '@/components/ui/chart';
+import { useTranslation } from '@/hooks/use-translation';
 import type { RevenueTrendPoint } from '@/types';
 
-const chartConfig = {
-    amount: {
-        label: 'Revenue',
-        color: 'var(--chart-1)',
-    },
-} satisfies ChartConfig;
-
 export function RevenueTrendChart({ data }: { data: RevenueTrendPoint[] }) {
+    const { t } = useTranslation();
+    const revenueLegend = t('adminDashboard.revenueChart.legend');
+    const chartConfig = {
+        amount: {
+            label: revenueLegend,
+            color: 'var(--chart-1)',
+        },
+    } satisfies ChartConfig;
     const chartData = data.map((point) => ({
         ...point,
         label: new Date(point.date).toLocaleDateString(undefined, {
@@ -27,7 +29,7 @@ export function RevenueTrendChart({ data }: { data: RevenueTrendPoint[] }) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Revenue — last 14 days</CardTitle>
+                <CardTitle>{t('adminDashboard.revenueChart.title')}</CardTitle>
             </CardHeader>
             <CardContent>
                 <ChartContainer config={chartConfig} className="w-full">
@@ -48,7 +50,7 @@ export function RevenueTrendChart({ data }: { data: RevenueTrendPoint[] }) {
                                 <ChartTooltipContent
                                     formatter={(value) => [
                                         `$${Number(value).toFixed(2)}`,
-                                        ' Revenue',
+                                        ` ${revenueLegend}`,
                                     ]}
                                 />
                             }

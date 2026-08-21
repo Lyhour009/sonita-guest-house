@@ -20,6 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useTranslation } from '@/hooks/use-translation';
 import type { Invoice } from '@/types';
 
 type Props = {
@@ -27,17 +28,20 @@ type Props = {
 };
 
 export default function PaymentSubmitDialog({ invoice }: Props) {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button size="sm">Pay</Button>
+                <Button size="sm">{t('payments.submitDialog.trigger')}</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        Pay invoice · {invoice.room.room_number}
+                        {t('payments.submitDialog.title', {
+                            roomNumber: invoice.room.room_number,
+                        })}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -55,7 +59,9 @@ export default function PaymentSubmitDialog({ invoice }: Props) {
                             />
 
                             <div className="grid gap-1.5">
-                                <Label htmlFor="amount">Amount ($)</Label>
+                                <Label htmlFor="amount">
+                                    {t('payments.submitDialog.amount')}
+                                </Label>
                                 <Input
                                     id="amount"
                                     name="amount"
@@ -69,7 +75,9 @@ export default function PaymentSubmitDialog({ invoice }: Props) {
                             </div>
 
                             <div className="grid gap-1.5">
-                                <Label htmlFor="method">Payment method</Label>
+                                <Label htmlFor="method">
+                                    {t('payments.submitDialog.method')}
+                                </Label>
                                 <Select name="method" defaultValue="cash">
                                     <SelectTrigger
                                         id="method"
@@ -79,13 +87,13 @@ export default function PaymentSubmitDialog({ invoice }: Props) {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="cash">
-                                            Cash
+                                            {t('payments.method.cash')}
                                         </SelectItem>
                                         <SelectItem value="bank_transfer">
-                                            Bank transfer
+                                            {t('payments.method.bank_transfer')}
                                         </SelectItem>
                                         <SelectItem value="qr">
-                                            QR payment
+                                            {t('payments.method.qr')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -94,7 +102,7 @@ export default function PaymentSubmitDialog({ invoice }: Props) {
 
                             <div className="grid gap-1.5">
                                 <Label htmlFor="proof_image">
-                                    Proof of payment (optional)
+                                    {t('payments.submitDialog.proofOptional')}
                                 </Label>
                                 <input
                                     id="proof_image"
@@ -108,7 +116,7 @@ export default function PaymentSubmitDialog({ invoice }: Props) {
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
-                                    Submit payment
+                                    {t('payments.submitDialog.submit')}
                                 </Button>
                             </DialogFooter>
                         </>

@@ -9,6 +9,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslation } from '@/hooks/use-translation';
 import type { RoomDetail, RoomStatus, RentalMode } from '@/types';
 
 type Props = {
@@ -17,10 +18,14 @@ type Props = {
 };
 
 export default function RoomForm({ room, errors }: Props) {
+    const { t } = useTranslation();
+
     return (
         <div className="grid gap-6 sm:grid-cols-2">
             <div className="grid gap-2">
-                <Label htmlFor="room_number">Room number</Label>
+                <Label htmlFor="room_number">
+                    {t('adminRooms.form.roomNumber')}
+                </Label>
                 <Input
                     id="room_number"
                     name="room_number"
@@ -31,19 +36,23 @@ export default function RoomForm({ room, errors }: Props) {
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="room_type">Room type</Label>
+                <Label htmlFor="room_type">
+                    {t('adminRooms.form.roomType')}
+                </Label>
                 <Input
                     id="room_type"
                     name="room_type"
                     defaultValue={room?.room_type}
-                    placeholder="Standard, Deluxe, Suite..."
+                    placeholder={t('adminRooms.form.roomTypePlaceholder')}
                     required
                 />
                 <InputError message={errors.room_type} />
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="rental_mode">Rental mode</Label>
+                <Label htmlFor="rental_mode">
+                    {t('adminRooms.filters.rentalMode')}
+                </Label>
                 <Select
                     name="rental_mode"
                     defaultValue={
@@ -55,19 +64,21 @@ export default function RoomForm({ room, errors }: Props) {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="short_stay">
-                            Short stay only
+                            {t('adminRooms.form.rentalModeShortStayOnly')}
                         </SelectItem>
                         <SelectItem value="long_stay">
-                            Long stay only
+                            {t('adminRooms.form.rentalModeLongStayOnly')}
                         </SelectItem>
-                        <SelectItem value="both">Short & long stay</SelectItem>
+                        <SelectItem value="both">
+                            {t('adminRooms.form.rentalModeBoth')}
+                        </SelectItem>
                     </SelectContent>
                 </Select>
                 <InputError message={errors.rental_mode} />
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="status">Status</Label>
+                <Label htmlFor="status">{t('common.labels.status')}</Label>
                 <Select
                     name="status"
                     defaultValue={
@@ -78,18 +89,30 @@ export default function RoomForm({ room, errors }: Props) {
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="available">Available</SelectItem>
-                        <SelectItem value="occupied">Occupied</SelectItem>
-                        <SelectItem value="reserved">Reserved</SelectItem>
-                        <SelectItem value="cleaning">Cleaning</SelectItem>
-                        <SelectItem value="maintenance">Maintenance</SelectItem>
+                        <SelectItem value="available">
+                            {t('common.roomStatus.available')}
+                        </SelectItem>
+                        <SelectItem value="occupied">
+                            {t('common.roomStatus.occupied')}
+                        </SelectItem>
+                        <SelectItem value="reserved">
+                            {t('common.roomStatus.reserved')}
+                        </SelectItem>
+                        <SelectItem value="cleaning">
+                            {t('common.roomStatus.cleaning')}
+                        </SelectItem>
+                        <SelectItem value="maintenance">
+                            {t('common.roomStatus.maintenance')}
+                        </SelectItem>
                     </SelectContent>
                 </Select>
                 <InputError message={errors.status} />
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="price_per_night">Price per night ($)</Label>
+                <Label htmlFor="price_per_night">
+                    {t('adminRooms.form.pricePerNight')}
+                </Label>
                 <Input
                     id="price_per_night"
                     name="price_per_night"
@@ -103,7 +126,9 @@ export default function RoomForm({ room, errors }: Props) {
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="price_per_month">Price per month ($)</Label>
+                <Label htmlFor="price_per_month">
+                    {t('adminRooms.form.pricePerMonth')}
+                </Label>
                 <Input
                     id="price_per_month"
                     name="price_per_month"
@@ -117,7 +142,7 @@ export default function RoomForm({ room, errors }: Props) {
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="floor">Floor</Label>
+                <Label htmlFor="floor">{t('adminRooms.form.floor')}</Label>
                 <Input
                     id="floor"
                     name="floor"
@@ -128,7 +153,9 @@ export default function RoomForm({ room, errors }: Props) {
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="max_occupants">Max occupants</Label>
+                <Label htmlFor="max_occupants">
+                    {t('adminRooms.form.maxOccupants')}
+                </Label>
                 <Input
                     id="max_occupants"
                     name="max_occupants"
@@ -141,18 +168,22 @@ export default function RoomForm({ room, errors }: Props) {
             </div>
 
             <div className="grid gap-2 sm:col-span-2">
-                <Label htmlFor="amenities">Amenities</Label>
+                <Label htmlFor="amenities">
+                    {t('adminRooms.form.amenities')}
+                </Label>
                 <Textarea
                     id="amenities"
                     name="amenities"
                     defaultValue={room?.amenities ?? undefined}
-                    placeholder="Wi-Fi, Air conditioning, Hot water..."
+                    placeholder={t('adminRooms.form.amenitiesPlaceholder')}
                 />
                 <InputError message={errors.amenities} />
             </div>
 
             <div className="grid gap-2 sm:col-span-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">
+                    {t('adminRooms.form.description')}
+                </Label>
                 <Textarea
                     id="description"
                     name="description"

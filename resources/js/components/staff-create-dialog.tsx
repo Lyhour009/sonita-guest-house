@@ -20,18 +20,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function StaffCreateDialog() {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>Add staff account</Button>
+                <Button>{t('staffAccounts.addAccount')}</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Add staff account</DialogTitle>
+                    <DialogTitle>{t('staffAccounts.addAccount')}</DialogTitle>
                 </DialogHeader>
 
                 <Form
@@ -42,7 +44,9 @@ export default function StaffCreateDialog() {
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-1.5">
-                                <Label htmlFor="full_name">Full name</Label>
+                                <Label htmlFor="full_name">
+                                    {t('staffAccounts.form.fullName')}
+                                </Label>
                                 <Input
                                     id="full_name"
                                     name="full_name"
@@ -52,7 +56,9 @@ export default function StaffCreateDialog() {
                             </div>
 
                             <div className="grid gap-1.5">
-                                <Label htmlFor="email">Email</Label>
+                                <Label htmlFor="email">
+                                    {t('staffAccounts.form.email')}
+                                </Label>
                                 <Input
                                     id="email"
                                     name="email"
@@ -64,24 +70,30 @@ export default function StaffCreateDialog() {
 
                             <div className="grid gap-1.5">
                                 <Label htmlFor="phone_number">
-                                    Phone number (optional)
+                                    {t('staffAccounts.form.phoneNumber')}
                                 </Label>
                                 <Input id="phone_number" name="phone_number" />
                                 <InputError message={errors.phone_number} />
                             </div>
 
                             <div className="grid gap-1.5">
-                                <Label htmlFor="role">Role</Label>
+                                <Label htmlFor="role">
+                                    {t('staffAccounts.form.role')}
+                                </Label>
                                 <Select name="role" defaultValue="receptionist">
                                     <SelectTrigger id="role" className="w-full">
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="receptionist">
-                                            Receptionist
+                                            {t(
+                                                'staffAccounts.roles.receptionist',
+                                            )}
                                         </SelectItem>
                                         <SelectItem value="housekeeping">
-                                            Housekeeping
+                                            {t(
+                                                'staffAccounts.roles.housekeeping',
+                                            )}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -89,7 +101,9 @@ export default function StaffCreateDialog() {
                             </div>
 
                             <div className="grid gap-1.5">
-                                <Label htmlFor="password">Password</Label>
+                                <Label htmlFor="password">
+                                    {t('staffAccounts.form.password')}
+                                </Label>
                                 <Input
                                     id="password"
                                     name="password"
@@ -101,7 +115,7 @@ export default function StaffCreateDialog() {
 
                             <div className="grid gap-1.5">
                                 <Label htmlFor="password_confirmation">
-                                    Confirm password
+                                    {t('staffAccounts.form.confirmPassword')}
                                 </Label>
                                 <Input
                                     id="password_confirmation"
@@ -113,7 +127,7 @@ export default function StaffCreateDialog() {
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
-                                    Create account
+                                    {t('staffAccounts.createAccount')}
                                 </Button>
                             </DialogFooter>
                         </>

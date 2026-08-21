@@ -32,6 +32,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import { destroy, index as adminRoomsIndex } from '@/routes/admin/rooms';
 import type { Paginated, RoomDetail } from '@/types';
 
@@ -47,6 +48,7 @@ type Props = {
 };
 
 export default function AdminRoomsIndex({ rooms, filters }: Props) {
+    const { t } = useTranslation();
     const [search, setSearch] = useState(filters.search ?? '');
     const [rentalMode, setRentalMode] = useState(filters.rental_mode ?? 'any');
     const [status, setStatus] = useState(filters.status ?? 'any');
@@ -87,17 +89,19 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
 
     return (
         <>
-            <Head title="Rooms" />
+            <Head title={t('adminRooms.title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-xl font-semibold">Rooms</h1>
+                    <h1 className="text-xl font-semibold">
+                        {t('adminRooms.title')}
+                    </h1>
                     <RoomCreateDialog />
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
                     <Input
-                        placeholder="Search by room number or type..."
+                        placeholder={t('adminRooms.searchPlaceholder')}
                         value={search}
                         onChange={(event) => setSearch(event.target.value)}
                         className="max-w-xs"
@@ -111,15 +115,23 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                         }}
                     >
                         <SelectTrigger className="w-44">
-                            <SelectValue placeholder="Rental mode" />
+                            <SelectValue
+                                placeholder={t('adminRooms.filters.rentalMode')}
+                            />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="any">Any rental mode</SelectItem>
-                            <SelectItem value="short_stay">
-                                Short stay
+                            <SelectItem value="any">
+                                {t('adminRooms.filters.anyRentalMode')}
                             </SelectItem>
-                            <SelectItem value="long_stay">Long stay</SelectItem>
-                            <SelectItem value="both">Both</SelectItem>
+                            <SelectItem value="short_stay">
+                                {t('common.reservationType.short_stay')}
+                            </SelectItem>
+                            <SelectItem value="long_stay">
+                                {t('common.reservationType.long_stay')}
+                            </SelectItem>
+                            <SelectItem value="both">
+                                {t('adminRooms.filters.both')}
+                            </SelectItem>
                         </SelectContent>
                     </Select>
 
@@ -131,16 +143,28 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                         }}
                     >
                         <SelectTrigger className="w-44">
-                            <SelectValue placeholder="Status" />
+                            <SelectValue
+                                placeholder={t('common.labels.status')}
+                            />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="any">Any status</SelectItem>
-                            <SelectItem value="available">Available</SelectItem>
-                            <SelectItem value="occupied">Occupied</SelectItem>
-                            <SelectItem value="reserved">Reserved</SelectItem>
-                            <SelectItem value="cleaning">Cleaning</SelectItem>
+                            <SelectItem value="any">
+                                {t('adminRooms.filters.anyStatus')}
+                            </SelectItem>
+                            <SelectItem value="available">
+                                {t('common.roomStatus.available')}
+                            </SelectItem>
+                            <SelectItem value="occupied">
+                                {t('common.roomStatus.occupied')}
+                            </SelectItem>
+                            <SelectItem value="reserved">
+                                {t('common.roomStatus.reserved')}
+                            </SelectItem>
+                            <SelectItem value="cleaning">
+                                {t('common.roomStatus.cleaning')}
+                            </SelectItem>
                             <SelectItem value="maintenance">
-                                Maintenance
+                                {t('common.roomStatus.maintenance')}
                             </SelectItem>
                         </SelectContent>
                     </Select>
@@ -150,14 +174,22 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Room</TableHead>
-                                <TableHead>Type</TableHead>
-                                <TableHead>Rental mode</TableHead>
-                                <TableHead>Price / night</TableHead>
-                                <TableHead>Price / month</TableHead>
-                                <TableHead>Status</TableHead>
+                                <TableHead>{t('common.labels.room')}</TableHead>
+                                <TableHead>{t('common.labels.type')}</TableHead>
+                                <TableHead>
+                                    {t('adminRooms.table.rentalMode')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('adminRooms.table.pricePerNight')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('adminRooms.table.pricePerMonth')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('common.labels.status')}
+                                </TableHead>
                                 <TableHead className="text-right">
-                                    Actions
+                                    {t('common.actions.actions')}
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -168,7 +200,7 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                                         colSpan={7}
                                         className="text-center text-muted-foreground"
                                     >
-                                        No rooms match your filters.
+                                        {t('adminRooms.empty')}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -178,7 +210,11 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                                     <TableCell>{room.room_type}</TableCell>
                                     <TableCell>
                                         <Badge variant="secondary">
-                                            {room.rental_mode}
+                                            {room.rental_mode === 'both'
+                                                ? t('adminRooms.filters.both')
+                                                : t(
+                                                      `common.reservationType.${room.rental_mode}`,
+                                                  )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
@@ -195,7 +231,9 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                                                     : 'outline'
                                             }
                                         >
-                                            {room.status}
+                                            {t(
+                                                `common.roomStatus.${room.status}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -207,7 +245,7 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                                                     setEditingRoomId(room.id)
                                                 }
                                             >
-                                                Edit
+                                                {t('common.actions.edit')}
                                             </Button>
                                             <AlertDialog>
                                                 <AlertDialogTrigger asChild>
@@ -215,26 +253,33 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                                                         variant="destructive"
                                                         size="sm"
                                                     >
-                                                        Delete
+                                                        {t(
+                                                            'common.actions.delete',
+                                                        )}
                                                     </Button>
                                                 </AlertDialogTrigger>
                                                 <AlertDialogContent>
                                                     <AlertDialogHeader>
                                                         <AlertDialogTitle>
-                                                            Delete room{' '}
-                                                            {room.room_number}?
+                                                            {t(
+                                                                'adminRooms.deleteRoom.title',
+                                                                {
+                                                                    roomNumber:
+                                                                        room.room_number,
+                                                                },
+                                                            )}
                                                         </AlertDialogTitle>
                                                         <AlertDialogDescription>
-                                                            This will
-                                                            permanently delete
-                                                            the room and its
-                                                            images. This cannot
-                                                            be undone.
+                                                            {t(
+                                                                'adminRooms.deleteRoom.description',
+                                                            )}
                                                         </AlertDialogDescription>
                                                     </AlertDialogHeader>
                                                     <AlertDialogFooter>
                                                         <AlertDialogCancel>
-                                                            Cancel
+                                                            {t(
+                                                                'common.actions.cancel',
+                                                            )}
                                                         </AlertDialogCancel>
                                                         <AlertDialogAction
                                                             variant="destructive"
@@ -244,7 +289,9 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                                                                 )
                                                             }
                                                         >
-                                                            Delete
+                                                            {t(
+                                                                'common.actions.delete',
+                                                            )}
                                                         </AlertDialogAction>
                                                     </AlertDialogFooter>
                                                 </AlertDialogContent>

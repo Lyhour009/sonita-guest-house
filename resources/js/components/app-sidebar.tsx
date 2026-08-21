@@ -26,6 +26,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { useTranslation } from '@/hooks/use-translation';
 import { dashboard } from '@/routes';
 import { index as adminDashboardIndex } from '@/routes/admin/dashboard';
 import { index as adminInvoicesIndex } from '@/routes/admin/invoices';
@@ -43,83 +44,6 @@ import { index as staffPaymentsIndex } from '@/routes/staff/payments';
 import { index as staffReservationsIndex } from '@/routes/staff/reservations';
 import type { NavItem } from '@/types';
 
-const guestNavItems: NavItem[] = [
-    {
-        title: 'My Reservations',
-        href: reservationsIndex(),
-        icon: CalendarCheck,
-    },
-    {
-        title: 'My Invoices',
-        href: invoicesIndex(),
-        icon: FileText,
-    },
-    {
-        title: 'My Payments',
-        href: paymentsIndex(),
-        icon: CreditCard,
-    },
-    {
-        title: 'Maintenance',
-        href: maintenanceIndex(),
-        icon: Wrench,
-    },
-];
-
-const staffNavItems: NavItem[] = [
-    {
-        title: 'Reservations',
-        href: staffReservationsIndex(),
-        icon: CalendarCheck,
-    },
-    {
-        title: 'Payments',
-        href: staffPaymentsIndex(),
-        icon: CreditCard,
-    },
-];
-
-const housekeepingNavItems: NavItem[] = [
-    {
-        title: 'Room Status',
-        href: staffHousekeepingIndex(),
-        icon: ClipboardList,
-    },
-    {
-        title: 'Maintenance',
-        href: staffMaintenanceIndex(),
-        icon: Wrench,
-    },
-];
-
-const adminNavItems: NavItem[] = [
-    {
-        title: 'Rooms',
-        href: adminRoomsIndex(),
-        icon: BedDouble,
-    },
-    {
-        title: 'Invoices',
-        href: adminInvoicesIndex(),
-        icon: FileText,
-    },
-    {
-        title: 'Services',
-        href: adminServicesIndex(),
-        icon: ConciergeBell,
-    },
-    {
-        title: 'Staff Accounts',
-        href: adminStaffIndex(),
-        icon: Users,
-    },
-    {
-        title: 'Settings',
-        href: adminSettingsEdit(),
-        icon: Settings,
-    },
-];
-
 const footerNavItems: NavItem[] = [
     {
         title: 'Repository',
@@ -135,13 +59,91 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     const { auth } = usePage().props;
+    const { t } = useTranslation();
     const dashboardHref =
         auth.user?.role === 'admin' ? adminDashboardIndex() : dashboard();
     const mainNavItems: NavItem[] = [
         {
-            title: 'Dashboard',
+            title: t('nav.dashboard'),
             href: dashboardHref,
             icon: LayoutGrid,
+        },
+    ];
+
+    const guestNavItems: NavItem[] = [
+        {
+            title: t('nav.guest.myReservations'),
+            href: reservationsIndex(),
+            icon: CalendarCheck,
+        },
+        {
+            title: t('nav.guest.myInvoices'),
+            href: invoicesIndex(),
+            icon: FileText,
+        },
+        {
+            title: t('nav.guest.myPayments'),
+            href: paymentsIndex(),
+            icon: CreditCard,
+        },
+        {
+            title: t('nav.guest.maintenance'),
+            href: maintenanceIndex(),
+            icon: Wrench,
+        },
+    ];
+
+    const staffNavItems: NavItem[] = [
+        {
+            title: t('nav.staff.reservations'),
+            href: staffReservationsIndex(),
+            icon: CalendarCheck,
+        },
+        {
+            title: t('nav.staff.payments'),
+            href: staffPaymentsIndex(),
+            icon: CreditCard,
+        },
+    ];
+
+    const housekeepingNavItems: NavItem[] = [
+        {
+            title: t('nav.staff.roomStatus'),
+            href: staffHousekeepingIndex(),
+            icon: ClipboardList,
+        },
+        {
+            title: t('nav.staff.maintenance'),
+            href: staffMaintenanceIndex(),
+            icon: Wrench,
+        },
+    ];
+
+    const adminNavItems: NavItem[] = [
+        {
+            title: t('nav.admin.rooms'),
+            href: adminRoomsIndex(),
+            icon: BedDouble,
+        },
+        {
+            title: t('nav.admin.invoices'),
+            href: adminInvoicesIndex(),
+            icon: FileText,
+        },
+        {
+            title: t('nav.admin.services'),
+            href: adminServicesIndex(),
+            icon: ConciergeBell,
+        },
+        {
+            title: t('nav.admin.staffAccounts'),
+            href: adminStaffIndex(),
+            icon: Users,
+        },
+        {
+            title: t('nav.admin.settings'),
+            href: adminSettingsEdit(),
+            icon: Settings,
         },
     ];
 
@@ -162,21 +164,30 @@ export function AppSidebar() {
             <SidebarContent>
                 <NavMain items={mainNavItems} />
                 {auth.user?.role === 'guest' && (
-                    <NavMain items={guestNavItems} label="Reservations" />
+                    <NavMain
+                        items={guestNavItems}
+                        label={t('nav.groups.reservations')}
+                    />
                 )}
                 {(auth.user?.role === 'receptionist' ||
                     auth.user?.role === 'admin') && (
-                    <NavMain items={staffNavItems} label="Staff" />
+                    <NavMain
+                        items={staffNavItems}
+                        label={t('nav.groups.staff')}
+                    />
                 )}
                 {(auth.user?.role === 'housekeeping' ||
                     auth.user?.role === 'admin') && (
                     <NavMain
                         items={housekeepingNavItems}
-                        label="Housekeeping"
+                        label={t('nav.groups.housekeeping')}
                     />
                 )}
                 {auth.user?.role === 'admin' && (
-                    <NavMain items={adminNavItems} label="Admin" />
+                    <NavMain
+                        items={adminNavItems}
+                        label={t('nav.groups.admin')}
+                    />
                 )}
             </SidebarContent>
 

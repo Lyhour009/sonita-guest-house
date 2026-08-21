@@ -9,6 +9,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as paymentsIndex, proof as proofShow } from '@/routes/payments';
 import type { Paginated, Payment } from '@/types';
 
@@ -17,23 +18,37 @@ type Props = {
 };
 
 export default function PaymentsIndex({ payments }: Props) {
+    const { t } = useTranslation();
+
     return (
         <>
             <Head title="My payments" />
 
             <div className="space-y-6 p-4">
-                <h1 className="text-xl font-semibold">My payments</h1>
+                <h1 className="text-xl font-semibold">
+                    {t('payments.page.title')}
+                </h1>
 
                 <div className="rounded-xl border">
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Room</TableHead>
-                                <TableHead>Amount</TableHead>
-                                <TableHead>Method</TableHead>
-                                <TableHead>Submitted</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Proof</TableHead>
+                                <TableHead>{t('common.labels.room')}</TableHead>
+                                <TableHead>
+                                    {t('payments.table.amount')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('payments.table.method')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('payments.table.submitted')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('common.labels.status')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('payments.table.proof')}
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -43,7 +58,7 @@ export default function PaymentsIndex({ payments }: Props) {
                                         colSpan={6}
                                         className="text-center text-muted-foreground"
                                     >
-                                        You haven't submitted any payments yet.
+                                        {t('payments.page.empty')}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -55,13 +70,17 @@ export default function PaymentsIndex({ payments }: Props) {
                                     <TableCell>${payment.amount}</TableCell>
                                     <TableCell>
                                         <Badge variant="secondary">
-                                            {payment.method}
+                                            {t(
+                                                `payments.method.${payment.method}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>{payment.created_at}</TableCell>
                                     <TableCell>
                                         <Badge variant="outline">
-                                            {payment.status}
+                                            {t(
+                                                `common.paymentStatus.${payment.status}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
@@ -71,7 +90,7 @@ export default function PaymentsIndex({ payments }: Props) {
                                                 target="_blank"
                                                 className="text-sm underline"
                                             >
-                                                View
+                                                {t('payments.proof.view')}
                                             </Link>
                                         ) : (
                                             '—'

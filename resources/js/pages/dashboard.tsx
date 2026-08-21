@@ -8,6 +8,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import { dashboard } from '@/routes';
 import { index as invoicesIndex } from '@/routes/invoices';
 import { index as notificationsIndex } from '@/routes/notifications';
@@ -47,16 +48,22 @@ function GuestDashboard({
     latestInvoice,
     notifications = [],
 }: Partial<GuestDashboardData>) {
+    const { t } = useTranslation();
+
     return (
         <div className="space-y-6 p-4">
-            <h1 className="text-xl font-semibold">My dashboard</h1>
+            <h1 className="text-xl font-semibold">
+                {t('dashboard.guest.title')}
+            </h1>
 
             <div className="grid gap-4 md:grid-cols-2">
                 <div className="rounded-xl border p-4">
-                    <h2 className="mb-3 font-medium">Current reservations</h2>
+                    <h2 className="mb-3 font-medium">
+                        {t('dashboard.guest.currentReservations')}
+                    </h2>
                     {reservations.length === 0 && (
                         <p className="text-sm text-muted-foreground">
-                            You have no active reservations.
+                            {t('dashboard.guest.noActiveReservations')}
                         </p>
                     )}
                     <div className="space-y-2">
@@ -66,11 +73,16 @@ function GuestDashboard({
                                 className="flex items-center justify-between text-sm"
                             >
                                 <span>
-                                    Room {reservation.room.room_number} ·{' '}
-                                    {reservation.reservation_type}
+                                    {t('common.labels.room')}{' '}
+                                    {reservation.room.room_number} ·{' '}
+                                    {t(
+                                        `common.reservationType.${reservation.reservation_type}`,
+                                    )}
                                 </span>
                                 <Badge variant="outline">
-                                    {reservation.status}
+                                    {t(
+                                        `common.reservationStatus.${reservation.status}`,
+                                    )}
                                 </Badge>
                             </div>
                         ))}
@@ -78,21 +90,28 @@ function GuestDashboard({
                 </div>
 
                 <div className="rounded-xl border p-4">
-                    <h2 className="mb-3 font-medium">Latest invoice</h2>
+                    <h2 className="mb-3 font-medium">
+                        {t('dashboard.guest.latestInvoice')}
+                    </h2>
                     {latestInvoice ? (
                         <Link
                             href={invoicesIndex()}
                             className="block space-y-1 text-sm underline"
                         >
-                            <span>Room {latestInvoice.room.room_number}</span>
+                            <span>
+                                {t('common.labels.room')}{' '}
+                                {latestInvoice.room.room_number}
+                            </span>
                             <span className="block">
                                 ${latestInvoice.total_amount} ·{' '}
-                                {latestInvoice.status}
+                                {t(
+                                    `common.invoiceStatus.${latestInvoice.status}`,
+                                )}
                             </span>
                         </Link>
                     ) : (
                         <p className="text-sm text-muted-foreground">
-                            You have no invoices yet.
+                            {t('dashboard.guest.noInvoices')}
                         </p>
                     )}
                 </div>
@@ -100,17 +119,19 @@ function GuestDashboard({
 
             <div className="rounded-xl border p-4">
                 <div className="mb-3 flex items-center justify-between">
-                    <h2 className="font-medium">Recent notifications</h2>
+                    <h2 className="font-medium">
+                        {t('dashboard.guest.recentNotifications')}
+                    </h2>
                     <Link
                         href={notificationsIndex()}
                         className="text-sm underline"
                     >
-                        View all
+                        {t('common.actions.viewAll')}
                     </Link>
                 </div>
                 {notifications.length === 0 && (
                     <p className="text-sm text-muted-foreground">
-                        You have no notifications yet.
+                        {t('dashboard.guest.noNotifications')}
                     </p>
                 )}
                 <div className="space-y-2">
@@ -130,18 +151,24 @@ function ReceptionistDashboard({
     departures = [],
     rooms = [],
 }: Partial<ReceptionistDashboardData>) {
+    const { t } = useTranslation();
+
     return (
         <div className="space-y-6 p-4">
-            <h1 className="text-xl font-semibold">Front desk dashboard</h1>
+            <h1 className="text-xl font-semibold">
+                {t('dashboard.receptionist.title')}
+            </h1>
 
             <div className="grid gap-4 md:grid-cols-2">
                 <div className="rounded-xl border p-4">
                     <h2 className="mb-3 font-medium">
-                        Today's arrivals ({arrivals.length})
+                        {t('dashboard.receptionist.todaysArrivals', {
+                            count: arrivals.length,
+                        })}
                     </h2>
                     {arrivals.length === 0 && (
                         <p className="text-sm text-muted-foreground">
-                            No arrivals expected today.
+                            {t('dashboard.receptionist.noArrivals')}
                         </p>
                     )}
                     <div className="space-y-2">
@@ -152,7 +179,8 @@ function ReceptionistDashboard({
                             >
                                 <span>{entry.guest.full_name}</span>
                                 <span className="text-muted-foreground">
-                                    Room {entry.room.room_number}
+                                    {t('common.labels.room')}{' '}
+                                    {entry.room.room_number}
                                 </span>
                             </div>
                         ))}
@@ -161,11 +189,13 @@ function ReceptionistDashboard({
 
                 <div className="rounded-xl border p-4">
                     <h2 className="mb-3 font-medium">
-                        Today's departures ({departures.length})
+                        {t('dashboard.receptionist.todaysDepartures', {
+                            count: departures.length,
+                        })}
                     </h2>
                     {departures.length === 0 && (
                         <p className="text-sm text-muted-foreground">
-                            No departures expected today.
+                            {t('dashboard.receptionist.noDepartures')}
                         </p>
                     )}
                     <div className="space-y-2">
@@ -176,7 +206,8 @@ function ReceptionistDashboard({
                             >
                                 <span>{entry.guest.full_name}</span>
                                 <span className="text-muted-foreground">
-                                    Room {entry.room.room_number}
+                                    {t('common.labels.room')}{' '}
+                                    {entry.room.room_number}
                                 </span>
                             </div>
                         ))}
@@ -188,8 +219,8 @@ function ReceptionistDashboard({
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Room</TableHead>
-                            <TableHead>Status</TableHead>
+                            <TableHead>{t('common.labels.room')}</TableHead>
+                            <TableHead>{t('common.labels.status')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -199,7 +230,7 @@ function ReceptionistDashboard({
                                     colSpan={2}
                                     className="text-center text-muted-foreground"
                                 >
-                                    No rooms have been added yet.
+                                    {t('dashboard.receptionist.noRooms')}
                                 </TableCell>
                             </TableRow>
                         )}
@@ -208,7 +239,7 @@ function ReceptionistDashboard({
                                 <TableCell>{room.room_number}</TableCell>
                                 <TableCell>
                                     <Badge variant="outline">
-                                        {room.status}
+                                        {t(`common.roomStatus.${room.status}`)}
                                     </Badge>
                                 </TableCell>
                             </TableRow>
@@ -224,18 +255,22 @@ function HousekeepingDashboard({
     roomsAwaitingCleaning = 0,
     openAssignedMaintenance = 0,
 }: Partial<HousekeepingDashboardData>) {
+    const { t } = useTranslation();
+
     return (
         <div className="space-y-6 p-4">
-            <h1 className="text-xl font-semibold">Housekeeping dashboard</h1>
+            <h1 className="text-xl font-semibold">
+                {t('dashboard.housekeeping.title')}
+            </h1>
 
             <div className="grid gap-4 md:grid-cols-2">
                 <StatCard
-                    label="Rooms awaiting cleaning"
+                    label={t('dashboard.housekeeping.roomsAwaitingCleaning')}
                     value={roomsAwaitingCleaning}
                     href={staffHousekeepingIndex().url}
                 />
                 <StatCard
-                    label="Open assigned maintenance"
+                    label={t('dashboard.housekeeping.openAssignedMaintenance')}
                     value={openAssignedMaintenance}
                     href={staffMaintenanceIndex().url}
                 />

@@ -1,9 +1,11 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import LanguageToggle from '@/components/language-toggle';
 import ReservationBookDialog from '@/components/reservation-book-dialog';
 import RoomAvailabilityCalendar from '@/components/room-availability-calendar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { useTranslation } from '@/hooks/use-translation';
 import { dashboard, home, login } from '@/routes';
 import { register } from '@/routes';
 import type { RoomBookedRange, RoomDetail } from '@/types';
@@ -13,14 +15,9 @@ type Props = {
     bookedRanges: RoomBookedRange[];
 };
 
-const rentalModeLabel: Record<RoomDetail['rental_mode'], string> = {
-    short_stay: 'Short stay only',
-    long_stay: 'Long stay only',
-    both: 'Short & long stay',
-};
-
 export default function RoomShow({ room, bookedRanges }: Props) {
     const { auth } = usePage().props;
+    const { t } = useTranslation();
 
     return (
         <>
@@ -31,20 +28,25 @@ export default function RoomShow({ room, bookedRanges }: Props) {
                         href={home()}
                         className="text-sm text-muted-foreground hover:underline"
                     >
-                        ← Back to rooms
+                        {t('rooms.detail.backToRooms')}
                     </Link>
                     <nav className="flex items-center gap-3 text-sm">
+                        <LanguageToggle />
                         {auth.user ? (
                             <Button asChild size="sm">
-                                <Link href={dashboard()}>Dashboard</Link>
+                                <Link href={dashboard()}>
+                                    {t('nav.dashboard')}
+                                </Link>
                             </Button>
                         ) : (
                             <>
                                 <Button asChild variant="ghost" size="sm">
-                                    <Link href={login()}>Log in</Link>
+                                    <Link href={login()}>{t('nav.login')}</Link>
                                 </Button>
                                 <Button asChild size="sm">
-                                    <Link href={register()}>Register</Link>
+                                    <Link href={register()}>
+                                        {t('nav.register')}
+                                    </Link>
                                 </Button>
                             </>
                         )}
@@ -77,13 +79,19 @@ export default function RoomShow({ room, bookedRanges }: Props) {
                                 {room.room_type} · Room {room.room_number}
                             </h1>
                             <p className="text-sm text-muted-foreground">
-                                {room.floor ? `Floor ${room.floor} · ` : ''}
-                                Up to {room.max_occupants} guest
-                                {room.max_occupants > 1 ? 's' : ''}
+                                {room.floor
+                                    ? `${t('rooms.detail.floor', { floor: room.floor })} · `
+                                    : ''}
+                                {t(
+                                    room.max_occupants > 1
+                                        ? 'rooms.maxOccupants.other'
+                                        : 'rooms.maxOccupants.one',
+                                    { count: room.max_occupants },
+                                )}
                             </p>
                         </div>
                         <Badge variant="secondary">
-                            {rentalModeLabel[room.rental_mode]}
+                            {t(`rooms.rentalModeDetail.${room.rental_mode}`)}
                         </Badge>
                     </div>
 
@@ -92,7 +100,7 @@ export default function RoomShow({ room, bookedRanges }: Props) {
                     <div className="grid gap-4 sm:grid-cols-2">
                         <div>
                             <p className="text-sm text-muted-foreground">
-                                Per night
+                                {t('rooms.detail.perNight')}
                             </p>
                             <p className="text-xl font-semibold">
                                 ${room.price_per_night}
@@ -100,7 +108,7 @@ export default function RoomShow({ room, bookedRanges }: Props) {
                         </div>
                         <div>
                             <p className="text-sm text-muted-foreground">
-                                Per month
+                                {t('rooms.detail.perMonth')}
                             </p>
                             <p className="text-xl font-semibold">
                                 ${room.price_per_month}
@@ -110,7 +118,9 @@ export default function RoomShow({ room, bookedRanges }: Props) {
 
                     {room.description && (
                         <div>
-                            <h2 className="mb-1 font-medium">Description</h2>
+                            <h2 className="mb-1 font-medium">
+                                {t('rooms.detail.description')}
+                            </h2>
                             <p className="text-sm text-muted-foreground">
                                 {room.description}
                             </p>
@@ -119,7 +129,9 @@ export default function RoomShow({ room, bookedRanges }: Props) {
 
                     {room.amenities && (
                         <div>
-                            <h2 className="mb-1 font-medium">Amenities</h2>
+                            <h2 className="mb-1 font-medium">
+                                {t('rooms.detail.amenities')}
+                            </h2>
                             <p className="text-sm text-muted-foreground">
                                 {room.amenities}
                             </p>
@@ -137,7 +149,9 @@ export default function RoomShow({ room, bookedRanges }: Props) {
                             <ReservationBookDialog room={room} />
                         ) : !auth.user ? (
                             <Button asChild className="w-full">
-                                <Link href={login()}>Log in to book</Link>
+                                <Link href={login()}>
+                                    {t('nav.logInToBook')}
+                                </Link>
                             </Button>
                         ) : null}
                     </div>

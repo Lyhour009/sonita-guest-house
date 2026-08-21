@@ -10,6 +10,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as maintenanceIndex } from '@/routes/maintenance';
 import type {
     MaintenanceRequest,
@@ -23,6 +24,8 @@ type Props = {
 };
 
 export default function MaintenanceIndex({ requests, rooms }: Props) {
+    const { t } = useTranslation();
+
     return (
         <>
             <Head title="My maintenance requests" />
@@ -30,7 +33,7 @@ export default function MaintenanceIndex({ requests, rooms }: Props) {
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-xl font-semibold">
-                        My maintenance requests
+                        {t('maintenance.page.title')}
                     </h1>
                     <MaintenanceRequestDialog rooms={rooms} />
                 </div>
@@ -39,11 +42,19 @@ export default function MaintenanceIndex({ requests, rooms }: Props) {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Room</TableHead>
-                                <TableHead>Title</TableHead>
-                                <TableHead>Priority</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Submitted</TableHead>
+                                <TableHead>{t('common.labels.room')}</TableHead>
+                                <TableHead>
+                                    {t('maintenance.table.title')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('maintenance.table.priority')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('common.labels.status')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('maintenance.table.submitted')}
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -53,7 +64,7 @@ export default function MaintenanceIndex({ requests, rooms }: Props) {
                                         colSpan={5}
                                         className="text-center text-muted-foreground"
                                     >
-                                        You haven't reported any issues yet.
+                                        {t('maintenance.page.empty')}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -65,12 +76,16 @@ export default function MaintenanceIndex({ requests, rooms }: Props) {
                                     <TableCell>{request.title}</TableCell>
                                     <TableCell>
                                         <Badge variant="secondary">
-                                            {request.priority}
+                                            {t(
+                                                `common.maintenancePriority.${request.priority}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="outline">
-                                            {request.status}
+                                            {t(
+                                                `common.maintenanceStatus.${request.status}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>{request.created_at}</TableCell>

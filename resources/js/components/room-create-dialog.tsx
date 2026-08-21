@@ -11,18 +11,20 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function RoomCreateDialog() {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>Add room</Button>
+                <Button>{t('adminRooms.addRoom')}</Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Add room</DialogTitle>
+                    <DialogTitle>{t('adminRooms.addRoom')}</DialogTitle>
                 </DialogHeader>
 
                 <Form
@@ -36,7 +38,7 @@ export default function RoomCreateDialog() {
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
-                                    Create room
+                                    {t('adminRooms.createRoom')}
                                 </Button>
                             </DialogFooter>
                         </>

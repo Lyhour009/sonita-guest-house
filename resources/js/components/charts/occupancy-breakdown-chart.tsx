@@ -8,21 +8,7 @@ import {
     ChartTooltipContent,
 } from '@/components/ui/chart';
 import type { ChartConfig } from '@/components/ui/chart';
-
-const chartConfig = {
-    short_stay: {
-        label: 'Short-stay occupied',
-        color: 'var(--chart-1)',
-    },
-    long_stay: {
-        label: 'Long-stay occupied',
-        color: 'var(--chart-2)',
-    },
-    available: {
-        label: 'Available',
-        color: 'var(--chart-3)',
-    },
-} satisfies ChartConfig;
+import { useTranslation } from '@/hooks/use-translation';
 
 export function OccupancyBreakdownChart({
     shortStay,
@@ -33,6 +19,21 @@ export function OccupancyBreakdownChart({
     longStay: number;
     available: number;
 }) {
+    const { t } = useTranslation();
+    const chartConfig = {
+        short_stay: {
+            label: t('adminDashboard.occupancyChart.shortStayLegend'),
+            color: 'var(--chart-1)',
+        },
+        long_stay: {
+            label: t('adminDashboard.occupancyChart.longStayLegend'),
+            color: 'var(--chart-2)',
+        },
+        available: {
+            label: t('common.roomStatus.available'),
+            color: 'var(--chart-3)',
+        },
+    } satisfies ChartConfig;
     const chartData = [
         { key: 'short_stay', value: shortStay },
         { key: 'long_stay', value: longStay },
@@ -42,7 +43,9 @@ export function OccupancyBreakdownChart({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Room occupancy</CardTitle>
+                <CardTitle>
+                    {t('adminDashboard.occupancyChart.title')}
+                </CardTitle>
             </CardHeader>
             <CardContent>
                 <ChartContainer

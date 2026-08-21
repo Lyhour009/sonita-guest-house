@@ -13,7 +13,10 @@
       "Bash(npx shadcn@latest add chart --yes)",
       "Bash(composer require *)",
       "Bash(grep -n \"rooms/{room}\\\\|rooms.show\\\\|room-show\\\\|RoomController::class, 'show'\" \"d:/Code/Laravel/Sonita-Guest-House/routes/web.php\")",
-      "Bash(npx shadcn@latest add calendar --yes)"
+      "Bash(npx shadcn@latest add calendar --yes)",
+      "Bash(grep -iv \"^ui$\")",
+      "Bash(grep -n \"^\\\\s*[A-Za-z].*[A-Za-z]$\\\\|>[A-Z][a-z]\" \"d:/Code/Laravel/Sonita-Guest-House/resources/js/components/nav-footer.tsx\" \"d:/Code/Laravel/Sonita-Guest-House/resources/js/components/user-menu-content.tsx\" \"d:/Code/Laravel/Sonita-Guest-House/resources/js/components/nav-user.tsx\")",
+      "Bash(npx tsc *)"
     ],
     "additionalDirectories": [
       "\\tmp"

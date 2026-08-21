@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { OccupancyBreakdownChart } from '@/components/charts/occupancy-breakdown-chart';
 import { RevenueTrendChart } from '@/components/charts/revenue-trend-chart';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as adminDashboardIndex } from '@/routes/admin/dashboard';
 import { index as adminInvoicesIndex } from '@/routes/admin/invoices';
 import { index as staffMaintenanceIndex } from '@/routes/staff/maintenance';
@@ -34,33 +35,38 @@ export default function AdminDashboardIndex({
     openMaintenanceCount,
     revenueTrend,
 }: Props) {
+    const { t } = useTranslation();
     const availableRooms =
         occupancy.total_rooms - occupancy.short_stay - occupancy.long_stay;
 
     return (
         <>
-            <Head title="Admin dashboard" />
+            <Head title={t('adminDashboard.title')} />
 
             <div className="space-y-6 p-4">
-                <h1 className="text-xl font-semibold">Admin dashboard</h1>
+                <h1 className="text-xl font-semibold">
+                    {t('adminDashboard.title')}
+                </h1>
 
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <StatCard
-                        label="Revenue this month"
+                        label={t('adminDashboard.stats.revenueThisMonth')}
                         value={`$${revenueThisMonth}`}
                     />
                     <StatCard
-                        label="Outstanding invoices"
+                        label={t('adminDashboard.stats.outstandingInvoices')}
                         value={outstandingInvoicesCount}
                         href={adminInvoicesIndex().url}
                     />
                     <StatCard
-                        label="Open maintenance requests"
+                        label={t(
+                            'adminDashboard.stats.openMaintenanceRequests',
+                        )}
                         value={openMaintenanceCount}
                         href={staffMaintenanceIndex().url}
                     />
                     <StatCard
-                        label="Total rooms"
+                        label={t('adminDashboard.stats.totalRooms')}
                         value={occupancy.total_rooms}
                     />
                 </div>

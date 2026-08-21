@@ -21,6 +21,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as adminStaffIndex } from '@/routes/admin/staff';
 import type { Paginated, StaffAccount } from '@/types';
 
@@ -35,6 +36,7 @@ type Props = {
 };
 
 export default function AdminStaffIndex({ staff, filters }: Props) {
+    const { t } = useTranslation();
     const [search, setSearch] = useState(filters.search ?? '');
     const [role, setRole] = useState(filters.role ?? 'any');
     const [editingStaffId, setEditingStaffId] = useState<string | null>(null);
@@ -67,17 +69,19 @@ export default function AdminStaffIndex({ staff, filters }: Props) {
 
     return (
         <>
-            <Head title="Staff" />
+            <Head title={t('staffAccounts.title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-xl font-semibold">Staff</h1>
+                    <h1 className="text-xl font-semibold">
+                        {t('staffAccounts.title')}
+                    </h1>
                     <StaffCreateDialog />
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
                     <Input
-                        placeholder="Search by name or email..."
+                        placeholder={t('staffAccounts.searchPlaceholder')}
                         value={search}
                         onChange={(event) => setSearch(event.target.value)}
                         className="max-w-xs"
@@ -91,15 +95,19 @@ export default function AdminStaffIndex({ staff, filters }: Props) {
                         }}
                     >
                         <SelectTrigger className="w-48">
-                            <SelectValue placeholder="Role" />
+                            <SelectValue
+                                placeholder={t('staffAccounts.filters.role')}
+                            />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="any">Any role</SelectItem>
+                            <SelectItem value="any">
+                                {t('staffAccounts.filters.anyRole')}
+                            </SelectItem>
                             <SelectItem value="receptionist">
-                                Receptionist
+                                {t('staffAccounts.roles.receptionist')}
                             </SelectItem>
                             <SelectItem value="housekeeping">
-                                Housekeeping
+                                {t('staffAccounts.roles.housekeeping')}
                             </SelectItem>
                         </SelectContent>
                     </Select>
@@ -109,12 +117,20 @@ export default function AdminStaffIndex({ staff, filters }: Props) {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Email</TableHead>
-                                <TableHead>Phone</TableHead>
-                                <TableHead>Role</TableHead>
+                                <TableHead>
+                                    {t('staffAccounts.table.name')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('staffAccounts.table.email')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('staffAccounts.table.phone')}
+                                </TableHead>
+                                <TableHead>
+                                    {t('staffAccounts.filters.role')}
+                                </TableHead>
                                 <TableHead className="text-right">
-                                    Actions
+                                    {t('common.actions.actions')}
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -125,7 +141,7 @@ export default function AdminStaffIndex({ staff, filters }: Props) {
                                         colSpan={5}
                                         className="text-center text-muted-foreground"
                                     >
-                                        No staff accounts match your filters.
+                                        {t('staffAccounts.empty')}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -138,7 +154,9 @@ export default function AdminStaffIndex({ staff, filters }: Props) {
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="secondary">
-                                            {member.role}
+                                            {t(
+                                                `staffAccounts.roles.${member.role}`,
+                                            )}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -149,7 +167,7 @@ export default function AdminStaffIndex({ staff, filters }: Props) {
                                                 setEditingStaffId(member.id)
                                             }
                                         >
-                                            Edit
+                                            {t('common.actions.edit')}
                                         </Button>
                                     </TableCell>
                                 </TableRow>

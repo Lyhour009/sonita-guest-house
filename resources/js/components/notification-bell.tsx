@@ -2,10 +2,12 @@ import { Link, usePage } from '@inertiajs/react';
 import { Bell } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as notificationsIndex } from '@/routes/notifications';
 
 export function NotificationBell() {
     const { unreadNotificationsCount } = usePage().props;
+    const { t } = useTranslation();
 
     return (
         <Button variant="ghost" size="icon" className="relative" asChild>
@@ -21,7 +23,9 @@ export function NotificationBell() {
                             : unreadNotificationsCount}
                     </Badge>
                 )}
-                <span className="sr-only">Notifications</span>
+                <span className="sr-only">
+                    {t('notifications.bell.srLabel')}
+                </span>
             </Link>
         </Button>
     );

@@ -2,6 +2,7 @@ import { router } from '@inertiajs/react';
 import type { ChangeEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/hooks/use-translation';
 import { destroy, store } from '@/routes/admin/rooms/images';
 import type { RoomImage } from '@/types';
 
@@ -11,6 +12,8 @@ type Props = {
 };
 
 export default function RoomImageManager({ roomId, images }: Props) {
+    const { t } = useTranslation();
+
     const handleUpload = (event: ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
 
@@ -48,7 +51,7 @@ export default function RoomImageManager({ roomId, images }: Props) {
                     <div key={image.id} className="group relative">
                         <img
                             src={image.url}
-                            alt="Room"
+                            alt={t('common.labels.room')}
                             className="aspect-square w-full rounded-lg object-cover"
                         />
                         <Button
@@ -58,19 +61,21 @@ export default function RoomImageManager({ roomId, images }: Props) {
                             className="absolute top-1 right-1 opacity-0 transition-opacity group-hover:opacity-100"
                             onClick={() => handleDelete(image)}
                         >
-                            Remove
+                            {t('adminRooms.imageManager.remove')}
                         </Button>
                     </div>
                 ))}
                 {images.length === 0 && (
                     <p className="col-span-full text-sm text-muted-foreground">
-                        No images uploaded yet.
+                        {t('adminRooms.imageManager.noImages')}
                     </p>
                 )}
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="room_images">Upload images</Label>
+                <Label htmlFor="room_images">
+                    {t('adminRooms.imageManager.upload')}
+                </Label>
                 <input
                     id="room_images"
                     type="file"

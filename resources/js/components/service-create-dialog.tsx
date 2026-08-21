@@ -13,18 +13,20 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function ServiceCreateDialog() {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>Add service</Button>
+                <Button>{t('services.addService')}</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Add service</DialogTitle>
+                    <DialogTitle>{t('services.addService')}</DialogTitle>
                 </DialogHeader>
 
                 <Form
@@ -35,13 +37,17 @@ export default function ServiceCreateDialog() {
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-1.5">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="name">
+                                    {t('services.form.name')}
+                                </Label>
                                 <Input id="name" name="name" required />
                                 <InputError message={errors.name} />
                             </div>
 
                             <div className="grid gap-1.5">
-                                <Label htmlFor="price">Price ($)</Label>
+                                <Label htmlFor="price">
+                                    {t('services.form.price')}
+                                </Label>
                                 <Input
                                     id="price"
                                     name="price"
@@ -55,7 +61,7 @@ export default function ServiceCreateDialog() {
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
-                                    Create service
+                                    {t('services.createService')}
                                 </Button>
                             </DialogFooter>
                         </>
