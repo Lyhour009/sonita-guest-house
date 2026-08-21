@@ -34,6 +34,8 @@
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
+        <link rel="preload" href="/fonts/KantumruyPro.ttf" as="font" type="font/ttf" crossorigin>
+        <link rel="preload" href="/fonts/Inter.ttf" as="font" type="font/ttf" crossorigin>
         <link rel="stylesheet" href="/fonts/fonts.css">
 
         @viteReactRefresh

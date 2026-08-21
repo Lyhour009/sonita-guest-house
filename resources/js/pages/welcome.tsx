@@ -1,4 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { BedDouble } from 'lucide-react';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 import LanguageToggle from '@/components/language-toggle';
@@ -153,13 +154,18 @@ export default function Welcome({ rooms, filters }: Props) {
                                     key={room.id}
                                     className="overflow-hidden py-0"
                                 >
-                                    <div className="aspect-video w-full bg-muted">
-                                        {room.thumbnail && (
+                                    <div className="aspect-video w-full bg-muted/50 relative overflow-hidden flex items-center justify-center border-b border-border/40">
+                                        {room.thumbnail ? (
                                             <img
                                                 src={room.thumbnail}
                                                 alt={room.room_type}
-                                                className="h-full w-full object-cover"
+                                                className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
                                             />
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center text-muted-foreground/50 select-none">
+                                                <BedDouble className="size-10 stroke-[1.5] mb-1 opacity-50" />
+                                                <span className="text-[11px] font-medium opacity-60">Hour Guest House</span>
+                                            </div>
                                         )}
                                     </div>
                                     <CardHeader className="pt-6">

@@ -29,6 +29,7 @@ export default function RoomCreateDialog() {
 
                 <Form
                     {...RoomController.store.form()}
+                    encType="multipart/form-data"
                     onSuccess={() => setOpen(false)}
                     className="space-y-6"
                 >

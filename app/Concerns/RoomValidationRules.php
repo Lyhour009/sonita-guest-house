@@ -33,6 +33,8 @@ trait RoomValidationRules
             'max_occupants' => ['required', 'integer', 'min:1'],
             'amenities' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
+            'images' => ['nullable', 'array'],
+            'images.*' => ['image', 'max:5120'],
         ];
     }
 }

@@ -37,6 +37,7 @@ export default function RoomEditDialog({ room, onOpenChange }: Props) {
                     <>
                         <Form
                             {...RoomController.update.form(room.id)}
+                            encType="multipart/form-data"
                             onSuccess={() => onOpenChange(false)}
                             className="space-y-6"
                         >

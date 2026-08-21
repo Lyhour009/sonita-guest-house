@@ -1,4 +1,7 @@
+import { ImagePlus, X } from 'lucide-react';
+import { useState, type ChangeEvent } from 'react';
 import InputError from '@/components/input-error';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -19,6 +22,18 @@ type Props = {
 
 export default function RoomForm({ room, errors }: Props) {
     const { t } = useTranslation();
+    const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) {
+            setPreviewUrls([]);
+            return;
+        }
+
+        const urls = Array.from(files).map((file) => URL.createObjectURL(file));
+        setPreviewUrls(urls);
+    };
 
     return (
         <div className="grid gap-6 sm:grid-cols-2">
@@ -190,6 +205,47 @@ export default function RoomForm({ room, errors }: Props) {
                     defaultValue={room?.description ?? undefined}
                 />
                 <InputError message={errors.description} />
+            </div>
+
+            {/* Room Images Upload Section */}
+            <div className="grid gap-3 sm:col-span-2">
+                <Label htmlFor="room_images" className="text-sm font-semibold">
+                    {t('adminRooms.images')}
+                </Label>
+
+                <div className="relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border/80 bg-muted/20 p-6 text-center transition-colors hover:border-primary/50 hover:bg-muted/40">
+                    <ImagePlus className="mb-2 size-8 text-muted-foreground" />
+                    <p className="text-sm font-medium text-foreground">
+                        {t('adminRooms.imageManager.upload')}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                        JPG, PNG, WebP up to 5MB
+                    </p>
+                    <input
+                        id="room_images"
+                        name="images[]"
+                        type="file"
+                        multiple
+                        accept="image/png,image/jpeg,image/jpg,image/webp"
+                        onChange={handleFileChange}
+                        className="absolute inset-0 cursor-pointer opacity-0"
+                    />
+                </div>
+
+                {previewUrls.length > 0 && (
+                    <div className="mt-2 grid grid-cols-3 gap-3 sm:grid-cols-4">
+                        {previewUrls.map((url, idx) => (
+                            <div key={idx} className="relative aspect-video overflow-hidden rounded-lg border border-border bg-muted shadow-2xs">
+                                <img
+                                    src={url}
+                                    alt={`Preview ${idx + 1}`}
+                                    className="h-full w-full object-cover"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
+                <InputError message={errors.images} />
             </div>
         </div>
     );

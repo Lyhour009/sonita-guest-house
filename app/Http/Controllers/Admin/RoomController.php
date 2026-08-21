@@ -52,7 +52,14 @@ class RoomController extends Controller
      */
     public function store(RoomStoreRequest $request): RedirectResponse
     {
-        Room::create($request->validated());
+        $room = Room::create($request->safe()->except('images'));
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $path = $file->store("rooms/{$room->id}", 'public');
+                $room->roomImages()->create(['image_path' => $path]);
+            }
+        }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Room created.')]);
 
@@ -64,7 +71,14 @@ class RoomController extends Controller
      */
     public function update(RoomUpdateRequest $request, Room $room): RedirectResponse
     {
-        $room->update($request->validated());
+        $room->update($request->safe()->except('images'));
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $path = $file->store("rooms/{$room->id}", 'public');
+                $room->roomImages()->create(['image_path' => $path]);
+            }
+        }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Room updated.')]);
 
