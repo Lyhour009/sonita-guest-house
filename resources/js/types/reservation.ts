@@ -14,12 +14,29 @@ export type ReservationRoomSummary = {
     id: string;
     room_number: string;
     room_type: string;
+    price_per_night?: number;
+    price_per_month?: number;
 };
 
 export type ReservationGuestSummary = {
     id: string;
     full_name: string;
     email: string;
+    phone_number?: string | null;
+};
+
+export type ReservationInvoiceSummary = {
+    id: string;
+    total_amount: number;
+    status: 'pending' | 'paid' | 'overdue' | 'cancelled';
+    due_date?: string | null;
+};
+
+export type ReservationServiceSummary = {
+    id: string;
+    name: string;
+    price: number;
+    quantity: number;
 };
 
 export type Reservation = {
@@ -30,9 +47,32 @@ export type Reservation = {
     start_date: string | null;
     end_date: string | null;
     status: ReservationStatus;
+    deposit_amount?: number | null;
+    monthly_due_day?: number | null;
+    num_guests?: number | null;
+    created_at?: string;
     room: ReservationRoomSummary;
 };
 
 export type StaffReservation = Reservation & {
     guest: ReservationGuestSummary;
+    latest_invoice?: ReservationInvoiceSummary | null;
+    services?: ReservationServiceSummary[];
+};
+
+export type TimelineBooking = {
+    id: string;
+    guest_name: string;
+    reservation_type: ReservationType;
+    status: ReservationStatus;
+    start_date: string;
+    end_date: string;
+};
+
+export type TimelineRoom = {
+    id: string;
+    room_number: string;
+    room_type: string;
+    status: string;
+    bookings: TimelineBooking[];
 };

@@ -22,6 +22,8 @@ export interface DatePickerProps {
     className?: string;
     required?: boolean;
     align?: 'start' | 'center' | 'end';
+    side?: 'top' | 'right' | 'bottom' | 'left';
+    sideOffset?: number;
 }
 
 export function DatePicker({
@@ -36,6 +38,8 @@ export function DatePicker({
     className,
     required = false,
     align = 'start',
+    side = 'bottom',
+    sideOffset = 6,
 }: DatePickerProps) {
     const [open, setOpen] = React.useState(false);
 
@@ -126,7 +130,10 @@ export function DatePicker({
                 </PopoverTrigger>
                 <PopoverContent
                     align={align}
-                    className="w-auto p-3 rounded-2xl shadow-xl border-border"
+                    side="bottom"
+                    sideOffset={4}
+                    avoidCollisions={false}
+                    className="w-72 p-3 rounded-2xl shadow-xl border-border z-[100] bg-popover"
                 >
                     <Calendar
                         mode="single"
