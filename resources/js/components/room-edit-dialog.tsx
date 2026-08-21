@@ -11,6 +11,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import type { RoomDetail } from '@/types';
 
@@ -41,15 +42,18 @@ export default function RoomEditDialog({ room, onOpenChange }: Props) {
                             onSuccess={() => onOpenChange(false)}
                             className="space-y-6"
                         >
-                            {({ processing, errors }) => (
+                            {({ processing, errors, isDirty }) => (
                                 <>
                                     <RoomForm room={room} errors={errors} />
 
                                     <DialogFooter>
                                         <Button
                                             type="submit"
-                                            disabled={processing}
+                                            disabled={processing || !isDirty}
                                         >
+                                            {processing && (
+                                                <Spinner className="mr-2" />
+                                            )}
                                             {t('common.actions.saveChanges')}
                                         </Button>
                                     </DialogFooter>

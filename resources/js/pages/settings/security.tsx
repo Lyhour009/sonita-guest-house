@@ -10,6 +10,7 @@ import ManageTwoFactor from '@/components/manage-two-factor';
 import PasswordInput from '@/components/password-input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import { edit } from '@/routes/security';
 
@@ -60,7 +61,7 @@ export default function Security(props: Props) {
                     }}
                     className="space-y-6"
                 >
-                    {({ errors, processing }) => (
+                    {({ errors, processing, isDirty }) => (
                         <>
                             <div className="grid gap-2">
                                 <Label htmlFor="current_password">
@@ -130,9 +131,10 @@ export default function Security(props: Props) {
 
                             <div className="flex items-center gap-4">
                                 <Button
-                                    disabled={processing}
+                                    disabled={processing || !isDirty}
                                     data-test="update-password-button"
                                 >
+                                    {processing && <Spinner className="mr-2" />}
                                     {t('common.actions.save')}
                                 </Button>
                             </div>

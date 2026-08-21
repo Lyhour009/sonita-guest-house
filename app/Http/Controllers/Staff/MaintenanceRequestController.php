@@ -86,7 +86,7 @@ class MaintenanceRequestController extends Controller
 
         $action->handle($maintenanceRequest, $assignee);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Maintenance request assigned.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.maintenance.assigned']);
 
         return back();
     }
@@ -98,7 +98,7 @@ class MaintenanceRequestController extends Controller
     {
         $action->handle($maintenanceRequest, (string) $request->validated('status'));
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Maintenance request updated.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.maintenance.updated']);
 
         return back();
     }

@@ -24,6 +24,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import {
     Table,
     TableBody,
@@ -33,6 +34,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
+import { usePendingAction } from '@/hooks/use-pending-action';
 import { useTranslation } from '@/hooks/use-translation';
 import { destroy, index as adminRoomsIndex } from '@/routes/admin/rooms';
 import type { Paginated, RoomDetail } from '@/types';
@@ -84,8 +86,13 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearch]);
 
+    const { isPending, withPending } = usePendingAction();
+
     const deleteRoom = (roomId: string) => {
-        router.delete(destroy(roomId).url, { preserveScroll: true });
+        router.delete(
+            destroy(roomId).url,
+            withPending(`delete-${roomId}`, { preserveScroll: true }),
+        );
     };
 
     return (
@@ -284,12 +291,20 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                                                         </AlertDialogCancel>
                                                         <AlertDialogAction
                                                             variant="destructive"
+                                                            disabled={isPending(
+                                                                `delete-${room.id}`,
+                                                            )}
                                                             onClick={() =>
                                                                 deleteRoom(
                                                                     room.id,
                                                                 )
                                                             }
                                                         >
+                                                            {isPending(
+                                                                `delete-${room.id}`,
+                                                            ) && (
+                                                                <Spinner className="mr-2" />
+                                                            )}
                                                             {t(
                                                                 'common.actions.delete',
                                                             )}

@@ -56,7 +56,7 @@ class PaymentController extends Controller
             'proof_image' => $request->file('proof_image'),
         ]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Payment submitted — awaiting confirmation.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.payments.submitted']);
 
         return to_route('invoices.index');
     }

@@ -176,7 +176,9 @@ class ReservationController extends Controller
     {
         $action->handle($request->validated());
 
-        return back()->with('success', 'Reservation created successfully.');
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.reservations.createdByStaff']);
+
+        return back();
     }
 
     /**
@@ -186,7 +188,9 @@ class ReservationController extends Controller
     {
         $action->handle($reservation);
 
-        return back()->with('success', 'Reservation confirmed.');
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.reservations.confirmed']);
+
+        return back();
     }
 
     /**
@@ -196,7 +200,9 @@ class ReservationController extends Controller
     {
         $action->handle($reservation);
 
-        return back()->with('success', 'Check-in completed successfully.');
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.reservations.checkedIn']);
+
+        return back();
     }
 
     /**
@@ -206,7 +212,9 @@ class ReservationController extends Controller
     {
         $action->handle($reservation);
 
-        return back()->with('success', 'Check-out completed successfully.');
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.reservations.checkedOut']);
+
+        return back();
     }
 
     /**
@@ -216,6 +224,8 @@ class ReservationController extends Controller
     {
         $action->handle($reservation);
 
-        return back()->with('success', 'Reservation cancelled.');
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.reservations.cancelled']);
+
+        return back();
     }
 }

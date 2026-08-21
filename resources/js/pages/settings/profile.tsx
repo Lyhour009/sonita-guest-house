@@ -7,6 +7,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
@@ -46,7 +47,7 @@ export default function Profile({
                     }}
                     className="space-y-6"
                 >
-                    {({ processing, errors }) => (
+                    {({ processing, errors, isDirty }) => (
                         <>
                             <div className="grid gap-2">
                                 <Label htmlFor="full_name">
@@ -126,9 +127,10 @@ export default function Profile({
 
                             <div className="flex items-center gap-4">
                                 <Button
-                                    disabled={processing}
+                                    disabled={processing || !isDirty}
                                     data-test="update-profile-button"
                                 >
+                                    {processing && <Spinner className="mr-2" />}
                                     {t('common.actions.save')}
                                 </Button>
                             </div>

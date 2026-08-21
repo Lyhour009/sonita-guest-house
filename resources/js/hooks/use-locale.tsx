@@ -10,7 +10,7 @@ export type UseLocaleReturn = {
 const listeners = new Set<() => void>();
 let currentLocale: Locale = 'en';
 
-const getStoredLocale = (): Locale => {
+export const getStoredLocale = (): Locale => {
     if (typeof window === 'undefined') {
         return 'en';
     }

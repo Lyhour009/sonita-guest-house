@@ -32,7 +32,7 @@ type Props = {
     onOpenChange: (open: boolean) => void;
     onOpenCheckin: (reservation: StaffReservation) => void;
     onOpenPrintSlip: (reservation: StaffReservation) => void;
-    onAction: (url: string) => void;
+    onAction: (id: string, url: string) => void;
     confirmUrl?: (id: string) => string;
     checkOutUrl?: (id: string) => string;
     cancelUrl?: (id: string) => string;
@@ -69,20 +69,29 @@ export default function ReservationDetailsDrawer({
         switch (status) {
             case 'paid':
                 return (
-                    <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-sans text-xs font-semibold gap-1">
+                    <Badge
+                        variant="outline"
+                        className="gap-1 border-emerald-500/40 bg-emerald-500/10 font-sans text-xs font-semibold text-emerald-700 dark:text-emerald-300"
+                    >
                         <span className="size-1.5 rounded-full bg-emerald-500" />
                         {t('staff.reservations.paymentStatus.paid')}
                     </Badge>
                 );
             case 'pending':
                 return (
-                    <Badge variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-sans text-xs font-semibold">
+                    <Badge
+                        variant="outline"
+                        className="border-amber-500/40 bg-amber-500/10 font-sans text-xs font-semibold text-amber-700 dark:text-amber-300"
+                    >
                         {t('staff.reservations.paymentStatus.pending')}
                     </Badge>
                 );
             default:
                 return (
-                    <Badge variant="outline" className="border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-sans text-xs font-semibold">
+                    <Badge
+                        variant="outline"
+                        className="border-rose-500/40 bg-rose-500/10 font-sans text-xs font-semibold text-rose-600 dark:text-rose-400"
+                    >
                         {t('staff.reservations.paymentStatus.unpaid')}
                     </Badge>
                 );
@@ -93,85 +102,105 @@ export default function ReservationDetailsDrawer({
         switch (resStatus) {
             case 'confirmed':
                 return (
-                    <Badge variant="outline" className="border-primary/40 bg-primary/10 text-primary font-sans text-xs font-semibold">
+                    <Badge
+                        variant="outline"
+                        className="border-primary/40 bg-primary/10 font-sans text-xs font-semibold text-primary"
+                    >
                         {t('common.reservationStatus.confirmed')}
                     </Badge>
                 );
             case 'checked_in':
             case 'active':
                 return (
-                    <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-sans text-xs font-semibold gap-1.5">
-                        <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <Badge
+                        variant="outline"
+                        className="gap-1.5 border-emerald-500/40 bg-emerald-500/10 font-sans text-xs font-semibold text-emerald-700 dark:text-emerald-300"
+                    >
+                        <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
                         {t(`common.reservationStatus.${resStatus}`)}
                     </Badge>
                 );
             case 'checked_out':
                 return (
-                    <Badge variant="outline" className="border-border bg-muted/50 text-muted-foreground font-sans text-xs">
+                    <Badge
+                        variant="outline"
+                        className="border-border bg-muted/50 font-sans text-xs text-muted-foreground"
+                    >
                         {t('common.reservationStatus.checked_out')}
                     </Badge>
                 );
             case 'cancelled':
                 return (
-                    <Badge variant="outline" className="border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-sans text-xs">
+                    <Badge
+                        variant="outline"
+                        className="border-rose-500/40 bg-rose-500/10 font-sans text-xs text-rose-600 dark:text-rose-400"
+                    >
                         {t('common.reservationStatus.cancelled')}
                     </Badge>
                 );
             default:
                 return (
-                    <Badge variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-sans text-xs font-semibold">
+                    <Badge
+                        variant="outline"
+                        className="border-amber-500/40 bg-amber-500/10 font-sans text-xs font-semibold text-amber-700 dark:text-amber-300"
+                    >
                         {t('common.reservationStatus.pending')}
                     </Badge>
                 );
         }
     };
 
-    const totalAmount = reservation.latest_invoice?.total_amount
-        ?? (reservation.reservation_type === 'short_stay' ? (reservation.room.price_per_night ?? 0) : (reservation.room.price_per_month ?? 0));
+    const totalAmount =
+        reservation.latest_invoice?.total_amount ??
+        (reservation.reservation_type === 'short_stay'
+            ? (reservation.room.price_per_night ?? 0)
+            : (reservation.room.price_per_month ?? 0));
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="w-full sm:max-w-lg overflow-y-auto p-6 font-sans">
-                <SheetHeader className="pb-4 border-b border-border/80">
+            <SheetContent className="w-full overflow-y-auto p-6 font-sans sm:max-w-lg">
+                <SheetHeader className="border-b border-border/80 pb-4">
                     <div className="flex items-center justify-between">
-                        <span className="text-xs font-mono font-bold uppercase text-muted-foreground">
+                        <span className="font-mono text-xs font-bold text-muted-foreground uppercase">
                             #{reservation.id.substring(0, 8)}
                         </span>
                         <div className="flex items-center gap-2">
                             {getStatusBadge(reservation.status)}
-                            {getPaymentBadge(reservation.latest_invoice?.status)}
+                            {getPaymentBadge(
+                                reservation.latest_invoice?.status,
+                            )}
                         </div>
                     </div>
-                    <SheetTitle className="text-xl font-bold font-sans text-foreground">
+                    <SheetTitle className="font-sans text-xl font-bold text-foreground">
                         {t('staff.reservations.details.title')}
                     </SheetTitle>
-                    <SheetDescription className="text-xs font-sans text-muted-foreground">
+                    <SheetDescription className="font-sans text-xs text-muted-foreground">
                         {t('staff.reservations.details.subtitle')}
                     </SheetDescription>
                 </SheetHeader>
 
                 <div className="space-y-5 py-4">
                     {/* 1. Guest Profile */}
-                    <div className="rounded-2xl border border-border/80 bg-card p-4 space-y-3 shadow-2xs">
-                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                    <div className="space-y-3 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
+                        <h4 className="flex items-center gap-1.5 text-xs font-bold tracking-wider text-muted-foreground uppercase">
                             <User className="size-3.5" />
                             {t('staff.reservations.details.guestInfo')}
                         </h4>
 
                         <div className="flex items-center gap-3.5">
-                            <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary font-bold text-sm">
+                            <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-sm font-bold text-primary">
                                 {getInitials(reservation.guest.full_name)}
                             </div>
                             <div className="min-w-0 flex-1">
                                 <p className="text-base font-bold text-foreground">
                                     {reservation.guest.full_name}
                                 </p>
-                                <p className="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5">
+                                <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
                                     <Mail className="size-3" />
                                     {reservation.guest.email}
                                 </p>
                                 {reservation.guest.phone_number && (
-                                    <p className="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5">
+                                    <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
                                         <Phone className="size-3" />
                                         {reservation.guest.phone_number}
                                     </p>
@@ -179,8 +208,8 @@ export default function ReservationDetailsDrawer({
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between pt-2 border-t border-border/60 text-xs">
-                            <span className="text-muted-foreground flex items-center gap-1">
+                        <div className="flex items-center justify-between border-t border-border/60 pt-2 text-xs">
+                            <span className="flex items-center gap-1 text-muted-foreground">
                                 <Users className="size-3.5" />
                                 {t('staff.reservations.details.guestsCount')}
                             </span>
@@ -191,42 +220,52 @@ export default function ReservationDetailsDrawer({
                     </div>
 
                     {/* 2. Room & Stay Details */}
-                    <div className="rounded-2xl border border-border/80 bg-card p-4 space-y-3 shadow-2xs">
-                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                    <div className="space-y-3 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
+                        <h4 className="flex items-center gap-1.5 text-xs font-bold tracking-wider text-muted-foreground uppercase">
                             <Home className="size-3.5" />
                             {t('staff.reservations.details.stayInfo')}
                         </h4>
 
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2.5">
-                                <span className="flex size-9 items-center justify-center rounded-xl border border-border bg-background font-bold text-sm text-foreground shadow-2xs">
+                                <span className="flex size-9 items-center justify-center rounded-xl border border-border bg-background text-sm font-bold text-foreground shadow-2xs">
                                     #{reservation.room.room_number}
                                 </span>
                                 <div>
                                     <p className="text-sm font-bold text-foreground capitalize">
-                                        {t('staff.reservations.details.roomLabel', {
-                                            type: reservation.room.room_type,
-                                        })}
+                                        {t(
+                                            'staff.reservations.details.roomLabel',
+                                            {
+                                                type: reservation.room
+                                                    .room_type,
+                                            },
+                                        )}
                                     </p>
                                     <p className="text-xs text-muted-foreground capitalize">
-                                        {t(`staff.reservations.billingCadence.${reservation.reservation_type}`)}
+                                        {t(
+                                            `staff.reservations.billingCadence.${reservation.reservation_type}`,
+                                        )}
                                     </p>
                                 </div>
                             </div>
 
                             <div className="text-right text-xs">
-                                <span className="text-muted-foreground block text-[11px]">
+                                <span className="block text-[11px] text-muted-foreground">
                                     {t('staff.reservations.details.roomRate')}
                                 </span>
                                 <span className="font-bold text-foreground">
-                                    ${reservation.reservation_type === 'short_stay' ? `${reservation.room.price_per_night}/night` : `${reservation.room.price_per_month}/mo`}
+                                    $
+                                    {reservation.reservation_type ===
+                                    'short_stay'
+                                        ? `${reservation.room.price_per_night}/night`
+                                        : `${reservation.room.price_per_month}/mo`}
                                 </span>
                             </div>
                         </div>
 
-                        <div className="space-y-2 pt-2 border-t border-border/60 text-xs">
+                        <div className="space-y-2 border-t border-border/60 pt-2 text-xs">
                             <div className="flex items-center justify-between">
-                                <span className="text-muted-foreground flex items-center gap-1">
+                                <span className="flex items-center gap-1 text-muted-foreground">
                                     <Calendar className="size-3.5" />
                                     {t('staff.reservations.table.dates')}
                                 </span>
@@ -237,9 +276,11 @@ export default function ReservationDetailsDrawer({
 
                             {reservation.created_at && (
                                 <div className="flex items-center justify-between">
-                                    <span className="text-muted-foreground flex items-center gap-1">
+                                    <span className="flex items-center gap-1 text-muted-foreground">
                                         <Clock className="size-3.5" />
-                                        {t('staff.reservations.details.createdOn')}
+                                        {t(
+                                            'staff.reservations.details.createdOn',
+                                        )}
                                     </span>
                                     <span className="text-muted-foreground">
                                         {reservation.created_at}
@@ -250,8 +291,8 @@ export default function ReservationDetailsDrawer({
                     </div>
 
                     {/* 3. Financial & Billing Summary */}
-                    <div className="rounded-2xl border border-border/80 bg-card p-4 space-y-3 shadow-2xs">
-                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                    <div className="space-y-3 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
+                        <h4 className="flex items-center gap-1.5 text-xs font-bold tracking-wider text-muted-foreground uppercase">
                             <CreditCard className="size-3.5" />
                             {t('staff.reservations.details.financialInfo')}
                         </h4>
@@ -259,27 +300,38 @@ export default function ReservationDetailsDrawer({
                         <div className="space-y-2 text-xs">
                             <div className="flex items-center justify-between">
                                 <span className="text-muted-foreground">
-                                    {t('staff.reservations.details.paymentStatus')}
+                                    {t(
+                                        'staff.reservations.details.paymentStatus',
+                                    )}
                                 </span>
-                                {getPaymentBadge(reservation.latest_invoice?.status)}
+                                {getPaymentBadge(
+                                    reservation.latest_invoice?.status,
+                                )}
                             </div>
 
                             {reservation.deposit_amount && (
                                 <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground">
-                                        {t('staff.reservations.details.deposit')}
+                                        {t(
+                                            'staff.reservations.details.deposit',
+                                        )}
                                     </span>
                                     <span className="font-semibold text-foreground">
-                                        ${Number(reservation.deposit_amount).toFixed(2)}
+                                        $
+                                        {Number(
+                                            reservation.deposit_amount,
+                                        ).toFixed(2)}
                                     </span>
                                 </div>
                             )}
 
-                            <div className="flex items-center justify-between pt-2 border-t border-border/60 text-sm">
+                            <div className="flex items-center justify-between border-t border-border/60 pt-2 text-sm">
                                 <span className="font-bold text-foreground">
-                                    {t('staff.reservations.details.totalAmount')}
+                                    {t(
+                                        'staff.reservations.details.totalAmount',
+                                    )}
                                 </span>
-                                <span className="font-bold text-emerald-600 dark:text-emerald-400 text-base">
+                                <span className="text-base font-bold text-emerald-600 dark:text-emerald-400">
                                     ${Number(totalAmount).toFixed(2)}
                                 </span>
                             </div>
@@ -295,7 +347,7 @@ export default function ReservationDetailsDrawer({
                             onClick={() => {
                                 onOpenPrintSlip(reservation);
                             }}
-                            className="w-full rounded-xl h-10 gap-2 font-sans text-xs font-semibold border-border bg-card shadow-2xs cursor-pointer"
+                            className="h-10 w-full cursor-pointer gap-2 rounded-xl border-border bg-card font-sans text-xs font-semibold shadow-2xs"
                         >
                             <Printer className="size-4 text-primary" />
                             {t('staff.reservations.printSlip.printButton')}
@@ -306,10 +358,13 @@ export default function ReservationDetailsDrawer({
                             <Button
                                 type="button"
                                 onClick={() => {
-                                    onAction(confirmUrl(reservation.id));
+                                    onAction(
+                                        reservation.id,
+                                        confirmUrl(reservation.id),
+                                    );
                                     onOpenChange(false);
                                 }}
-                                className="w-full rounded-xl h-10 gap-2 bg-primary text-primary-foreground font-sans text-xs font-semibold shadow-2xs cursor-pointer"
+                                className="h-10 w-full cursor-pointer gap-2 rounded-xl bg-primary font-sans text-xs font-semibold text-primary-foreground shadow-2xs"
                             >
                                 <Check className="size-4" />
                                 {t('common.actions.confirm')}
@@ -317,19 +372,20 @@ export default function ReservationDetailsDrawer({
                         )}
 
                         {/* Check-in */}
-                        {reservation.status === 'confirmed' && reservation.reservation_type === 'short_stay' && (
-                            <Button
-                                type="button"
-                                onClick={() => {
-                                    onOpenCheckin(reservation);
-                                    onOpenChange(false);
-                                }}
-                                className="w-full rounded-xl h-10 gap-2 bg-primary text-primary-foreground font-sans text-xs font-semibold shadow-2xs cursor-pointer"
-                            >
-                                <LogIn className="size-4" />
-                                {t('staff.reservations.checkIn')}
-                            </Button>
-                        )}
+                        {reservation.status === 'confirmed' &&
+                            reservation.reservation_type === 'short_stay' && (
+                                <Button
+                                    type="button"
+                                    onClick={() => {
+                                        onOpenCheckin(reservation);
+                                        onOpenChange(false);
+                                    }}
+                                    className="h-10 w-full cursor-pointer gap-2 rounded-xl bg-primary font-sans text-xs font-semibold text-primary-foreground shadow-2xs"
+                                >
+                                    <LogIn className="size-4" />
+                                    {t('staff.reservations.checkIn')}
+                                </Button>
+                            )}
 
                         {/* Check-out */}
                         {reservation.status === 'checked_in' && checkOutUrl && (
@@ -337,10 +393,13 @@ export default function ReservationDetailsDrawer({
                                 type="button"
                                 variant="outline"
                                 onClick={() => {
-                                    onAction(checkOutUrl(reservation.id));
+                                    onAction(
+                                        reservation.id,
+                                        checkOutUrl(reservation.id),
+                                    );
                                     onOpenChange(false);
                                 }}
-                                className="w-full rounded-xl h-10 gap-2 border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-sans text-xs font-semibold hover:bg-emerald-500/20 cursor-pointer"
+                                className="h-10 w-full cursor-pointer gap-2 rounded-xl border-emerald-500/40 bg-emerald-500/10 font-sans text-xs font-semibold text-emerald-700 hover:bg-emerald-500/20 dark:text-emerald-300"
                             >
                                 <LogOut className="size-4" />
                                 {t('staff.reservations.checkOut')}
@@ -348,20 +407,26 @@ export default function ReservationDetailsDrawer({
                         )}
 
                         {/* Cancel */}
-                        {['pending', 'confirmed', 'active'].includes(reservation.status) && cancelUrl && (
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                onClick={() => {
-                                    onAction(cancelUrl(reservation.id));
-                                    onOpenChange(false);
-                                }}
-                                className="w-full rounded-xl h-9 text-xs text-rose-600 hover:bg-rose-500/10 font-sans cursor-pointer"
-                            >
-                                <X className="size-3.5 mr-1" />
-                                {t('common.actions.cancel')}
-                            </Button>
-                        )}
+                        {['pending', 'confirmed', 'active'].includes(
+                            reservation.status,
+                        ) &&
+                            cancelUrl && (
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    onClick={() => {
+                                        onAction(
+                                            reservation.id,
+                                            cancelUrl(reservation.id),
+                                        );
+                                        onOpenChange(false);
+                                    }}
+                                    className="h-9 w-full cursor-pointer rounded-xl font-sans text-xs text-rose-600 hover:bg-rose-500/10"
+                                >
+                                    <X className="mr-1 size-3.5" />
+                                    {t('common.actions.cancel')}
+                                </Button>
+                            )}
                     </div>
                 </div>
             </SheetContent>

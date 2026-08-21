@@ -12,6 +12,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import {
     Table,
     TableBody,
@@ -21,6 +22,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
+import { usePendingAction } from '@/hooks/use-pending-action';
 import { useTranslation } from '@/hooks/use-translation';
 import { proof as proofShow } from '@/routes/payments';
 import { index as staffPaymentsIndex } from '@/routes/staff/payments';
@@ -66,8 +68,14 @@ export default function StaffPaymentsIndex({ payments, filters }: Props) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearch]);
 
-    const runAction = (url: string) => {
-        router.patch(url, {}, { preserveScroll: true, only: ['payments'] });
+    const { isPending, withPending } = usePendingAction();
+
+    const runAction = (key: string, url: string) => {
+        router.patch(
+            url,
+            {},
+            withPending(key, { preserveScroll: true, only: ['payments'] }),
+        );
     };
 
     return (
@@ -196,14 +204,21 @@ export default function StaffPaymentsIndex({ payments, filters }: Props) {
                                             <div className="flex justify-end gap-2">
                                                 <Button
                                                     size="sm"
+                                                    disabled={isPending(
+                                                        payment.id,
+                                                    )}
                                                     onClick={() =>
                                                         runAction(
+                                                            payment.id,
                                                             PaymentController.confirm.url(
                                                                 payment.id,
                                                             ),
                                                         )
                                                     }
                                                 >
+                                                    {isPending(payment.id) && (
+                                                        <Spinner className="mr-2" />
+                                                    )}
                                                     {t(
                                                         'common.actions.confirm',
                                                     )}
@@ -211,14 +226,21 @@ export default function StaffPaymentsIndex({ payments, filters }: Props) {
                                                 <Button
                                                     variant="destructive"
                                                     size="sm"
+                                                    disabled={isPending(
+                                                        payment.id,
+                                                    )}
                                                     onClick={() =>
                                                         runAction(
+                                                            payment.id,
                                                             PaymentController.reject.url(
                                                                 payment.id,
                                                             ),
                                                         )
                                                     }
                                                 >
+                                                    {isPending(payment.id) && (
+                                                        <Spinner className="mr-2" />
+                                                    )}
                                                     {t('staff.payments.reject')}
                                                 </Button>
                                             </div>

@@ -1,6 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import HousekeepingController from '@/actions/App/Http/Controllers/Staff/HousekeepingController';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import {
     Table,
     TableBody,
@@ -9,6 +10,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { usePendingAction } from '@/hooks/use-pending-action';
 import { useTranslation } from '@/hooks/use-translation';
 import { index as staffHousekeepingIndex } from '@/routes/staff/housekeeping';
 import type { CleaningRoom } from '@/types';
@@ -19,12 +21,16 @@ type Props = {
 
 export default function StaffHousekeepingIndex({ rooms }: Props) {
     const { t } = useTranslation();
+    const { isPending, withPending } = usePendingAction();
 
     const markClean = (roomId: string) => {
         router.patch(
             HousekeepingController.markClean.url(roomId),
             {},
-            { preserveScroll: true, only: ['rooms'] },
+            withPending(`clean-${roomId}`, {
+                preserveScroll: true,
+                only: ['rooms'],
+            }),
         );
     };
 
@@ -70,8 +76,14 @@ export default function StaffHousekeepingIndex({ rooms }: Props) {
                                     <TableCell className="text-right">
                                         <Button
                                             size="sm"
+                                            disabled={isPending(
+                                                `clean-${room.id}`,
+                                            )}
                                             onClick={() => markClean(room.id)}
                                         >
+                                            {isPending(`clean-${room.id}`) && (
+                                                <Spinner className="mr-2" />
+                                            )}
                                             {t('staff.housekeeping.markClean')}
                                         </Button>
                                     </TableCell>

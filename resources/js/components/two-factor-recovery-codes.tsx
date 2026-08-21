@@ -10,6 +10,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import { regenerateRecoveryCodes } from '@/routes/two-factor';
 
@@ -95,7 +96,7 @@ export default function TwoFactorRecoveryCodes({
                                     disabled={processing}
                                     aria-describedby="regenerate-warning"
                                 >
-                                    <RefreshCw />{' '}
+                                    {processing ? <Spinner /> : <RefreshCw />}{' '}
                                     {t(
                                         'auth.twoFactor.recoveryCodes.regenerateButton',
                                     )}

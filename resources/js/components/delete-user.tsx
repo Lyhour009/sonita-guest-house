@@ -15,6 +15,7 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 
 export default function DeleteUser() {
@@ -112,6 +113,9 @@ export default function DeleteUser() {
                                                 type="submit"
                                                 data-test="confirm-delete-user-button"
                                             >
+                                                {processing && (
+                                                    <Spinner className="mr-2" />
+                                                )}
                                                 {t(
                                                     'auth.settings.deleteAccount.deleteButton',
                                                 )}

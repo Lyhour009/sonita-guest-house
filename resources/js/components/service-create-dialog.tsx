@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 
 export default function ServiceCreateDialog() {
@@ -61,6 +62,7 @@ export default function ServiceCreateDialog() {
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
+                                    {processing && <Spinner className="mr-2" />}
                                     {t('services.createService')}
                                 </Button>
                             </DialogFooter>

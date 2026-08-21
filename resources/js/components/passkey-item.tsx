@@ -10,6 +10,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import type { Passkey } from '@/types/auth';
 
@@ -95,6 +96,7 @@ export default function PasskeyItem({ passkey, onDelete }: Props) {
                             onClick={handleDelete}
                             disabled={isDeleting}
                         >
+                            {isDeleting && <Spinner className="mr-2" />}
                             {isDeleting
                                 ? t('auth.passkeys.item.removingButton')
                                 : t('auth.passkeys.item.removeButton')}

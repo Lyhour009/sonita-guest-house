@@ -15,6 +15,7 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import {
     Table,
     TableBody,
@@ -23,6 +24,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { usePendingAction } from '@/hooks/use-pending-action';
 import { useTranslation } from '@/hooks/use-translation';
 import { destroy, index as adminServicesIndex } from '@/routes/admin/services';
 import type { Paginated, Service } from '@/types';
@@ -44,8 +46,13 @@ export default function AdminServicesIndex({ services }: Props) {
         [services.data, editingServiceId],
     );
 
+    const { isPending, withPending } = usePendingAction();
+
     const deleteService = (serviceId: string) => {
-        router.delete(destroy(serviceId).url, { preserveScroll: true });
+        router.delete(
+            destroy(serviceId).url,
+            withPending(`delete-${serviceId}`, { preserveScroll: true }),
+        );
     };
 
     return (
@@ -138,12 +145,20 @@ export default function AdminServicesIndex({ services }: Props) {
                                                         </AlertDialogCancel>
                                                         <AlertDialogAction
                                                             variant="destructive"
+                                                            disabled={isPending(
+                                                                `delete-${service.id}`,
+                                                            )}
                                                             onClick={() =>
                                                                 deleteService(
                                                                     service.id,
                                                                 )
                                                             }
                                                         >
+                                                            {isPending(
+                                                                `delete-${service.id}`,
+                                                            ) && (
+                                                                <Spinner className="mr-2" />
+                                                            )}
                                                             {t(
                                                                 'common.actions.delete',
                                                             )}

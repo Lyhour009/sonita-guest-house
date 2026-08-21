@@ -20,6 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import type { Invoice } from '@/types';
 
@@ -116,6 +117,7 @@ export default function PaymentSubmitDialog({ invoice }: Props) {
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
+                                    {processing && <Spinner className="mr-2" />}
                                     {t('payments.submitDialog.submit')}
                                 </Button>
                             </DialogFooter>

@@ -21,6 +21,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import type { ActiveLongStayReservationOption } from '@/types';
 
@@ -95,7 +96,9 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
                                     name="billing_period"
                                     value={billingPeriod}
                                     onChange={setBillingPeriod}
-                                    placeholder={t('adminInvoices.dialog.billingMonth')}
+                                    placeholder={t(
+                                        'adminInvoices.dialog.billingMonth',
+                                    )}
                                 />
                                 <InputError message={errors.billing_period} />
                             </div>
@@ -177,6 +180,7 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
+                                    {processing && <Spinner className="mr-2" />}
                                     {t('adminInvoices.dialog.submit')}
                                 </Button>
                             </DialogFooter>

@@ -38,7 +38,7 @@ class ServiceController extends Controller
     {
         Service::create($request->validated());
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Service created.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.services.created']);
 
         return to_route('admin.services.index');
     }
@@ -50,7 +50,7 @@ class ServiceController extends Controller
     {
         $service->update($request->validated());
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Service updated.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.services.updated']);
 
         return to_route('admin.services.index');
     }
@@ -62,7 +62,7 @@ class ServiceController extends Controller
     {
         $service->delete();
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Service deleted.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.services.deleted']);
 
         return to_route('admin.services.index');
     }

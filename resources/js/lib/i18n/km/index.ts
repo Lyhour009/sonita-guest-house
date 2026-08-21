@@ -16,6 +16,7 @@ import { services } from './services';
 import { settingsPage } from './settingsPage';
 import { staff } from './staff';
 import { staffAccounts } from './staffAccounts';
+import { toasts } from './toasts';
 import { welcome } from './welcome';
 
 export const km: Dictionary = {
@@ -37,4 +38,5 @@ export const km: Dictionary = {
     adminInvoices,
     adminRooms,
     staff,
+    toasts,
 };

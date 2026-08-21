@@ -33,7 +33,7 @@ class HousekeepingController extends Controller
     {
         $action->handle($room);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Room marked as clean.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.housekeeping.roomCleaned']);
 
         return back();
     }

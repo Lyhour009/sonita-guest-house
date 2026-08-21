@@ -16,6 +16,7 @@ export const common: Dictionary['common'] = {
         viewDetails: 'មើលព័ត៌មានលម្អិត',
         confirm: 'បញ្ជាក់',
         submit: 'ដាក់ស្នើ',
+        processing: 'កំពុងដំណើរការ...',
         close: 'បិទ',
         back: 'ថយក្រោយ',
         next: 'បន្ទាប់',

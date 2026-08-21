@@ -2,6 +2,8 @@ import { router } from '@inertiajs/react';
 import type { ChangeEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
+import { usePendingAction } from '@/hooks/use-pending-action';
 import { useTranslation } from '@/hooks/use-translation';
 import { destroy, store } from '@/routes/admin/rooms/images';
 import type { RoomImage } from '@/types';
@@ -11,8 +13,11 @@ type Props = {
     images: RoomImage[];
 };
 
+const UPLOAD_KEY = 'upload';
+
 export default function RoomImageManager({ roomId, images }: Props) {
     const { t } = useTranslation();
+    const { isPending, withPending } = usePendingAction();
 
     const handleUpload = (event: ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -24,7 +29,7 @@ export default function RoomImageManager({ roomId, images }: Props) {
         router.post(
             store(roomId).url,
             { images: Array.from(files) },
-            {
+            withPending(UPLOAD_KEY, {
                 forceFormData: true,
                 preserveScroll: true,
                 preserveState: true,
@@ -32,16 +37,19 @@ export default function RoomImageManager({ roomId, images }: Props) {
                 onFinish: () => {
                     event.target.value = '';
                 },
-            },
+            }),
         );
     };
 
     const handleDelete = (roomImage: RoomImage) => {
-        router.delete(destroy({ room: roomId, roomImage: roomImage.id }).url, {
-            preserveScroll: true,
-            preserveState: true,
-            only: ['rooms'],
-        });
+        router.delete(
+            destroy({ room: roomId, roomImage: roomImage.id }).url,
+            withPending(roomImage.id, {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['rooms'],
+            }),
+        );
     };
 
     return (
@@ -59,8 +67,12 @@ export default function RoomImageManager({ roomId, images }: Props) {
                             variant="destructive"
                             size="sm"
                             className="absolute top-1 right-1 opacity-0 transition-opacity group-hover:opacity-100"
+                            disabled={isPending(image.id)}
                             onClick={() => handleDelete(image)}
                         >
+                            {isPending(image.id) && (
+                                <Spinner className="mr-2" />
+                            )}
                             {t('adminRooms.imageManager.remove')}
                         </Button>
                     </div>
@@ -76,14 +88,18 @@ export default function RoomImageManager({ roomId, images }: Props) {
                 <Label htmlFor="room_images">
                     {t('adminRooms.imageManager.upload')}
                 </Label>
-                <input
-                    id="room_images"
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleUpload}
-                    className="text-sm"
-                />
+                <div className="flex items-center gap-2">
+                    <input
+                        id="room_images"
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleUpload}
+                        disabled={isPending(UPLOAD_KEY)}
+                        className="text-sm disabled:opacity-50"
+                    />
+                    {isPending(UPLOAD_KEY) && <Spinner />}
+                </div>
             </div>
         </div>
     );

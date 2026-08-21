@@ -23,7 +23,7 @@ class RoomImageController extends Controller
             ]);
         }
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Images uploaded.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.rooms.imagesUploaded']);
 
         return back();
     }
@@ -37,7 +37,7 @@ class RoomImageController extends Controller
 
         $roomImage->delete();
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Image removed.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.rooms.imageRemoved']);
 
         return back();
     }

@@ -21,6 +21,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { DatePicker } from '@/components/ui/date-picker';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import type { ReservationType, RoomDetail } from '@/types';
 
@@ -217,6 +218,7 @@ export default function ReservationBookDialog({ room }: Props) {
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
+                                    {processing && <Spinner className="mr-2" />}
                                     {t('reservations.bookDialog.submit')}
                                 </Button>
                             </DialogFooter>

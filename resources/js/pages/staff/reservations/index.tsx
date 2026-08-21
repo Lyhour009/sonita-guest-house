@@ -32,6 +32,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import {
     Table,
     TableBody,
@@ -41,6 +42,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
+import { usePendingAction } from '@/hooks/use-pending-action';
 import { useTranslation } from '@/hooks/use-translation';
 import { index as staffReservationsIndex } from '@/routes/staff/reservations';
 import type { Paginated, RoomOption } from '@/types';
@@ -89,7 +91,8 @@ export default function StaffReservationsIndex({
     const [viewMode, setViewMode] = useState<'table' | 'timeline'>('table');
 
     // Dialog & Drawer States
-    const [selectedReservation, setSelectedReservation] = useState<StaffReservation | null>(null);
+    const [selectedReservation, setSelectedReservation] =
+        useState<StaffReservation | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isCheckinOpen, setIsCheckinOpen] = useState(false);
     const [isPrintSlipOpen, setIsPrintSlipOpen] = useState(false);
@@ -107,7 +110,12 @@ export default function StaffReservationsIndex({
             {
                 preserveState: true,
                 replace: true,
-                only: ['reservations', 'filters', 'statusCounts', 'timelineRooms'],
+                only: [
+                    'reservations',
+                    'filters',
+                    'statusCounts',
+                    'timelineRooms',
+                ],
             },
         );
     };
@@ -119,8 +127,17 @@ export default function StaffReservationsIndex({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearch]);
 
-    const runAction = (url: string) => {
-        router.patch(url, {}, { preserveScroll: true, only: ['reservations', 'statusCounts', 'timelineRooms'] });
+    const { isPending, withPending } = usePendingAction();
+
+    const runAction = (id: string, url: string) => {
+        router.patch(
+            url,
+            {},
+            withPending(id, {
+                preserveScroll: true,
+                only: ['reservations', 'statusCounts', 'timelineRooms'],
+            }),
+        );
     };
 
     const getInitials = (name: string) => {
@@ -134,33 +151,48 @@ export default function StaffReservationsIndex({
         switch (resStatus) {
             case 'confirmed':
                 return (
-                    <Badge variant="outline" className="border-primary/40 bg-primary/10 text-primary font-sans text-xs font-semibold">
+                    <Badge
+                        variant="outline"
+                        className="border-primary/40 bg-primary/10 font-sans text-xs font-semibold text-primary"
+                    >
                         {t('common.reservationStatus.confirmed')}
                     </Badge>
                 );
             case 'checked_in':
             case 'active':
                 return (
-                    <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-sans text-xs font-semibold gap-1.5">
-                        <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <Badge
+                        variant="outline"
+                        className="gap-1.5 border-emerald-500/40 bg-emerald-500/10 font-sans text-xs font-semibold text-emerald-700 dark:text-emerald-300"
+                    >
+                        <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
                         {t(`common.reservationStatus.${resStatus}`)}
                     </Badge>
                 );
             case 'checked_out':
                 return (
-                    <Badge variant="outline" className="border-border bg-muted/50 text-muted-foreground font-sans text-xs">
+                    <Badge
+                        variant="outline"
+                        className="border-border bg-muted/50 font-sans text-xs text-muted-foreground"
+                    >
                         {t('common.reservationStatus.checked_out')}
                     </Badge>
                 );
             case 'cancelled':
                 return (
-                    <Badge variant="outline" className="border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-sans text-xs">
+                    <Badge
+                        variant="outline"
+                        className="border-rose-500/40 bg-rose-500/10 font-sans text-xs text-rose-600 dark:text-rose-400"
+                    >
                         {t('common.reservationStatus.cancelled')}
                     </Badge>
                 );
             default:
                 return (
-                    <Badge variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-sans text-xs font-semibold">
+                    <Badge
+                        variant="outline"
+                        className="border-amber-500/40 bg-amber-500/10 font-sans text-xs font-semibold text-amber-700 dark:text-amber-300"
+                    >
                         {t('common.reservationStatus.pending')}
                     </Badge>
                 );
@@ -171,20 +203,29 @@ export default function StaffReservationsIndex({
         switch (payStatus) {
             case 'paid':
                 return (
-                    <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-sans text-[11px] font-semibold gap-1">
+                    <Badge
+                        variant="outline"
+                        className="gap-1 border-emerald-500/40 bg-emerald-500/10 font-sans text-[11px] font-semibold text-emerald-700 dark:text-emerald-300"
+                    >
                         <span className="size-1 rounded-full bg-emerald-500" />
                         {t('staff.reservations.paymentStatus.paid')}
                     </Badge>
                 );
             case 'pending':
                 return (
-                    <Badge variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-sans text-[11px] font-semibold">
+                    <Badge
+                        variant="outline"
+                        className="border-amber-500/40 bg-amber-500/10 font-sans text-[11px] font-semibold text-amber-700 dark:text-amber-300"
+                    >
                         {t('staff.reservations.paymentStatus.pending')}
                     </Badge>
                 );
             default:
                 return (
-                    <Badge variant="outline" className="border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-sans text-[11px] font-semibold">
+                    <Badge
+                        variant="outline"
+                        className="border-rose-500/40 bg-rose-500/10 font-sans text-[11px] font-semibold text-rose-600 dark:text-rose-400"
+                    >
                         {t('staff.reservations.paymentStatus.unpaid')}
                     </Badge>
                 );
@@ -195,34 +236,38 @@ export default function StaffReservationsIndex({
         <>
             <Head title={t('nav.staff.reservations')} />
 
-            <div className="w-full space-y-5 p-4 md:p-6 bg-background">
+            <div className="w-full space-y-5 bg-background p-4 md:p-6">
                 {/* 1. Standalone Clean Header */}
                 <div className="pt-1">
-                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground font-sans">
+                    <h1 className="font-sans text-2xl font-bold tracking-tight text-foreground md:text-3xl">
                         {t('staff.reservations.pageTitle')}
                     </h1>
-                    <p className="text-sm text-muted-foreground font-sans mt-0.5">
+                    <p className="mt-0.5 font-sans text-sm text-muted-foreground">
                         {t('staff.reservations.subtitle')}
                     </p>
                 </div>
 
                 {/* 2. Unified Toolbar: Search + Dropdown on Left, View Toggle & Create Button on Right */}
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
                     {/* Left: Search input & Status select */}
-                    <div className="flex flex-1 flex-col sm:flex-row items-stretch sm:items-center gap-2.5 max-w-xl">
+                    <div className="flex max-w-xl flex-1 flex-col items-stretch gap-2.5 sm:flex-row sm:items-center">
                         <div className="relative flex-1">
-                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                            <Search className="absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
-                                placeholder={t('staff.reservations.searchPlaceholder')}
+                                placeholder={t(
+                                    'staff.reservations.searchPlaceholder',
+                                )}
                                 value={search}
-                                onChange={(event) => setSearch(event.target.value)}
-                                className="pl-9.5 pr-8 h-10 rounded-xl border-border bg-card shadow-2xs font-sans text-sm"
+                                onChange={(event) =>
+                                    setSearch(event.target.value)
+                                }
+                                className="h-10 rounded-xl border-border bg-card pr-8 pl-9.5 font-sans text-sm shadow-2xs"
                             />
                             {search && (
                                 <button
                                     type="button"
                                     onClick={() => setSearch('')}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+                                    className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
                                 >
                                     <X className="size-3.5" />
                                 </button>
@@ -236,30 +281,53 @@ export default function StaffReservationsIndex({
                                 applyFilters({ status: value });
                             }}
                         >
-                            <SelectTrigger className="w-full sm:w-48 h-10 rounded-xl border-border bg-card shadow-2xs font-sans text-sm">
-                                <SelectValue placeholder={t('common.labels.status')} />
+                            <SelectTrigger className="h-10 w-full rounded-xl border-border bg-card font-sans text-sm shadow-2xs sm:w-48">
+                                <SelectValue
+                                    placeholder={t('common.labels.status')}
+                                />
                             </SelectTrigger>
                             <SelectContent className="rounded-xl border-border font-sans">
                                 <SelectItem value="any">
-                                    {t('staff.reservations.anyStatus')} {statusCounts?.all !== undefined ? `(${statusCounts.all})` : ''}
+                                    {t('staff.reservations.anyStatus')}{' '}
+                                    {statusCounts?.all !== undefined
+                                        ? `(${statusCounts.all})`
+                                        : ''}
                                 </SelectItem>
                                 <SelectItem value="confirmed">
-                                    {t('common.reservationStatus.confirmed')} {statusCounts?.confirmed !== undefined ? `(${statusCounts.confirmed})` : ''}
+                                    {t('common.reservationStatus.confirmed')}{' '}
+                                    {statusCounts?.confirmed !== undefined
+                                        ? `(${statusCounts.confirmed})`
+                                        : ''}
                                 </SelectItem>
                                 <SelectItem value="checked_in">
-                                    {t('common.reservationStatus.checked_in')} {statusCounts?.checked_in !== undefined ? `(${statusCounts.checked_in})` : ''}
+                                    {t('common.reservationStatus.checked_in')}{' '}
+                                    {statusCounts?.checked_in !== undefined
+                                        ? `(${statusCounts.checked_in})`
+                                        : ''}
                                 </SelectItem>
                                 <SelectItem value="active">
-                                    {t('common.reservationStatus.active')} {statusCounts?.active !== undefined ? `(${statusCounts.active})` : ''}
+                                    {t('common.reservationStatus.active')}{' '}
+                                    {statusCounts?.active !== undefined
+                                        ? `(${statusCounts.active})`
+                                        : ''}
                                 </SelectItem>
                                 <SelectItem value="pending">
-                                    {t('common.reservationStatus.pending')} {statusCounts?.pending !== undefined ? `(${statusCounts.pending})` : ''}
+                                    {t('common.reservationStatus.pending')}{' '}
+                                    {statusCounts?.pending !== undefined
+                                        ? `(${statusCounts.pending})`
+                                        : ''}
                                 </SelectItem>
                                 <SelectItem value="checked_out">
-                                    {t('common.reservationStatus.checked_out')} {statusCounts?.checked_out !== undefined ? `(${statusCounts.checked_out})` : ''}
+                                    {t('common.reservationStatus.checked_out')}{' '}
+                                    {statusCounts?.checked_out !== undefined
+                                        ? `(${statusCounts.checked_out})`
+                                        : ''}
                                 </SelectItem>
                                 <SelectItem value="cancelled">
-                                    {t('common.reservationStatus.cancelled')} {statusCounts?.cancelled !== undefined ? `(${statusCounts.cancelled})` : ''}
+                                    {t('common.reservationStatus.cancelled')}{' '}
+                                    {statusCounts?.cancelled !== undefined
+                                        ? `(${statusCounts.cancelled})`
+                                        : ''}
                                 </SelectItem>
                             </SelectContent>
                         </Select>
@@ -268,11 +336,11 @@ export default function StaffReservationsIndex({
                     {/* Right: View Switcher (Table vs Timeline) + Create Button */}
                     <div className="flex items-center gap-2.5">
                         {/* View Switcher Toggle */}
-                        <div className="flex h-10 items-center rounded-xl border border-border bg-card p-1 shadow-2xs gap-1">
+                        <div className="flex h-10 items-center gap-1 rounded-xl border border-border bg-card p-1 shadow-2xs">
                             <button
                                 type="button"
                                 onClick={() => setViewMode('table')}
-                                className={`flex h-8 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold font-sans transition-all cursor-pointer ${
+                                className={`flex h-8 cursor-pointer items-center gap-1.5 rounded-lg px-3 font-sans text-xs font-semibold transition-all ${
                                     viewMode === 'table'
                                         ? 'bg-primary text-primary-foreground shadow-2xs'
                                         : 'text-muted-foreground hover:text-foreground'
@@ -280,25 +348,34 @@ export default function StaffReservationsIndex({
                                 title={t('staff.reservations.viewMode.table')}
                             >
                                 <LayoutList className="size-3.5" />
-                                <span className="hidden md:inline">{t('staff.reservations.viewMode.table')}</span>
+                                <span className="hidden md:inline">
+                                    {t('staff.reservations.viewMode.table')}
+                                </span>
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setViewMode('timeline')}
-                                className={`flex h-8 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold font-sans transition-all cursor-pointer ${
+                                className={`flex h-8 cursor-pointer items-center gap-1.5 rounded-lg px-3 font-sans text-xs font-semibold transition-all ${
                                     viewMode === 'timeline'
                                         ? 'bg-primary text-primary-foreground shadow-2xs'
                                         : 'text-muted-foreground hover:text-foreground'
                                 }`}
-                                title={t('staff.reservations.viewMode.timeline')}
+                                title={t(
+                                    'staff.reservations.viewMode.timeline',
+                                )}
                             >
                                 <CalendarDays className="size-3.5" />
-                                <span className="hidden md:inline">{t('staff.reservations.viewMode.timeline')}</span>
+                                <span className="hidden md:inline">
+                                    {t('staff.reservations.viewMode.timeline')}
+                                </span>
                             </button>
                         </div>
 
                         {/* Create Walk-in / Booking Trigger */}
-                        <ReservationWalkinDialog guests={guests} rooms={rooms} />
+                        <ReservationWalkinDialog
+                            guests={guests}
+                            rooms={rooms}
+                        />
                     </div>
                 </div>
 
@@ -313,29 +390,29 @@ export default function StaffReservationsIndex({
                         }}
                     />
                 ) : (
-                    <div className="rounded-2xl border border-border/80 bg-card shadow-2xs overflow-hidden">
+                    <div className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-2xs">
                         <Table>
-                            <TableHeader className="bg-muted/50 border-b border-border">
+                            <TableHeader className="border-b border-border bg-muted/50">
                                 <TableRow className="h-13 border-border hover:bg-transparent">
-                                    <TableHead className="h-13 py-4 font-bold text-xs uppercase tracking-wider text-muted-foreground font-sans pl-6">
+                                    <TableHead className="h-13 py-4 pl-6 font-sans text-xs font-bold tracking-wider text-muted-foreground uppercase">
                                         {t('common.labels.guest')}
                                     </TableHead>
-                                    <TableHead className="h-13 py-4 font-bold text-xs uppercase tracking-wider text-muted-foreground font-sans px-6">
+                                    <TableHead className="h-13 px-6 py-4 font-sans text-xs font-bold tracking-wider text-muted-foreground uppercase">
                                         {t('common.labels.room')}
                                     </TableHead>
-                                    <TableHead className="h-13 py-4 font-bold text-xs uppercase tracking-wider text-muted-foreground font-sans px-4">
+                                    <TableHead className="h-13 px-4 py-4 font-sans text-xs font-bold tracking-wider text-muted-foreground uppercase">
                                         {t('common.labels.type')}
                                     </TableHead>
-                                    <TableHead className="h-13 py-4 font-bold text-xs uppercase tracking-wider text-muted-foreground font-sans px-4">
+                                    <TableHead className="h-13 px-4 py-4 font-sans text-xs font-bold tracking-wider text-muted-foreground uppercase">
                                         {t('staff.reservations.table.dates')}
                                     </TableHead>
-                                    <TableHead className="h-13 py-4 font-bold text-xs uppercase tracking-wider text-muted-foreground font-sans px-4">
+                                    <TableHead className="h-13 px-4 py-4 font-sans text-xs font-bold tracking-wider text-muted-foreground uppercase">
                                         {t('common.labels.status')}
                                     </TableHead>
-                                    <TableHead className="h-13 py-4 font-bold text-xs uppercase tracking-wider text-muted-foreground font-sans px-4">
+                                    <TableHead className="h-13 px-4 py-4 font-sans text-xs font-bold tracking-wider text-muted-foreground uppercase">
                                         {t('staff.reservations.table.payment')}
                                     </TableHead>
-                                    <TableHead className="h-13 py-4 font-bold text-xs uppercase tracking-wider text-muted-foreground font-sans text-right pr-6">
+                                    <TableHead className="h-13 py-4 pr-6 text-right font-sans text-xs font-bold tracking-wider text-muted-foreground uppercase">
                                         {t('common.actions.actions')}
                                     </TableHead>
                                 </TableRow>
@@ -345,11 +422,15 @@ export default function StaffReservationsIndex({
                                     <TableRow>
                                         <TableCell
                                             colSpan={7}
-                                            className="py-12 text-center text-muted-foreground font-sans"
+                                            className="py-12 text-center font-sans text-muted-foreground"
                                         >
                                             <div className="flex flex-col items-center justify-center gap-2">
                                                 <CalendarCheck className="size-8 text-muted-foreground/50" />
-                                                <p className="text-sm font-semibold">{t('staff.reservations.empty')}</p>
+                                                <p className="text-sm font-semibold">
+                                                    {t(
+                                                        'staff.reservations.empty',
+                                                    )}
+                                                </p>
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -357,24 +438,36 @@ export default function StaffReservationsIndex({
                                     reservations.data.map((reservation) => (
                                         <TableRow
                                             key={reservation.id}
-                                            className="h-16 transition-colors hover:bg-muted/20 cursor-pointer"
+                                            className="h-16 cursor-pointer transition-colors hover:bg-muted/20"
                                             onClick={() => {
-                                                setSelectedReservation(reservation);
+                                                setSelectedReservation(
+                                                    reservation,
+                                                );
                                                 setIsDetailsOpen(true);
                                             }}
                                         >
                                             {/* Guest Profile */}
                                             <TableCell className="py-3.5 pl-6">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="flex size-9.5 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold text-xs font-sans">
-                                                        {getInitials(reservation.guest.full_name)}
+                                                    <div className="flex size-9.5 shrink-0 items-center justify-center rounded-xl bg-primary/10 font-sans text-xs font-bold text-primary">
+                                                        {getInitials(
+                                                            reservation.guest
+                                                                .full_name,
+                                                        )}
                                                     </div>
                                                     <div className="min-w-0">
-                                                        <p className="truncate text-sm font-bold text-foreground font-sans">
-                                                            {reservation.guest.full_name}
+                                                        <p className="truncate font-sans text-sm font-bold text-foreground">
+                                                            {
+                                                                reservation
+                                                                    .guest
+                                                                    .full_name
+                                                            }
                                                         </p>
-                                                        <p className="truncate text-xs text-muted-foreground font-sans">
-                                                            {reservation.guest.email}
+                                                        <p className="truncate font-sans text-xs text-muted-foreground">
+                                                            {
+                                                                reservation
+                                                                    .guest.email
+                                                            }
                                                         </p>
                                                     </div>
                                                 </div>
@@ -383,27 +476,43 @@ export default function StaffReservationsIndex({
                                             {/* Room Badge with Padding */}
                                             <TableCell className="px-6 py-3.5">
                                                 <div className="flex items-center gap-2.5">
-                                                    <span className="flex h-8 min-w-10 px-2.5 items-center justify-center rounded-xl border border-border/90 bg-background font-bold text-[13px] text-foreground font-sans shadow-2xs">
-                                                        #{reservation.room.room_number}
+                                                    <span className="flex h-8 min-w-10 items-center justify-center rounded-xl border border-border/90 bg-background px-2.5 font-sans text-[13px] font-bold text-foreground shadow-2xs">
+                                                        #
+                                                        {
+                                                            reservation.room
+                                                                .room_number
+                                                        }
                                                     </span>
-                                                    <span className="text-xs font-medium text-muted-foreground font-sans capitalize">
-                                                        {reservation.room.room_type}
+                                                    <span className="font-sans text-xs font-medium text-muted-foreground capitalize">
+                                                        {
+                                                            reservation.room
+                                                                .room_type
+                                                        }
                                                     </span>
                                                 </div>
                                             </TableCell>
 
                                             {/* Type */}
                                             <TableCell className="px-4 py-3.5">
-                                                <div className="inline-flex items-center gap-1.5 rounded-lg border border-border/80 bg-background px-2.5 py-1 text-xs font-medium text-foreground font-sans">
-                                                    {reservation.reservation_type === 'short_stay' ? (
+                                                <div className="inline-flex items-center gap-1.5 rounded-lg border border-border/80 bg-background px-2.5 py-1 font-sans text-xs font-medium text-foreground">
+                                                    {reservation.reservation_type ===
+                                                    'short_stay' ? (
                                                         <>
                                                             <Calendar className="size-3.5 text-primary" />
-                                                            <span>{t('common.reservationType.short_stay')}</span>
+                                                            <span>
+                                                                {t(
+                                                                    'common.reservationType.short_stay',
+                                                                )}
+                                                            </span>
                                                         </>
                                                     ) : (
                                                         <>
                                                             <Home className="size-3.5 text-purple-600 dark:text-purple-400" />
-                                                            <span>{t('common.reservationType.long_stay')}</span>
+                                                            <span>
+                                                                {t(
+                                                                    'common.reservationType.long_stay',
+                                                                )}
+                                                            </span>
                                                         </>
                                                     )}
                                                 </div>
@@ -413,14 +522,17 @@ export default function StaffReservationsIndex({
                                             <TableCell className="px-4 py-3.5">
                                                 <div className="space-y-0.5 font-sans">
                                                     <div className="text-xs font-semibold text-foreground">
-                                                        {reservation.reservation_type === 'short_stay'
+                                                        {reservation.reservation_type ===
+                                                        'short_stay'
                                                             ? `${reservation.check_in_date} → ${reservation.check_out_date}`
                                                             : `${reservation.start_date} → ${reservation.end_date ?? t('staff.reservations.openEnded')}`}
                                                     </div>
-                                                    <div className="text-[11px] text-muted-foreground flex items-center gap-1">
+                                                    <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
                                                         <Clock className="size-3" />
                                                         <span>
-                                                            {t(`staff.reservations.billingCadence.${reservation.reservation_type}`)}
+                                                            {t(
+                                                                `staff.reservations.billingCadence.${reservation.reservation_type}`,
+                                                            )}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -428,101 +540,165 @@ export default function StaffReservationsIndex({
 
                                             {/* Status */}
                                             <TableCell className="px-4 py-3.5">
-                                                {getStatusBadge(reservation.status)}
+                                                {getStatusBadge(
+                                                    reservation.status,
+                                                )}
                                             </TableCell>
 
                                             {/* Payment Status Pill */}
                                             <TableCell className="px-4 py-3.5">
-                                                {getPaymentBadge(reservation.latest_invoice?.status)}
+                                                {getPaymentBadge(
+                                                    reservation.latest_invoice
+                                                        ?.status,
+                                                )}
                                             </TableCell>
 
                                             {/* Action Buttons */}
-                                            <TableCell className="text-right pr-6" onClick={(e) => e.stopPropagation()}>
+                                            <TableCell
+                                                className="pr-6 text-right"
+                                                onClick={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                            >
                                                 <div className="flex items-center justify-end gap-1.5">
                                                     {/* Print Slip Icon Button */}
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        className="size-8 p-0 rounded-xl text-muted-foreground hover:text-foreground font-sans"
-                                                        title={t('staff.reservations.printSlip.title')}
+                                                        className="size-8 rounded-xl p-0 font-sans text-muted-foreground hover:text-foreground"
+                                                        title={t(
+                                                            'staff.reservations.printSlip.title',
+                                                        )}
                                                         onClick={() => {
-                                                            setSelectedReservation(reservation);
-                                                            setIsPrintSlipOpen(true);
+                                                            setSelectedReservation(
+                                                                reservation,
+                                                            );
+                                                            setIsPrintSlipOpen(
+                                                                true,
+                                                            );
                                                         }}
                                                     >
                                                         <Printer className="size-4" />
                                                     </Button>
 
                                                     {/* Confirm Button */}
-                                                    {reservation.status === 'pending' && (
+                                                    {reservation.status ===
+                                                        'pending' && (
                                                         <Button
                                                             size="sm"
-                                                            className="h-8 gap-1 rounded-xl bg-primary text-primary-foreground font-sans text-xs font-semibold shadow-2xs"
+                                                            className="h-8 gap-1 rounded-xl bg-primary font-sans text-xs font-semibold text-primary-foreground shadow-2xs"
+                                                            disabled={isPending(
+                                                                reservation.id,
+                                                            )}
                                                             onClick={() =>
                                                                 runAction(
+                                                                    reservation.id,
                                                                     ReservationController.confirm.url(
                                                                         reservation.id,
                                                                     ),
                                                                 )
                                                             }
                                                         >
-                                                            <Check className="size-3.5" />
-                                                            {t('common.actions.confirm')}
+                                                            {isPending(
+                                                                reservation.id,
+                                                            ) ? (
+                                                                <Spinner className="size-3.5" />
+                                                            ) : (
+                                                                <Check className="size-3.5" />
+                                                            )}
+                                                            {t(
+                                                                'common.actions.confirm',
+                                                            )}
                                                         </Button>
                                                     )}
 
                                                     {/* Check In Button (Opens Modal) */}
-                                                    {reservation.status === 'confirmed' &&
-                                                        reservation.reservation_type === 'short_stay' && (
+                                                    {reservation.status ===
+                                                        'confirmed' &&
+                                                        reservation.reservation_type ===
+                                                            'short_stay' && (
                                                             <Button
                                                                 size="sm"
-                                                                className="h-8 gap-1.5 rounded-xl bg-primary text-primary-foreground font-sans text-xs font-semibold shadow-2xs"
+                                                                className="h-8 gap-1.5 rounded-xl bg-primary font-sans text-xs font-semibold text-primary-foreground shadow-2xs"
                                                                 onClick={() => {
-                                                                    setSelectedReservation(reservation);
-                                                                    setIsCheckinOpen(true);
+                                                                    setSelectedReservation(
+                                                                        reservation,
+                                                                    );
+                                                                    setIsCheckinOpen(
+                                                                        true,
+                                                                    );
                                                                 }}
                                                             >
                                                                 <LogIn className="size-3.5" />
-                                                                {t('staff.reservations.checkIn')}
+                                                                {t(
+                                                                    'staff.reservations.checkIn',
+                                                                )}
                                                             </Button>
                                                         )}
 
                                                     {/* Check Out Button */}
-                                                    {reservation.status === 'checked_in' && (
+                                                    {reservation.status ===
+                                                        'checked_in' && (
                                                         <Button
                                                             size="sm"
                                                             variant="outline"
-                                                            className="h-8 gap-1.5 rounded-xl border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20 font-sans text-xs font-semibold"
+                                                            className="h-8 gap-1.5 rounded-xl border-emerald-500/40 bg-emerald-500/10 font-sans text-xs font-semibold text-emerald-700 hover:bg-emerald-500/20 dark:text-emerald-300"
+                                                            disabled={isPending(
+                                                                reservation.id,
+                                                            )}
                                                             onClick={() =>
                                                                 runAction(
+                                                                    reservation.id,
                                                                     ReservationController.checkOut.url(
                                                                         reservation.id,
                                                                     ),
                                                                 )
                                                             }
                                                         >
-                                                            <LogOut className="size-3.5" />
-                                                            {t('staff.reservations.checkOut')}
+                                                            {isPending(
+                                                                reservation.id,
+                                                            ) ? (
+                                                                <Spinner className="size-3.5" />
+                                                            ) : (
+                                                                <LogOut className="size-3.5" />
+                                                            )}
+                                                            {t(
+                                                                'staff.reservations.checkOut',
+                                                            )}
                                                         </Button>
                                                     )}
 
                                                     {/* Cancel Button */}
-                                                    {['pending', 'confirmed', 'active'].includes(
+                                                    {[
+                                                        'pending',
+                                                        'confirmed',
+                                                        'active',
+                                                    ].includes(
                                                         reservation.status,
                                                     ) && (
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
-                                                            className="h-8 rounded-xl text-xs text-muted-foreground hover:bg-rose-500/10 hover:text-rose-600 font-sans"
+                                                            className="h-8 rounded-xl font-sans text-xs text-muted-foreground hover:bg-rose-500/10 hover:text-rose-600"
+                                                            disabled={isPending(
+                                                                reservation.id,
+                                                            )}
                                                             onClick={() =>
                                                                 runAction(
+                                                                    reservation.id,
                                                                     ReservationController.cancel.url(
                                                                         reservation.id,
                                                                     ),
                                                                 )
                                                             }
                                                         >
-                                                            <X className="size-3.5" />
+                                                            {isPending(
+                                                                reservation.id,
+                                                            ) ? (
+                                                                <Spinner className="size-3.5" />
+                                                            ) : (
+                                                                <X className="size-3.5" />
+                                                            )}
                                                         </Button>
                                                     )}
                                                 </div>
@@ -538,7 +714,7 @@ export default function StaffReservationsIndex({
                 {/* 4. Pagination */}
                 {viewMode === 'table' && (
                     <div className="flex items-center justify-between">
-                        <p className="text-xs text-muted-foreground font-sans">
+                        <p className="font-sans text-xs text-muted-foreground">
                             {t('staff.reservations.showingCount', {
                                 shown: reservations.data.length,
                                 total: reservations.total,

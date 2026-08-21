@@ -59,7 +59,7 @@ class MaintenanceRequestController extends Controller
             'priority' => $request->validated('priority'),
         ]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Maintenance request submitted.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.maintenance.submitted']);
 
         return back();
     }

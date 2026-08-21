@@ -40,7 +40,7 @@ class SettingController extends Controller
     {
         $this->currentSetting()->update($request->validated());
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Settings updated.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.settings.updated']);
 
         return to_route('admin.settings.edit');
     }

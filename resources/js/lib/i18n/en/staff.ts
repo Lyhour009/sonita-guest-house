@@ -155,6 +155,7 @@ export const staff = {
         emailLabel: 'Email address',
         phoneLabel: 'Phone number (optional)',
         submit: 'Create booking',
+        creating: 'Creating...',
         cancel: 'Cancel',
     },
 };

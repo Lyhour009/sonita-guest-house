@@ -18,6 +18,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import type { StaffAccount } from '@/types';
 
@@ -46,7 +47,7 @@ export default function StaffEditDialog({ staff, onOpenChange }: Props) {
                         onSuccess={() => onOpenChange(false)}
                         className="space-y-4"
                     >
-                        {({ processing, errors }) => (
+                        {({ processing, errors, isDirty }) => (
                             <>
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="full_name">
@@ -146,7 +147,13 @@ export default function StaffEditDialog({ staff, onOpenChange }: Props) {
                                 </div>
 
                                 <DialogFooter>
-                                    <Button type="submit" disabled={processing}>
+                                    <Button
+                                        type="submit"
+                                        disabled={processing || !isDirty}
+                                    >
+                                        {processing && (
+                                            <Spinner className="mr-2" />
+                                        )}
                                         {t('common.actions.saveChanges')}
                                     </Button>
                                 </DialogFooter>

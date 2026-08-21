@@ -72,7 +72,7 @@ class InvoiceController extends Controller
 
         $action->handle($reservation, $request->validated());
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Invoice generated.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.invoices.generated']);
 
         return to_route('admin.invoices.index');
     }

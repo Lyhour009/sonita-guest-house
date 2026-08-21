@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import type { StaffReservation } from '@/types/reservation';
 
@@ -56,24 +57,24 @@ export default function ReservationCheckinDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-md rounded-2xl p-6">
+            <DialogContent className="rounded-2xl p-6 sm:max-w-md">
                 <DialogHeader className="space-y-1.5">
-                    <div className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-1">
+                    <div className="mb-1 flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                         <LogIn className="size-5.5" />
                     </div>
-                    <DialogTitle className="text-xl font-bold font-sans text-foreground">
+                    <DialogTitle className="font-sans text-xl font-bold text-foreground">
                         {t('staff.reservations.checkInDialog.title')}
                     </DialogTitle>
-                    <DialogDescription className="text-xs font-sans text-muted-foreground">
+                    <DialogDescription className="font-sans text-xs text-muted-foreground">
                         {t('staff.reservations.checkInDialog.description')}
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className="space-y-4 py-2">
                     {/* Guest & Room Summary Box */}
-                    <div className="rounded-xl border border-border/80 bg-muted/40 p-3.5 space-y-2.5 font-sans">
+                    <div className="space-y-2.5 rounded-xl border border-border/80 bg-muted/40 p-3.5 font-sans">
                         <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground text-xs flex items-center gap-1.5">
+                            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                 <User className="size-3.5" />
                                 {t('staff.reservations.checkInDialog.guest')}
                             </span>
@@ -83,7 +84,7 @@ export default function ReservationCheckinDialog({
                         </div>
 
                         <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground text-xs flex items-center gap-1.5">
+                            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                 <span className="size-2 rounded-full bg-primary" />
                                 {t('staff.reservations.checkInDialog.room')}
                             </span>
@@ -98,7 +99,7 @@ export default function ReservationCheckinDialog({
                         </div>
 
                         <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground text-xs flex items-center gap-1.5">
+                            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                 <Calendar className="size-3.5" />
                                 {t('staff.reservations.checkInDialog.dates')}
                             </span>
@@ -110,26 +111,33 @@ export default function ReservationCheckinDialog({
 
                     {/* Key Card Field */}
                     <div className="space-y-1.5 font-sans">
-                        <Label htmlFor="key-card" className="text-xs font-semibold flex items-center gap-1.5">
+                        <Label
+                            htmlFor="key-card"
+                            className="flex items-center gap-1.5 text-xs font-semibold"
+                        >
                             <KeyRound className="size-3.5 text-muted-foreground" />
-                            {t('staff.reservations.checkInDialog.keyCardNumber')}
+                            {t(
+                                'staff.reservations.checkInDialog.keyCardNumber',
+                            )}
                         </Label>
                         <Input
                             id="key-card"
                             value={keyCard}
                             onChange={(e) => setKeyCard(e.target.value)}
-                            placeholder={t('staff.reservations.checkInDialog.keyCardPlaceholder')}
-                            className="rounded-xl h-10 border-border bg-background"
+                            placeholder={t(
+                                'staff.reservations.checkInDialog.keyCardPlaceholder',
+                            )}
+                            className="h-10 rounded-xl border-border bg-background"
                         />
                     </div>
                 </div>
 
-                <DialogFooter className="gap-2 sm:gap-0 pt-2">
+                <DialogFooter className="gap-2 pt-2 sm:gap-0">
                     <Button
                         type="button"
                         variant="outline"
                         onClick={() => onOpenChange(false)}
-                        className="rounded-xl font-sans text-xs h-10"
+                        className="h-10 rounded-xl font-sans text-xs"
                     >
                         {t('staff.reservations.checkInDialog.cancelButton')}
                     </Button>
@@ -137,10 +145,18 @@ export default function ReservationCheckinDialog({
                         type="button"
                         onClick={handleConfirmCheckin}
                         disabled={isSubmitting}
-                        className="rounded-xl font-sans text-xs font-semibold h-10 gap-1.5 bg-primary text-primary-foreground shadow-2xs cursor-pointer"
+                        className="h-10 cursor-pointer gap-1.5 rounded-xl bg-primary font-sans text-xs font-semibold text-primary-foreground shadow-2xs"
                     >
-                        <CheckCircle2 className="size-4" />
-                        {isSubmitting ? 'Processing...' : t('staff.reservations.checkInDialog.confirmButton')}
+                        {isSubmitting ? (
+                            <Spinner className="size-4" />
+                        ) : (
+                            <CheckCircle2 className="size-4" />
+                        )}
+                        {isSubmitting
+                            ? t('common.actions.processing')
+                            : t(
+                                  'staff.reservations.checkInDialog.confirmButton',
+                              )}
                     </Button>
                 </DialogFooter>
             </DialogContent>

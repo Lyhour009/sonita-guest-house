@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import type { Service } from '@/types';
 
@@ -39,7 +40,7 @@ export default function ServiceEditDialog({ service, onOpenChange }: Props) {
                         onSuccess={() => onOpenChange(false)}
                         className="space-y-4"
                     >
-                        {({ processing, errors }) => (
+                        {({ processing, errors, isDirty }) => (
                             <>
                                 <div className="grid gap-1.5">
                                     <Label htmlFor="name">
@@ -71,7 +72,13 @@ export default function ServiceEditDialog({ service, onOpenChange }: Props) {
                                 </div>
 
                                 <DialogFooter>
-                                    <Button type="submit" disabled={processing}>
+                                    <Button
+                                        type="submit"
+                                        disabled={processing || !isDirty}
+                                    >
+                                        {processing && (
+                                            <Spinner className="mr-2" />
+                                        )}
                                         {t('common.actions.saveChanges')}
                                     </Button>
                                 </DialogFooter>

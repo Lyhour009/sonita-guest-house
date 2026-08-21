@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import {
     Table,
     TableBody,
@@ -23,6 +24,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import type { Locale } from '@/hooks/use-locale';
+import { usePendingAction } from '@/hooks/use-pending-action';
 import { useTranslation } from '@/hooks/use-translation';
 import { translate } from '@/lib/i18n/translate';
 import { index as reservationsIndex } from '@/routes/reservations';
@@ -44,11 +46,13 @@ function dateRange(reservation: Reservation, locale: Locale) {
 
 export default function ReservationsIndex({ reservations }: Props) {
     const { t, locale } = useTranslation();
+    const { isPending, withPending } = usePendingAction();
+
     const cancel = (reservationId: string) => {
         router.patch(
             ReservationController.cancel.url(reservationId),
             {},
-            { preserveScroll: true },
+            withPending(`cancel-${reservationId}`, { preserveScroll: true }),
         );
     };
 
@@ -148,12 +152,20 @@ export default function ReservationsIndex({ reservations }: Props) {
                                                         </AlertDialogCancel>
                                                         <AlertDialogAction
                                                             variant="destructive"
+                                                            disabled={isPending(
+                                                                `cancel-${reservation.id}`,
+                                                            )}
                                                             onClick={() =>
                                                                 cancel(
                                                                     reservation.id,
                                                                 )
                                                             }
                                                         >
+                                                            {isPending(
+                                                                `cancel-${reservation.id}`,
+                                                            ) && (
+                                                                <Spinner className="mr-2" />
+                                                            )}
                                                             {t(
                                                                 'reservations.cancelDialog.confirm',
                                                             )}

@@ -14,6 +14,7 @@ export const common = {
         viewDetails: 'View details',
         confirm: 'Confirm',
         submit: 'Submit',
+        processing: 'Processing...',
         close: 'Close',
         back: 'Back',
         next: 'Next',

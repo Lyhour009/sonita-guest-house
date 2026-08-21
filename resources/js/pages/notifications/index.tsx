@@ -3,6 +3,8 @@ import NotificationController from '@/actions/App/Http/Controllers/NotificationC
 import Pagination from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import { usePendingAction } from '@/hooks/use-pending-action';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 import { index as notificationsIndex } from '@/routes/notifications';
@@ -14,14 +16,16 @@ type Props = {
 
 export default function NotificationsIndex({ notifications }: Props) {
     const { t } = useTranslation();
+    const { isPending, withPending } = usePendingAction();
+
     const markRead = (id: string) => {
         router.patch(
             NotificationController.markRead.url(id),
             {},
-            {
+            withPending(`read-${id}`, {
                 preserveScroll: true,
                 only: ['notifications', 'unreadNotificationsCount'],
-            },
+            }),
         );
     };
 
@@ -29,10 +33,10 @@ export default function NotificationsIndex({ notifications }: Props) {
         router.patch(
             NotificationController.markAllRead.url(),
             {},
-            {
+            withPending('read-all', {
                 preserveScroll: true,
                 only: ['notifications', 'unreadNotificationsCount'],
-            },
+            }),
         );
     };
 
@@ -53,8 +57,12 @@ export default function NotificationsIndex({ notifications }: Props) {
                         <Button
                             variant="outline"
                             size="sm"
+                            disabled={isPending('read-all')}
                             onClick={markAllRead}
                         >
+                            {isPending('read-all') && (
+                                <Spinner className="mr-2" />
+                            )}
                             {t('notifications.page.markAllRead')}
                         </Button>
                     )}
@@ -105,8 +113,14 @@ export default function NotificationsIndex({ notifications }: Props) {
                                 <Button
                                     size="sm"
                                     variant="outline"
+                                    disabled={isPending(
+                                        `read-${notification.id}`,
+                                    )}
                                     onClick={() => markRead(notification.id)}
                                 >
+                                    {isPending(`read-${notification.id}`) && (
+                                        <Spinner className="mr-2" />
+                                    )}
                                     {t('notifications.page.markRead')}
                                 </Button>
                             )}

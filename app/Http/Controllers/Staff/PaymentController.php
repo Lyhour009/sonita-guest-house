@@ -65,7 +65,7 @@ class PaymentController extends Controller
     {
         $action->handle($payment);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Payment confirmed.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.payments.confirmed']);
 
         return back();
     }
@@ -77,7 +77,7 @@ class PaymentController extends Controller
     {
         $action->handle($payment);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Payment rejected.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.payments.rejected']);
 
         return back();
     }

@@ -157,6 +157,7 @@ export const staff: Dictionary['staff'] = {
         emailLabel: 'អាសយដ្ឋានអ៊ីមែល',
         phoneLabel: 'លេខទូរស័ព្ទ (មិនបង្ខំ)',
         submit: 'បង្កើតការកក់',
+        creating: 'កំពុងបង្កើត...',
         cancel: 'បោះបង់',
     },
 };

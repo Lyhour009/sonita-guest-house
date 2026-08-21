@@ -20,6 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 
 export default function StaffCreateDialog() {
@@ -127,6 +128,7 @@ export default function StaffCreateDialog() {
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
+                                    {processing && <Spinner className="mr-2" />}
                                     {t('staffAccounts.createAccount')}
                                 </Button>
                             </DialogFooter>

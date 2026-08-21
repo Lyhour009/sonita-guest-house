@@ -13,6 +13,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import {
     Table,
     TableBody,
@@ -22,6 +23,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
+import { usePendingAction } from '@/hooks/use-pending-action';
 import { useTranslation } from '@/hooks/use-translation';
 import { index as staffMaintenanceIndex } from '@/routes/staff/maintenance';
 import type {
@@ -86,11 +88,16 @@ export default function StaffMaintenanceIndex({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearch]);
 
+    const { isPending, withPending } = usePendingAction();
+
     const assign = (requestId: string, assignedTo: string) => {
         router.patch(
             MaintenanceController.assign.url(requestId),
             { assigned_to: assignedTo },
-            { preserveScroll: true, only: ['requests'] },
+            withPending(requestId, {
+                preserveScroll: true,
+                only: ['requests'],
+            }),
         );
     };
 
@@ -98,7 +105,10 @@ export default function StaffMaintenanceIndex({
         router.patch(
             MaintenanceController.updateStatus.url(requestId),
             { status: newStatus },
-            { preserveScroll: true, only: ['requests'] },
+            withPending(requestId, {
+                preserveScroll: true,
+                only: ['requests'],
+            }),
         );
     };
 
@@ -253,6 +263,7 @@ export default function StaffMaintenanceIndex({
                                                     request.assignee?.id ??
                                                     'unassigned'
                                                 }
+                                                disabled={isPending(request.id)}
                                                 onValueChange={(value) =>
                                                     assign(request.id, value)
                                                 }
@@ -300,6 +311,9 @@ export default function StaffMaintenanceIndex({
                                                     'pending' && (
                                                     <Button
                                                         size="sm"
+                                                        disabled={isPending(
+                                                            request.id,
+                                                        )}
                                                         onClick={() =>
                                                             updateStatus(
                                                                 request.id,
@@ -307,6 +321,11 @@ export default function StaffMaintenanceIndex({
                                                             )
                                                         }
                                                     >
+                                                        {isPending(
+                                                            request.id,
+                                                        ) && (
+                                                            <Spinner className="mr-2" />
+                                                        )}
                                                         {t(
                                                             'staff.maintenance.start',
                                                         )}
@@ -314,6 +333,9 @@ export default function StaffMaintenanceIndex({
                                                 )}
                                                 <Button
                                                     size="sm"
+                                                    disabled={isPending(
+                                                        request.id,
+                                                    )}
                                                     onClick={() =>
                                                         updateStatus(
                                                             request.id,
@@ -321,6 +343,9 @@ export default function StaffMaintenanceIndex({
                                                         )
                                                     }
                                                 >
+                                                    {isPending(request.id) && (
+                                                        <Spinner className="mr-2" />
+                                                    )}
                                                     {t(
                                                         'staff.maintenance.resolve',
                                                     )}
@@ -328,6 +353,9 @@ export default function StaffMaintenanceIndex({
                                                 <Button
                                                     variant="destructive"
                                                     size="sm"
+                                                    disabled={isPending(
+                                                        request.id,
+                                                    )}
                                                     onClick={() =>
                                                         updateStatus(
                                                             request.id,
@@ -335,6 +363,9 @@ export default function StaffMaintenanceIndex({
                                                         )
                                                     }
                                                 >
+                                                    {isPending(request.id) && (
+                                                        <Spinner className="mr-2" />
+                                                    )}
                                                     {t('common.actions.cancel')}
                                                 </Button>
                                             </div>

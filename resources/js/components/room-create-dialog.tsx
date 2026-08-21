@@ -11,6 +11,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 
 export default function RoomCreateDialog() {
@@ -39,6 +40,7 @@ export default function RoomCreateDialog() {
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
+                                    {processing && <Spinner className="mr-2" />}
                                     {t('adminRooms.createRoom')}
                                 </Button>
                             </DialogFooter>

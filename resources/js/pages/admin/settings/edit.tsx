@@ -5,6 +5,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from '@/hooks/use-translation';
 import { edit as settingsEdit } from '@/routes/admin/settings';
@@ -32,7 +33,7 @@ export default function AdminSettingsEdit({ setting }: Props) {
                     options={{ preserveScroll: true }}
                     className="space-y-6"
                 >
-                    {({ processing, errors }) => (
+                    {({ processing, errors, isDirty }) => (
                         <>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-1.5">
@@ -188,7 +189,8 @@ export default function AdminSettingsEdit({ setting }: Props) {
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <Button disabled={processing}>
+                                <Button disabled={processing || !isDirty}>
+                                    {processing && <Spinner className="mr-2" />}
                                     {t('common.actions.save')}
                                 </Button>
                             </div>

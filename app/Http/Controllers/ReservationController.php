@@ -50,7 +50,7 @@ class ReservationController extends Controller
     {
         $action->handle($request->user(), $request->validated());
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Reservation requested — awaiting confirmation.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.reservations.requested']);
 
         return to_route('reservations.index');
     }
@@ -64,7 +64,7 @@ class ReservationController extends Controller
 
         $action->handle($reservation);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Reservation cancelled.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.reservations.cancelled']);
 
         return to_route('reservations.index');
     }

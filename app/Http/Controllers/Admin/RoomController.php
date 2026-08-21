@@ -61,7 +61,7 @@ class RoomController extends Controller
             }
         }
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Room created.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.rooms.created']);
 
         return to_route('admin.rooms.index');
     }
@@ -80,7 +80,7 @@ class RoomController extends Controller
             }
         }
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Room updated.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.rooms.updated']);
 
         return to_route('admin.rooms.index');
     }
@@ -96,7 +96,7 @@ class RoomController extends Controller
 
         $room->delete();
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Room deleted.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.rooms.deleted']);
 
         return to_route('admin.rooms.index');
     }

@@ -222,6 +222,7 @@ function TwoFactorVerificationStep({
                                     processing || code.length < OTP_MAX_LENGTH
                                 }
                             >
+                                {processing && <Spinner className="mr-2" />}
                                 {t('common.actions.confirm')}
                             </Button>
                         </div>

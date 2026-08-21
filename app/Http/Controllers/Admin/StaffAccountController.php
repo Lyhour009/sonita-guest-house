@@ -64,7 +64,7 @@ class StaffAccountController extends Controller
             'password' => $request->validated('password'),
         ]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Staff account created.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.staffAccounts.created']);
 
         return to_route('admin.staff.index');
     }
@@ -82,7 +82,7 @@ class StaffAccountController extends Controller
             'password' => $request->validated('password'),
         ]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Staff account updated.')]);
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.staffAccounts.updated']);
 
         return to_route('admin.staff.index');
     }

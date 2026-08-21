@@ -15,6 +15,7 @@ import { services } from './services';
 import { settingsPage } from './settingsPage';
 import { staff } from './staff';
 import { staffAccounts } from './staffAccounts';
+import { toasts } from './toasts';
 import { welcome } from './welcome';
 
 export const en = {
@@ -36,4 +37,5 @@ export const en = {
     adminInvoices,
     adminRooms,
     staff,
+    toasts,
 };
