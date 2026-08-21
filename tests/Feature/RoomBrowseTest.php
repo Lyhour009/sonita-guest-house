@@ -55,6 +55,34 @@ test('a room with an overlapping active reservation is excluded from date-filter
     );
 });
 
+test('the room detail page reports booked date ranges from active reservations', function () {
+    $room = Room::factory()->create();
+
+    Reservation::factory()->create([
+        'room_id' => $room->id,
+        'reservation_type' => 'short_stay',
+        'check_in_date' => now()->addDays(5)->toDateString(),
+        'check_out_date' => now()->addDays(8)->toDateString(),
+        'status' => 'confirmed',
+    ]);
+
+    Reservation::factory()->create([
+        'room_id' => $room->id,
+        'reservation_type' => 'short_stay',
+        'check_in_date' => now()->addDays(20)->toDateString(),
+        'check_out_date' => now()->addDays(25)->toDateString(),
+        'status' => 'cancelled',
+    ]);
+
+    $response = $this->get(route('rooms.show', $room));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->has('bookedRanges', 1)
+        ->where('bookedRanges.0.start', now()->addDays(5)->toDateString())
+        ->where('bookedRanges.0.end', now()->addDays(8)->toDateString()));
+});
+
 test('a room without an overlapping reservation is still shown for the same dates', function () {
     $room = Room::factory()->create(['rental_mode' => 'short_stay']);
 

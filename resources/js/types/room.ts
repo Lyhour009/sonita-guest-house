@@ -19,6 +19,11 @@ export type RoomSummary = {
     thumbnail: string | null;
 };
 
+export type RoomBookedRange = {
+    start: string;
+    end: string;
+};
+
 export type RoomDetail = {
     id: string;
     room_number: string;

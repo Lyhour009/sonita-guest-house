@@ -1,14 +1,16 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import ReservationBookDialog from '@/components/reservation-book-dialog';
+import RoomAvailabilityCalendar from '@/components/room-availability-calendar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { dashboard, home, login } from '@/routes';
 import { register } from '@/routes';
-import type { RoomDetail } from '@/types';
+import type { RoomBookedRange, RoomDetail } from '@/types';
 
 type Props = {
     room: RoomDetail;
+    bookedRanges: RoomBookedRange[];
 };
 
 const rentalModeLabel: Record<RoomDetail['rental_mode'], string> = {
@@ -17,7 +19,7 @@ const rentalModeLabel: Record<RoomDetail['rental_mode'], string> = {
     both: 'Short & long stay',
 };
 
-export default function RoomShow({ room }: Props) {
+export default function RoomShow({ room, bookedRanges }: Props) {
     const { auth } = usePage().props;
 
     return (
@@ -123,6 +125,10 @@ export default function RoomShow({ room }: Props) {
                             </p>
                         </div>
                     )}
+
+                    <Separator />
+
+                    <RoomAvailabilityCalendar bookedRanges={bookedRanges} />
 
                     <Separator />
 
