@@ -20,13 +20,13 @@ export function NavMain({
     const { isCurrentUrl } = useCurrentUrl();
 
     return (
-        <SidebarGroup className="px-2.5 py-1">
+        <SidebarGroup className="px-2.5 py-0.5">
             {label && (
-                <SidebarGroupLabel className="px-3 pt-3.5 pb-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground/80 select-none">
+                <SidebarGroupLabel className="px-3 pt-3.5 pb-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground/60 select-none">
                     {label}
                 </SidebarGroupLabel>
             )}
-            <SidebarMenu className="gap-1.5">
+            <SidebarMenu className="gap-1">
                 {items.map((item) => {
                     const active = isCurrentUrl(item.href);
 
@@ -37,27 +37,26 @@ export function NavMain({
                                 isActive={active}
                                 tooltip={{ children: item.title }}
                                 className={cn(
-                                    'group/btn relative flex h-10.5 w-full items-center gap-3 rounded-xl px-3.5 text-[14.5px] font-medium transition-all duration-200 ease-out',
+                                    'group/btn relative flex h-10 w-full items-center gap-3 rounded-xl px-3 text-[14px] font-medium transition-all duration-150 ease-out',
                                     active
-                                        ? 'bg-primary/10 font-semibold text-primary shadow-2xs dark:bg-primary/20 dark:text-primary-foreground'
-                                        : 'text-sidebar-foreground/80 hover:translate-x-0.5 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground',
+                                        ? 'bg-primary text-primary-foreground font-semibold shadow-2xs hover:bg-primary/95 hover:text-primary-foreground'
+                                        : 'text-muted-foreground hover:bg-accent/70 hover:text-foreground',
                                 )}
                             >
                                 <Link href={item.href} prefetch className="flex items-center gap-3">
                                     {item.icon && (
                                         <item.icon
                                             className={cn(
-                                                'size-5 shrink-0 transition-transform duration-200 group-hover/btn:scale-110',
+                                                'size-4.5 shrink-0 transition-transform duration-150 group-hover/btn:scale-105',
                                                 active
-                                                    ? 'text-primary dark:text-primary-foreground'
-                                                    : 'text-sidebar-foreground/75 group-hover/btn:text-sidebar-foreground',
+                                                    ? 'text-primary-foreground'
+                                                    : 'text-muted-foreground group-hover/btn:text-foreground',
                                             )}
                                         />
                                     )}
-                                    <span className="truncate font-sans leading-relaxed tracking-normal">{item.title}</span>
-                                    {active && (
-                                        <span className="ml-auto size-2 rounded-full bg-primary animate-in fade-in-0 zoom-in-50 duration-200" />
-                                    )}
+                                    <span className="truncate font-sans leading-relaxed tracking-normal">
+                                        {item.title}
+                                    </span>
                                 </Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
