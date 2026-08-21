@@ -1,5 +1,6 @@
 <?php
 
+use App\Mail\UserNotificationMail;
 use App\Models\Invoice;
 use App\Models\MaintenanceRequest;
 use App\Models\Notification;
@@ -8,6 +9,7 @@ use App\Models\Reservation;
 use App\Models\Room;
 use App\Models\Setting;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 
 beforeEach(function () {
     Setting::create([
@@ -20,6 +22,8 @@ beforeEach(function () {
 });
 
 test('confirming a reservation notifies the guest', function () {
+    Mail::fake();
+
     $receptionist = User::factory()->receptionist()->create();
     $guest = User::factory()->create();
     $reservation = Reservation::factory()->create(['guest_id' => $guest->id, 'status' => 'pending']);
@@ -31,6 +35,9 @@ test('confirming a reservation notifies the guest', function () {
         'type' => 'reservation_confirmed',
         'is_read' => false,
     ]);
+
+    Mail::assertQueued(UserNotificationMail::class, fn (UserNotificationMail $mail) => $mail->hasTo($guest->email)
+        && $mail->type === 'reservation_confirmed');
 });
 
 test('checking out a short-stay reservation notifies the guest that an invoice was issued', function () {
@@ -77,6 +84,8 @@ test('generating a long-stay invoice notifies the guest', function () {
 });
 
 test('confirming a payment notifies the guest', function () {
+    Mail::fake();
+
     $receptionist = User::factory()->receptionist()->create();
     $guest = User::factory()->create();
     $invoice = Invoice::factory()->create(['total_amount' => 100]);
@@ -92,6 +101,9 @@ test('confirming a payment notifies the guest', function () {
         'user_id' => $guest->id,
         'type' => 'payment_confirmed',
     ]);
+
+    Mail::assertQueued(UserNotificationMail::class, fn (UserNotificationMail $mail) => $mail->hasTo($guest->email)
+        && $mail->type === 'payment_confirmed');
 });
 
 test('updating a maintenance request status notifies the reporter', function () {
