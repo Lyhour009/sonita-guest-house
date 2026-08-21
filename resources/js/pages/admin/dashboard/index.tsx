@@ -69,13 +69,10 @@ export default function AdminDashboardIndex({
         <>
             <Head title={t('adminDashboard.title')} />
 
-            <div className="space-y-7 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
-                {/* Modern Hero Welcome Banner */}
-                <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-r from-card via-card to-primary/5 p-6 sm:p-8 shadow-sm">
-                    <div className="pointer-events-none absolute -right-10 -top-10 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-                    <div className="pointer-events-none absolute right-40 -bottom-10 h-48 w-48 rounded-full bg-blue-500/5 blur-2xl" />
-
-                    <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="w-full space-y-6 p-4 sm:p-6 lg:p-8">
+                {/* Clean Hero Welcome Banner */}
+                <div className="relative rounded-2xl border border-border/70 bg-card p-6 sm:p-8 shadow-xs">
+                    <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                         <div className="space-y-1.5">
                             <div className="flex items-center gap-2">
                                 <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">

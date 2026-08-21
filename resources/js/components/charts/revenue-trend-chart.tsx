@@ -37,12 +37,6 @@ export function RevenueTrendChart({ data }: { data: RevenueTrendPoint[] }) {
                 <div className="h-[260px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                            <defs>
-                                <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
-                                    <stop offset="100%" stopColor="#10b981" stopOpacity={0.0} />
-                                </linearGradient>
-                            </defs>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-10" />
                             <XAxis
                                 dataKey="label"
@@ -79,7 +73,8 @@ export function RevenueTrendChart({ data }: { data: RevenueTrendPoint[] }) {
                                 dataKey="amount"
                                 stroke="#10b981"
                                 strokeWidth={2.5}
-                                fill="url(#revenueGrad)"
+                                fill="#10b981"
+                                fillOpacity={0.08}
                                 activeDot={{ r: 5, strokeWidth: 0, fill: '#10b981' }}
                             />
                         </AreaChart>
