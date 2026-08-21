@@ -17,15 +17,15 @@ export function OccupancyBreakdownChart({
     const occupancyRate = total > 0 ? Math.round((occupiedTotal / total) * 100) : 0;
 
     const data = [
-        { name: t('adminDashboard.occupancyChart.shortStayLegend'), value: shortStay, color: '#3b82f6' },
-        { name: t('adminDashboard.occupancyChart.longStayLegend'), value: longStay, color: '#8b5cf6' },
-        { name: t('adminDashboard.occupancyChart.availableLegend'), value: available, color: '#10b981' },
+        { name: t('adminDashboard.occupancyChart.shortStayLegend'), value: shortStay, color: 'var(--chart-short-stay)' },
+        { name: t('adminDashboard.occupancyChart.longStayLegend'), value: longStay, color: 'var(--chart-long-stay)' },
+        { name: t('adminDashboard.occupancyChart.availableLegend'), value: available, color: 'var(--chart-available)' },
     ].filter((item) => item.value > 0);
 
-    const fallbackData = data.length > 0 ? data : [{ name: 'Empty', value: 1, color: '#e5e7eb' }];
+    const fallbackData = data.length > 0 ? data : [{ name: 'Empty', value: 1, color: 'var(--muted)' }];
 
     return (
-        <Card className="rounded-2xl border border-border/70 bg-card shadow-sm flex flex-col justify-between">
+        <Card className="rounded-2xl border border-border bg-card shadow-xs flex flex-col justify-between">
             <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                     <CardTitle className="text-base font-bold tracking-tight font-sans">
@@ -48,7 +48,7 @@ export function OccupancyBreakdownChart({
                                     if (active && payload && payload.length) {
                                         const item = payload[0].payload;
                                         return (
-                                            <div className="rounded-xl border border-border/80 bg-popover p-2.5 shadow-lg backdrop-blur-md">
+                                            <div className="rounded-xl border border-border bg-popover p-2.5 shadow-lg">
                                                 <p className="text-xs font-medium text-muted-foreground">{item.name}</p>
                                                 <p className="text-sm font-bold text-foreground">{item.value} rooms</p>
                                             </div>
@@ -83,28 +83,28 @@ export function OccupancyBreakdownChart({
                     </div>
                 </div>
 
-                {/* Clean Custom Legends (No overlap) */}
+                {/* Clean Custom Legends referencing app.css tokens */}
                 <div className="mt-2 space-y-1.5 border-t border-border/50 pt-3">
                     <div className="flex items-center justify-between text-xs font-sans">
                         <div className="flex items-center gap-2">
-                            <span className="size-2.5 rounded-full bg-blue-500" />
+                            <span className="size-2.5 rounded-full bg-chart-short-stay" />
                             <span className="text-muted-foreground">{t('adminDashboard.occupancyChart.shortStayLegend')}</span>
                         </div>
                         <span className="font-semibold">{shortStay}</span>
                     </div>
                     <div className="flex items-center justify-between text-xs font-sans">
                         <div className="flex items-center gap-2">
-                            <span className="size-2.5 rounded-full bg-purple-500" />
+                            <span className="size-2.5 rounded-full bg-chart-long-stay" />
                             <span className="text-muted-foreground">{t('adminDashboard.occupancyChart.longStayLegend')}</span>
                         </div>
                         <span className="font-semibold">{longStay}</span>
                     </div>
                     <div className="flex items-center justify-between text-xs font-sans">
                         <div className="flex items-center gap-2">
-                            <span className="size-2.5 rounded-full bg-emerald-500" />
+                            <span className="size-2.5 rounded-full bg-chart-available" />
                             <span className="text-muted-foreground">{t('adminDashboard.occupancyChart.availableLegend')}</span>
                         </div>
-                        <span className="font-semibold text-emerald-600 dark:text-emerald-400">{available}</span>
+                        <span className="font-semibold text-success">{available}</span>
                     </div>
                 </div>
             </CardContent>

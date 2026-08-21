@@ -1,4 +1,4 @@
-import { TrendingUp, DollarSign } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useTranslation } from '@/hooks/use-translation';
@@ -18,7 +18,7 @@ export function RevenueTrendChart({ data }: { data: RevenueTrendPoint[] }) {
     }));
 
     return (
-        <Card className="rounded-2xl border border-border/70 bg-card shadow-sm">
+        <Card className="rounded-2xl border border-border bg-card shadow-xs">
             <CardHeader className="flex flex-row items-start justify-between pb-3">
                 <div>
                     <CardTitle className="text-base font-bold tracking-tight font-sans">
@@ -28,7 +28,7 @@ export function RevenueTrendChart({ data }: { data: RevenueTrendPoint[] }) {
                         {t('adminDashboard.revenueChart.totalEarned')}: <span className="font-semibold text-foreground">${total14Days.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span> · {t('adminDashboard.revenueChart.dailyAverage')}: <span className="font-semibold text-foreground">${avgDaily.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </CardDescription>
                 </div>
-                <div className="flex items-center gap-1.5 rounded-lg bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                <div className="flex items-center gap-1.5 rounded-lg bg-success/10 px-2.5 py-1 text-xs font-semibold text-success">
                     <TrendingUp className="size-3.5" />
                     <span>${total14Days.toFixed(0)}</span>
                 </div>
@@ -57,9 +57,9 @@ export function RevenueTrendChart({ data }: { data: RevenueTrendPoint[] }) {
                                     if (active && payload && payload.length) {
                                         const point = payload[0].payload as RevenueTrendPoint & { label: string };
                                         return (
-                                            <div className="rounded-xl border border-border/80 bg-popover p-2.5 shadow-lg backdrop-blur-md">
+                                            <div className="rounded-xl border border-border bg-popover p-2.5 shadow-lg">
                                                 <p className="text-xs font-medium text-muted-foreground">{point.label}</p>
-                                                <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                                                <p className="text-sm font-bold text-success">
                                                     ${Number(point.amount).toFixed(2)}
                                                 </p>
                                             </div>
@@ -71,11 +71,11 @@ export function RevenueTrendChart({ data }: { data: RevenueTrendPoint[] }) {
                             <Area
                                 type="monotone"
                                 dataKey="amount"
-                                stroke="#10b981"
+                                stroke="var(--chart-revenue)"
                                 strokeWidth={2.5}
-                                fill="#10b981"
-                                fillOpacity={0.08}
-                                activeDot={{ r: 5, strokeWidth: 0, fill: '#10b981' }}
+                                fill="var(--chart-revenue)"
+                                fillOpacity={0.1}
+                                activeDot={{ r: 5, strokeWidth: 0, fill: 'var(--chart-revenue)' }}
                             />
                         </AreaChart>
                     </ResponsiveContainer>

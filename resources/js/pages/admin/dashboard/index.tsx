@@ -3,15 +3,11 @@ import {
     ArrowUpRight,
     BedDouble,
     Calendar,
-    CheckCircle2,
-    Clock,
     CreditCard,
     DollarSign,
-    FileText,
     Receipt,
     Sparkles,
     TrendingUp,
-    Users,
     Wrench,
 } from 'lucide-react';
 import { OccupancyBreakdownChart } from '@/components/charts/occupancy-breakdown-chart';
@@ -71,7 +67,7 @@ export default function AdminDashboardIndex({
 
             <div className="w-full space-y-6 p-4 sm:p-6 lg:p-8">
                 {/* Clean Hero Welcome Banner */}
-                <div className="relative rounded-2xl border border-border/70 bg-card p-6 sm:p-8 shadow-xs">
+                <div className="relative rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-xs">
                     <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                         <div className="space-y-1.5">
                             <div className="flex items-center gap-2">
@@ -107,15 +103,15 @@ export default function AdminDashboardIndex({
                     </div>
                 </div>
 
-                {/* 4 Premium Stat Cards */}
+                {/* 4 Semantic Stat Cards */}
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {/* Stat 1: Monthly Revenue */}
-                    <Card className="group relative overflow-hidden rounded-2xl border border-border/70 bg-card p-5 shadow-sm transition-all duration-200 hover:border-emerald-500/40 hover:shadow-md">
+                    <Card className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-all duration-200 hover:border-success/40">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
                                 {t('adminDashboard.stats.revenueThisMonth')}
                             </span>
-                            <div className="flex size-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 transition-transform duration-200 group-hover:scale-110 dark:text-emerald-400">
+                            <div className="flex size-10 items-center justify-center rounded-xl bg-success/10 text-success transition-transform duration-200 group-hover:scale-110">
                                 <DollarSign className="size-5" />
                             </div>
                         </div>
@@ -124,7 +120,7 @@ export default function AdminDashboardIndex({
                                 ${revenueThisMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </div>
                             <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground font-sans">
-                                <span className="inline-flex items-center gap-0.5 text-emerald-600 dark:text-emerald-400 font-semibold">
+                                <span className="inline-flex items-center gap-0.5 text-success font-semibold">
                                     <TrendingUp className="size-3" />
                                     Active
                                 </span>
@@ -135,12 +131,12 @@ export default function AdminDashboardIndex({
 
                     {/* Stat 2: Total Rooms & Occupancy */}
                     <Link href={adminRoomsIndex().url} className="block group">
-                        <Card className="h-full relative overflow-hidden rounded-2xl border border-border/70 bg-card p-5 shadow-sm transition-all duration-200 hover:border-blue-500/40 hover:shadow-md cursor-pointer">
+                        <Card className="h-full relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-all duration-200 hover:border-info/40 cursor-pointer">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
                                     {t('adminDashboard.stats.totalRooms')}
                                 </span>
-                                <div className="flex size-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 transition-transform duration-200 group-hover:scale-110 dark:text-blue-400">
+                                <div className="flex size-10 items-center justify-center rounded-xl bg-info/10 text-info transition-transform duration-200 group-hover:scale-110">
                                     <BedDouble className="size-5" />
                                 </div>
                             </div>
@@ -149,13 +145,13 @@ export default function AdminDashboardIndex({
                                     <span className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-sans">
                                         {occupancy.total_rooms}
                                     </span>
-                                    <Badge variant="secondary" className="font-semibold text-xs bg-blue-500/10 text-blue-700 dark:text-blue-300">
+                                    <Badge variant="secondary" className="font-semibold text-xs bg-info/10 text-info">
                                         {occupancyRate}% Occupied
                                     </Badge>
                                 </div>
                                 <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground font-sans">
                                     <span>{availableRooms} {t('adminDashboard.roomStatus.available').toLowerCase()} · {occupiedRooms} in use</span>
-                                    <ArrowUpRight className="size-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-blue-500" />
+                                    <ArrowUpRight className="size-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-info" />
                                 </div>
                             </div>
                         </Card>
@@ -163,12 +159,12 @@ export default function AdminDashboardIndex({
 
                     {/* Stat 3: Outstanding Invoices */}
                     <Link href={adminInvoicesIndex().url} className="block group">
-                        <Card className="h-full relative overflow-hidden rounded-2xl border border-border/70 bg-card p-5 shadow-sm transition-all duration-200 hover:border-amber-500/40 hover:shadow-md cursor-pointer">
+                        <Card className="h-full relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-all duration-200 hover:border-warning/40 cursor-pointer">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
                                     {t('adminDashboard.stats.outstandingInvoices')}
                                 </span>
-                                <div className="flex size-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 transition-transform duration-200 group-hover:scale-110 dark:text-amber-400">
+                                <div className="flex size-10 items-center justify-center rounded-xl bg-warning/10 text-warning transition-transform duration-200 group-hover:scale-110">
                                     <Receipt className="size-5" />
                                 </div>
                             </div>
@@ -178,14 +174,14 @@ export default function AdminDashboardIndex({
                                         {outstandingInvoicesCount}
                                     </span>
                                     {outstandingInvoicesCount > 0 && (
-                                        <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold text-amber-600 dark:text-amber-400">
+                                        <span className="rounded-full bg-warning/10 px-2 py-0.5 text-[11px] font-semibold text-warning">
                                             Pending
                                         </span>
                                     )}
                                 </div>
                                 <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground font-sans">
                                     <span>{t('adminDashboard.stats.invoicesSubtitle')}</span>
-                                    <ArrowUpRight className="size-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-amber-500" />
+                                    <ArrowUpRight className="size-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-warning" />
                                 </div>
                             </div>
                         </Card>
@@ -193,12 +189,12 @@ export default function AdminDashboardIndex({
 
                     {/* Stat 4: Maintenance Issues */}
                     <Link href={staffMaintenanceIndex().url} className="block group">
-                        <Card className="h-full relative overflow-hidden rounded-2xl border border-border/70 bg-card p-5 shadow-sm transition-all duration-200 hover:border-rose-500/40 hover:shadow-md cursor-pointer">
+                        <Card className="h-full relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-all duration-200 hover:border-danger/40 cursor-pointer">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
                                     {t('adminDashboard.stats.openMaintenanceRequests')}
                                 </span>
-                                <div className="flex size-10 items-center justify-center rounded-xl bg-rose-500/10 text-rose-600 transition-transform duration-200 group-hover:scale-110 dark:text-rose-400">
+                                <div className="flex size-10 items-center justify-center rounded-xl bg-danger/10 text-danger transition-transform duration-200 group-hover:scale-110">
                                     <Wrench className="size-5" />
                                 </div>
                             </div>
@@ -208,14 +204,14 @@ export default function AdminDashboardIndex({
                                         {openMaintenanceCount}
                                     </span>
                                     {openMaintenanceCount > 0 && (
-                                        <span className="rounded-full bg-rose-500/10 px-2 py-0.5 text-[11px] font-semibold text-rose-600 dark:text-rose-400">
+                                        <span className="rounded-full bg-danger/10 px-2 py-0.5 text-[11px] font-semibold text-danger">
                                             Action needed
                                         </span>
                                     )}
                                 </div>
                                 <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground font-sans">
                                     <span>{t('adminDashboard.stats.maintenanceSubtitle')}</span>
-                                    <ArrowUpRight className="size-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-rose-500" />
+                                    <ArrowUpRight className="size-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-danger" />
                                 </div>
                             </div>
                         </Card>
@@ -223,7 +219,7 @@ export default function AdminDashboardIndex({
                 </div>
 
                 {/* Real-time Room Status Bar */}
-                <Card className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm">
+                <Card className="rounded-2xl border border-border bg-card p-5 shadow-xs">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-3">
                         <div className="flex items-center gap-2">
                             <BedDouble className="size-4.5 text-primary" />
@@ -239,69 +235,69 @@ export default function AdminDashboardIndex({
                         </Button>
                     </div>
 
-                    {/* Multi-segment Progress Bar */}
-                    <div className="flex h-3.5 w-full overflow-hidden rounded-full bg-muted/60 p-0.5">
+                    {/* Multi-segment Progress Bar using design tokens */}
+                    <div className="flex h-3.5 w-full overflow-hidden rounded-full bg-muted p-0.5">
                         {roomStatusCounts.available > 0 && (
                             <div
                                 style={{ width: `${(roomStatusCounts.available / (occupancy.total_rooms || 1)) * 100}%` }}
-                                className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                                className="h-full rounded-full bg-chart-available transition-all duration-500"
                                 title={`Available: ${roomStatusCounts.available}`}
                             />
                         )}
                         {roomStatusCounts.occupied > 0 && (
                             <div
                                 style={{ width: `${(roomStatusCounts.occupied / (occupancy.total_rooms || 1)) * 100}%` }}
-                                className="h-full rounded-full bg-blue-500 transition-all duration-500"
+                                className="h-full rounded-full bg-chart-short-stay transition-all duration-500"
                                 title={`Occupied: ${roomStatusCounts.occupied}`}
                             />
                         )}
                         {roomStatusCounts.reserved > 0 && (
                             <div
                                 style={{ width: `${(roomStatusCounts.reserved / (occupancy.total_rooms || 1)) * 100}%` }}
-                                className="h-full rounded-full bg-purple-500 transition-all duration-500"
+                                className="h-full rounded-full bg-chart-long-stay transition-all duration-500"
                                 title={`Reserved: ${roomStatusCounts.reserved}`}
                             />
                         )}
                         {roomStatusCounts.cleaning > 0 && (
                             <div
                                 style={{ width: `${(roomStatusCounts.cleaning / (occupancy.total_rooms || 1)) * 100}%` }}
-                                className="h-full rounded-full bg-amber-500 transition-all duration-500"
+                                className="h-full rounded-full bg-chart-cleaning transition-all duration-500"
                                 title={`Cleaning: ${roomStatusCounts.cleaning}`}
                             />
                         )}
                         {roomStatusCounts.maintenance > 0 && (
                             <div
                                 style={{ width: `${(roomStatusCounts.maintenance / (occupancy.total_rooms || 1)) * 100}%` }}
-                                className="h-full rounded-full bg-rose-500 transition-all duration-500"
+                                className="h-full rounded-full bg-chart-maintenance transition-all duration-500"
                                 title={`Maintenance: ${roomStatusCounts.maintenance}`}
                             />
                         )}
                     </div>
 
-                    {/* Status Pill Badges */}
+                    {/* Status Pill Badges referencing app.css tokens */}
                     <div className="mt-4 flex flex-wrap items-center gap-3 sm:gap-6 text-xs font-sans">
                         <div className="flex items-center gap-2">
-                            <span className="size-2.5 rounded-full bg-emerald-500" />
+                            <span className="size-2.5 rounded-full bg-chart-available" />
                             <span className="text-muted-foreground">{t('adminDashboard.roomStatus.available')}:</span>
                             <span className="font-bold text-foreground">{roomStatusCounts.available}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="size-2.5 rounded-full bg-blue-500" />
+                            <span className="size-2.5 rounded-full bg-chart-short-stay" />
                             <span className="text-muted-foreground">{t('adminDashboard.roomStatus.occupied')}:</span>
                             <span className="font-bold text-foreground">{roomStatusCounts.occupied}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="size-2.5 rounded-full bg-purple-500" />
+                            <span className="size-2.5 rounded-full bg-chart-long-stay" />
                             <span className="text-muted-foreground">{t('adminDashboard.roomStatus.reserved')}:</span>
                             <span className="font-bold text-foreground">{roomStatusCounts.reserved}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="size-2.5 rounded-full bg-amber-500" />
+                            <span className="size-2.5 rounded-full bg-chart-cleaning" />
                             <span className="text-muted-foreground">{t('adminDashboard.roomStatus.cleaning')}:</span>
                             <span className="font-bold text-foreground">{roomStatusCounts.cleaning}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="size-2.5 rounded-full bg-rose-500" />
+                            <span className="size-2.5 rounded-full bg-chart-maintenance" />
                             <span className="text-muted-foreground">{t('adminDashboard.roomStatus.maintenance')}:</span>
                             <span className="font-bold text-foreground">{roomStatusCounts.maintenance}</span>
                         </div>
@@ -325,7 +321,7 @@ export default function AdminDashboardIndex({
                 {/* Operational Section: Recent Bookings & Recent Payments */}
                 <div className="grid gap-6 lg:grid-cols-2">
                     {/* Recent Bookings */}
-                    <Card className="rounded-2xl border border-border/70 bg-card shadow-sm flex flex-col justify-between">
+                    <Card className="rounded-2xl border border-border bg-card shadow-xs flex flex-col justify-between">
                         <CardHeader className="flex flex-row items-center justify-between pb-3">
                             <div>
                                 <CardTitle className="text-base font-bold tracking-tight font-sans">
@@ -368,9 +364,9 @@ export default function AdminDashboardIndex({
                                                 variant="secondary"
                                                 className={`text-[11px] font-medium capitalize ${
                                                     res.status === 'checked_in' || res.status === 'active'
-                                                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                                                        ? 'bg-success/10 text-success'
                                                         : res.status === 'confirmed'
-                                                        ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                                                        ? 'bg-info/10 text-info'
                                                         : 'bg-muted text-muted-foreground'
                                                 }`}
                                             >
@@ -384,7 +380,7 @@ export default function AdminDashboardIndex({
                     </Card>
 
                     {/* Recent Payments */}
-                    <Card className="rounded-2xl border border-border/70 bg-card shadow-sm flex flex-col justify-between">
+                    <Card className="rounded-2xl border border-border bg-card shadow-xs flex flex-col justify-between">
                         <CardHeader className="flex flex-row items-center justify-between pb-3">
                             <div>
                                 <CardTitle className="text-base font-bold tracking-tight font-sans">
@@ -411,7 +407,7 @@ export default function AdminDashboardIndex({
                                     {recentPayments.map((payment) => (
                                         <div key={payment.id} className="flex items-center justify-between py-3 font-sans">
                                             <div className="flex items-center gap-3">
-                                                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-success/10 text-success">
                                                     <CreditCard className="size-4.5" />
                                                 </div>
                                                 <div>
@@ -423,7 +419,7 @@ export default function AdminDashboardIndex({
                                                     </p>
                                                 </div>
                                             </div>
-                                            <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                                            <span className="text-sm font-bold text-success">
                                                 +${payment.amount.toFixed(2)}
                                             </span>
                                         </div>
