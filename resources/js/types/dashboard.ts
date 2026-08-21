@@ -54,6 +54,25 @@ export type RevenueTrendPoint = {
     amount: number;
 };
 
+export type DashboardRecentReservation = {
+    id: string;
+    guest_name: string;
+    room_number: string;
+    room_type: string;
+    reservation_type: string;
+    status: string;
+    check_in_date: string | null;
+    check_out_date: string | null;
+};
+
+export type DashboardRecentPayment = {
+    id: string;
+    amount: number;
+    method: string;
+    guest_name: string;
+    paid_at: string;
+};
+
 export type AdminDashboardData = {
     occupancy: {
         short_stay: number;
@@ -64,4 +83,13 @@ export type AdminDashboardData = {
     outstandingInvoicesCount: number;
     openMaintenanceCount: number;
     revenueTrend: RevenueTrendPoint[];
+    roomStatusCounts?: {
+        available: number;
+        occupied: number;
+        reserved: number;
+        cleaning: number;
+        maintenance: number;
+    };
+    recentReservations?: DashboardRecentReservation[];
+    recentPayments?: DashboardRecentPayment[];
 };

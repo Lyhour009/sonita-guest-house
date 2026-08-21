@@ -28,20 +28,65 @@ class DashboardController extends Controller
             ->where('status', 'active')
             ->count();
 
-        $revenueThisMonth = Payment::query()
+        $totalRooms = Room::query()->count();
+
+        $revenueThisMonth = (float) Payment::query()
             ->where('status', 'confirmed')
             ->whereBetween('paid_at', [now()->startOfMonth(), now()->endOfMonth()])
             ->sum('amount');
+
+        $roomStatusCounts = [
+            'available' => Room::query()->where('status', 'available')->count(),
+            'occupied' => Room::query()->where('status', 'occupied')->count(),
+            'reserved' => Room::query()->where('status', 'reserved')->count(),
+            'cleaning' => Room::query()->where('status', 'cleaning')->count(),
+            'maintenance' => Room::query()->where('status', 'maintenance')->count(),
+        ];
+
+        $recentReservations = Reservation::query()
+            ->with(['guest', 'room'])
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(fn (Reservation $r) => [
+                'id' => $r->id,
+                'guest_name' => $r->guest?->full_name ?? 'Guest',
+                'room_number' => $r->room?->room_number ?? 'N/A',
+                'room_type' => $r->room?->room_type ?? 'Standard',
+                'reservation_type' => $r->reservation_type,
+                'status' => $r->status,
+                'check_in_date' => $r->check_in_date?->format('M d, Y') ?? $r->start_date?->format('M d, Y'),
+                'check_out_date' => $r->check_out_date?->format('M d, Y') ?? $r->end_date?->format('M d, Y'),
+            ])
+            ->all();
+
+        $recentPayments = Payment::query()
+            ->with(['guest'])
+            ->where('status', 'confirmed')
+            ->latest('paid_at')
+            ->take(5)
+            ->get()
+            ->map(fn (Payment $p) => [
+                'id' => $p->id,
+                'amount' => (float) $p->amount,
+                'method' => $p->method ?? 'cash',
+                'guest_name' => $p->guest?->full_name ?? 'Guest',
+                'paid_at' => $p->paid_at?->diffForHumans() ?? 'Recently',
+            ])
+            ->all();
 
         return Inertia::render('admin/dashboard/index', [
             'occupancy' => [
                 'short_stay' => $shortStayOccupied,
                 'long_stay' => $longStayOccupied,
-                'total_rooms' => Room::query()->count(),
+                'total_rooms' => $totalRooms,
             ],
             'revenueThisMonth' => $revenueThisMonth,
             'outstandingInvoicesCount' => Invoice::query()->whereIn('status', ['unpaid', 'partial'])->count(),
             'openMaintenanceCount' => MaintenanceRequest::query()->whereIn('status', ['pending', 'in_progress'])->count(),
+            'roomStatusCounts' => $roomStatusCounts,
+            'recentReservations' => $recentReservations,
+            'recentPayments' => $recentPayments,
             'revenueTrend' => $this->revenueTrend(),
         ]);
     }
