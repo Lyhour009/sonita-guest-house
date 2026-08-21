@@ -43,10 +43,36 @@ class DashboardController extends Controller
             'maintenance' => Room::query()->where('status', 'maintenance')->count(),
         ];
 
+        $todayCheckIns = Reservation::query()
+            ->whereIn('status', ['confirmed', 'checked_in'])
+            ->whereDate('check_in_date', now())
+            ->count();
+
+        $todayCheckOuts = Reservation::query()
+            ->whereIn('status', ['checked_in', 'checked_out'])
+            ->whereDate('check_out_date', now())
+            ->count();
+
+        $roomsList = Room::query()
+            ->orderBy('floor')
+            ->orderBy('room_number')
+            ->get()
+            ->map(fn (Room $room) => [
+                'id' => $room->id,
+                'room_number' => $room->room_number,
+                'room_type' => $room->room_type,
+                'floor' => $room->floor,
+                'status' => $room->status,
+                'rental_mode' => $room->rental_mode,
+                'price_per_night' => (float) $room->price_per_night,
+                'monthly_rate' => (float) $room->monthly_rate,
+            ])
+            ->all();
+
         $recentReservations = Reservation::query()
             ->with(['guest', 'room'])
             ->latest()
-            ->take(5)
+            ->take(6)
             ->get()
             ->map(fn (Reservation $r) => [
                 'id' => $r->id,
@@ -64,7 +90,7 @@ class DashboardController extends Controller
             ->with(['guest'])
             ->where('status', 'confirmed')
             ->latest('paid_at')
-            ->take(5)
+            ->take(6)
             ->get()
             ->map(fn (Payment $p) => [
                 'id' => $p->id,
@@ -85,6 +111,9 @@ class DashboardController extends Controller
             'outstandingInvoicesCount' => Invoice::query()->whereIn('status', ['unpaid', 'partial'])->count(),
             'openMaintenanceCount' => MaintenanceRequest::query()->whereIn('status', ['pending', 'in_progress'])->count(),
             'roomStatusCounts' => $roomStatusCounts,
+            'todayCheckIns' => $todayCheckIns,
+            'todayCheckOuts' => $todayCheckOuts,
+            'roomsList' => $roomsList,
             'recentReservations' => $recentReservations,
             'recentPayments' => $recentPayments,
             'revenueTrend' => $this->revenueTrend(),

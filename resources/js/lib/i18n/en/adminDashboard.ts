@@ -11,6 +11,15 @@ export const adminDashboard = {
         payments: 'Payments',
         staff: 'Staff',
     },
+    operations: {
+        todayCheckIns: 'Today Arrivals',
+        todayCheckOuts: 'Today Departures',
+        stayOvers: 'Active Stays',
+        roomMatrix: 'Live Room Matrix',
+        allFloors: 'All Rooms',
+        floor: 'Floor {{floor}}',
+        groundFloor: 'Ground Floor',
+    },
     stats: {
         revenueThisMonth: 'Revenue This Month',
         revenueSubtitle: 'Total confirmed earnings',

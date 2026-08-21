@@ -2,17 +2,23 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import {
     ArrowUpRight,
     BedDouble,
-    Calendar,
+    CalendarCheck,
+    CheckCircle2,
+    Clock,
     CreditCard,
     DollarSign,
-    Receipt,
+    FileText,
+    Flame,
+    Hotel,
+    LogIn,
+    LogOut,
+    Plus,
     Sparkles,
-    TrendingUp,
+    Users,
     Wrench,
 } from 'lucide-react';
-import { OccupancyBreakdownChart } from '@/components/charts/occupancy-breakdown-chart';
-import { RevenueTrendChart } from '@/components/charts/revenue-trend-chart';
-import RoomCreateDialog from '@/components/room-create-dialog';
+import { useMemo, useState } from 'react';
+import RevenueTrendChart from '@/components/charts/revenue-trend-chart';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,14 +32,15 @@ import { useTranslation } from '@/hooks/use-translation';
 import { index as adminDashboardIndex } from '@/routes/admin/dashboard';
 import { index as adminInvoicesIndex } from '@/routes/admin/invoices';
 import { index as adminRoomsIndex } from '@/routes/admin/rooms';
+import { index as staffHousekeepingIndex } from '@/routes/staff/housekeeping';
 import { index as staffMaintenanceIndex } from '@/routes/staff/maintenance';
 import { index as staffPaymentsIndex } from '@/routes/staff/payments';
 import { index as staffReservationsIndex } from '@/routes/staff/reservations';
-import type { AdminDashboardData } from '@/types';
+import type { AdminDashboardData } from '@/types/dashboard';
 
 type Props = AdminDashboardData;
 
-export default function AdminDashboardIndex({
+export default function AdminDashboard({
     occupancy,
     revenueThisMonth,
     outstandingInvoicesCount,
@@ -46,394 +53,509 @@ export default function AdminDashboardIndex({
         cleaning: 0,
         maintenance: 0,
     },
+    todayCheckIns = 0,
+    todayCheckOuts = 0,
+    roomsList = [],
     recentReservations = [],
     recentPayments = [],
 }: Props) {
-    const { t } = useTranslation();
     const { auth } = usePage().props;
-    const userName = auth.user?.full_name?.split(' ')[0] || 'Admin';
+    const { t } = useTranslation();
+    const [selectedRoomStatusFilter, setSelectedRoomStatusFilter] = useState<string>('all');
 
-    const availableRooms =
-        occupancy.total_rooms - occupancy.short_stay - occupancy.long_stay;
-    const occupiedRooms = occupancy.short_stay + occupancy.long_stay;
-    const occupancyRate =
-        occupancy.total_rooms > 0
-            ? Math.round((occupiedRooms / occupancy.total_rooms) * 100)
-            : 0;
+    const totalRooms = occupancy?.total_rooms ?? 0;
+    const occupiedCount = (occupancy?.short_stay ?? 0) + (occupancy?.long_stay ?? 0);
+    const occupancyRate = totalRooms > 0 ? Math.round((occupiedCount / totalRooms) * 100) : 0;
+
+    // Filtered rooms in the Live Room Grid
+    const filteredRooms = useMemo(() => {
+        if (selectedRoomStatusFilter === 'all') return roomsList;
+        return roomsList.filter((room) => room.status === selectedRoomStatusFilter);
+    }, [roomsList, selectedRoomStatusFilter]);
+
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+        }).format(amount);
+    };
+
+    const getRoomStatusColor = (status: string) => {
+        switch (status) {
+            case 'available':
+                return {
+                    bg: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300',
+                    dot: 'bg-emerald-500',
+                    label: t('adminDashboard.roomStatus.available'),
+                };
+            case 'occupied':
+                return {
+                    bg: 'bg-primary/10 border-primary/30 text-primary dark:text-primary-foreground',
+                    dot: 'bg-primary',
+                    label: t('adminDashboard.roomStatus.occupied'),
+                };
+            case 'reserved':
+                return {
+                    bg: 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300',
+                    dot: 'bg-purple-500',
+                    label: t('adminDashboard.roomStatus.reserved'),
+                };
+            case 'cleaning':
+                return {
+                    bg: 'bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-300',
+                    dot: 'bg-amber-500',
+                    label: t('adminDashboard.roomStatus.cleaning'),
+                };
+            case 'maintenance':
+                return {
+                    bg: 'bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-300',
+                    dot: 'bg-rose-500',
+                    label: t('adminDashboard.roomStatus.maintenance'),
+                };
+            default:
+                return {
+                    bg: 'bg-muted border-border text-muted-foreground',
+                    dot: 'bg-muted-foreground',
+                    label: status,
+                };
+        }
+    };
+
+    const getReservationStatusBadge = (status: string) => {
+        switch (status) {
+            case 'confirmed':
+                return <Badge variant="outline" className="border-primary/40 bg-primary/10 text-primary font-sans text-xs">Confirmed</Badge>;
+            case 'checked_in':
+            case 'active':
+                return <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-sans text-xs">Checked In</Badge>;
+            case 'checked_out':
+            case 'completed':
+                return <Badge variant="outline" className="border-muted bg-muted/40 text-muted-foreground font-sans text-xs">Checked Out</Badge>;
+            case 'cancelled':
+                return <Badge variant="outline" className="border-rose-500/40 bg-rose-500/10 text-rose-600 font-sans text-xs">Cancelled</Badge>;
+            default:
+                return <Badge variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-700 font-sans text-xs">{status}</Badge>;
+        }
+    };
 
     return (
         <>
             <Head title={t('adminDashboard.title')} />
 
-            <div className="w-full space-y-6 p-4 sm:p-6 lg:p-8">
-                {/* Clean Hero Welcome Banner */}
-                <div className="relative rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-xs">
-                    <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="space-y-1.5">
-                            <div className="flex items-center gap-2">
-                                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                                    <Sparkles className="size-3.5" />
-                                    Hour Guest House PMS
-                                </span>
-                            </div>
-                            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-sans">
-                                {t('adminDashboard.greeting', { name: userName })}
-                            </h1>
-                            <p className="text-sm text-muted-foreground font-sans">
-                                {t('adminDashboard.subtitle')}
-                            </p>
-                        </div>
-
-                        {/* Fast Action Buttons in Banner */}
-                        <div className="flex flex-wrap items-center gap-2.5 sm:self-center">
-                            <RoomCreateDialog />
-                            <Button asChild variant="outline" size="sm" className="rounded-xl font-sans h-9">
-                                <Link href={staffReservationsIndex().url} className="flex items-center gap-1.5">
-                                    <Calendar className="size-4 text-muted-foreground" />
-                                    <span>{t('adminDashboard.quickActions.reservations')}</span>
-                                </Link>
-                            </Button>
-                            <Button asChild variant="outline" size="sm" className="rounded-xl font-sans h-9">
-                                <Link href={adminInvoicesIndex().url} className="flex items-center gap-1.5">
-                                    <Receipt className="size-4 text-muted-foreground" />
-                                    <span>{t('adminDashboard.quickActions.invoices')}</span>
-                                </Link>
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* 4 Semantic Stat Cards */}
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    {/* Stat 1: Monthly Revenue */}
-                    <Card className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-all duration-200 hover:border-success/40">
-                        <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
-                                {t('adminDashboard.stats.revenueThisMonth')}
-                            </span>
-                            <div className="flex size-10 items-center justify-center rounded-xl bg-success/10 text-success transition-transform duration-200 group-hover:scale-110">
-                                <DollarSign className="size-5" />
-                            </div>
-                        </div>
-                        <div className="mt-3">
-                            <div className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-sans">
-                                ${revenueThisMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                            </div>
-                            <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground font-sans">
-                                <span className="inline-flex items-center gap-0.5 text-success font-semibold">
-                                    <TrendingUp className="size-3" />
-                                    Active
-                                </span>
-                                <span>· {t('adminDashboard.stats.revenueSubtitle')}</span>
-                            </div>
-                        </div>
-                    </Card>
-
-                    {/* Stat 2: Total Rooms & Occupancy */}
-                    <Link href={adminRoomsIndex().url} className="block group">
-                        <Card className="h-full relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-all duration-200 hover:border-info/40 cursor-pointer">
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
-                                    {t('adminDashboard.stats.totalRooms')}
-                                </span>
-                                <div className="flex size-10 items-center justify-center rounded-xl bg-info/10 text-info transition-transform duration-200 group-hover:scale-110">
-                                    <BedDouble className="size-5" />
-                                </div>
-                            </div>
-                            <div className="mt-3">
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-sans">
-                                        {occupancy.total_rooms}
-                                    </span>
-                                    <Badge variant="secondary" className="font-semibold text-xs bg-info/10 text-info">
-                                        {occupancyRate}% Occupied
-                                    </Badge>
-                                </div>
-                                <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground font-sans">
-                                    <span>{availableRooms} {t('adminDashboard.roomStatus.available').toLowerCase()} · {occupiedRooms} in use</span>
-                                    <ArrowUpRight className="size-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-info" />
-                                </div>
-                            </div>
-                        </Card>
-                    </Link>
-
-                    {/* Stat 3: Outstanding Invoices */}
-                    <Link href={adminInvoicesIndex().url} className="block group">
-                        <Card className="h-full relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-all duration-200 hover:border-warning/40 cursor-pointer">
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
-                                    {t('adminDashboard.stats.outstandingInvoices')}
-                                </span>
-                                <div className="flex size-10 items-center justify-center rounded-xl bg-warning/10 text-warning transition-transform duration-200 group-hover:scale-110">
-                                    <Receipt className="size-5" />
-                                </div>
-                            </div>
-                            <div className="mt-3">
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-sans">
-                                        {outstandingInvoicesCount}
-                                    </span>
-                                    {outstandingInvoicesCount > 0 && (
-                                        <span className="rounded-full bg-warning/10 px-2 py-0.5 text-[11px] font-semibold text-warning">
-                                            Pending
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground font-sans">
-                                    <span>{t('adminDashboard.stats.invoicesSubtitle')}</span>
-                                    <ArrowUpRight className="size-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-warning" />
-                                </div>
-                            </div>
-                        </Card>
-                    </Link>
-
-                    {/* Stat 4: Maintenance Issues */}
-                    <Link href={staffMaintenanceIndex().url} className="block group">
-                        <Card className="h-full relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-all duration-200 hover:border-danger/40 cursor-pointer">
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
-                                    {t('adminDashboard.stats.openMaintenanceRequests')}
-                                </span>
-                                <div className="flex size-10 items-center justify-center rounded-xl bg-danger/10 text-danger transition-transform duration-200 group-hover:scale-110">
-                                    <Wrench className="size-5" />
-                                </div>
-                            </div>
-                            <div className="mt-3">
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-sans">
-                                        {openMaintenanceCount}
-                                    </span>
-                                    {openMaintenanceCount > 0 && (
-                                        <span className="rounded-full bg-danger/10 px-2 py-0.5 text-[11px] font-semibold text-danger">
-                                            Action needed
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground font-sans">
-                                    <span>{t('adminDashboard.stats.maintenanceSubtitle')}</span>
-                                    <ArrowUpRight className="size-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-danger" />
-                                </div>
-                            </div>
-                        </Card>
-                    </Link>
-                </div>
-
-                {/* Real-time Room Status Bar */}
-                <Card className="rounded-2xl border border-border bg-card p-5 shadow-xs">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-3">
+            <div className="w-full flex-1 space-y-5 p-4 md:p-6 bg-background">
+                {/* 1. Executive Operations Header */}
+                <div className="flex flex-col gap-4 rounded-2xl border border-border/80 bg-card p-5 shadow-2xs md:flex-row md:items-center md:justify-between">
+                    <div className="space-y-1.5">
                         <div className="flex items-center gap-2">
-                            <BedDouble className="size-4.5 text-primary" />
-                            <h2 className="text-sm font-bold tracking-tight text-foreground font-sans">
-                                {t('adminDashboard.roomStatus.title')}
-                            </h2>
+                            <span className="flex size-2 rounded-full bg-emerald-500" />
+                            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                                Hour Guest House PMS · Live Operations
+                            </span>
                         </div>
-                        <Button asChild variant="ghost" size="sm" className="h-8 text-xs font-sans self-start sm:self-auto">
-                            <Link href={adminRoomsIndex().url} className="flex items-center gap-1 text-primary hover:underline">
-                                <span>{t('adminDashboard.quickActions.manageRooms')}</span>
-                                <ArrowUpRight className="size-3.5" />
+                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground font-sans">
+                            {t('adminDashboard.greeting', {
+                                name: String(auth?.user?.name || 'Admin'),
+                            })}
+                        </h1>
+                        <p className="text-sm text-muted-foreground font-sans">
+                            {t('adminDashboard.subtitle')}
+                        </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2.5">
+                        <Button asChild size="sm" className="gap-2 rounded-xl shadow-xs font-sans h-10 px-4">
+                            <Link href={staffReservationsIndex()}>
+                                <Plus className="size-4" />
+                                {t('adminDashboard.quickActions.reservations')}
+                            </Link>
+                        </Button>
+                        <Button asChild variant="outline" size="sm" className="gap-2 rounded-xl border-border bg-background hover:bg-accent font-sans h-10 px-3.5">
+                            <Link href={adminRoomsIndex()}>
+                                <BedDouble className="size-4 text-muted-foreground" />
+                                {t('adminDashboard.quickActions.manageRooms')}
+                            </Link>
+                        </Button>
+                        <Button asChild variant="outline" size="sm" className="gap-2 rounded-xl border-border bg-background hover:bg-accent font-sans h-10 px-3.5">
+                            <Link href={adminInvoicesIndex()}>
+                                <FileText className="size-4 text-muted-foreground" />
+                                {t('adminDashboard.quickActions.invoices')}
                             </Link>
                         </Button>
                     </div>
-
-                    {/* Multi-segment Progress Bar using design tokens */}
-                    <div className="flex h-3.5 w-full overflow-hidden rounded-full bg-muted p-0.5">
-                        {roomStatusCounts.available > 0 && (
-                            <div
-                                style={{ width: `${(roomStatusCounts.available / (occupancy.total_rooms || 1)) * 100}%` }}
-                                className="h-full rounded-full bg-chart-available transition-all duration-500"
-                                title={`Available: ${roomStatusCounts.available}`}
-                            />
-                        )}
-                        {roomStatusCounts.occupied > 0 && (
-                            <div
-                                style={{ width: `${(roomStatusCounts.occupied / (occupancy.total_rooms || 1)) * 100}%` }}
-                                className="h-full rounded-full bg-chart-short-stay transition-all duration-500"
-                                title={`Occupied: ${roomStatusCounts.occupied}`}
-                            />
-                        )}
-                        {roomStatusCounts.reserved > 0 && (
-                            <div
-                                style={{ width: `${(roomStatusCounts.reserved / (occupancy.total_rooms || 1)) * 100}%` }}
-                                className="h-full rounded-full bg-chart-long-stay transition-all duration-500"
-                                title={`Reserved: ${roomStatusCounts.reserved}`}
-                            />
-                        )}
-                        {roomStatusCounts.cleaning > 0 && (
-                            <div
-                                style={{ width: `${(roomStatusCounts.cleaning / (occupancy.total_rooms || 1)) * 100}%` }}
-                                className="h-full rounded-full bg-chart-cleaning transition-all duration-500"
-                                title={`Cleaning: ${roomStatusCounts.cleaning}`}
-                            />
-                        )}
-                        {roomStatusCounts.maintenance > 0 && (
-                            <div
-                                style={{ width: `${(roomStatusCounts.maintenance / (occupancy.total_rooms || 1)) * 100}%` }}
-                                className="h-full rounded-full bg-chart-maintenance transition-all duration-500"
-                                title={`Maintenance: ${roomStatusCounts.maintenance}`}
-                            />
-                        )}
-                    </div>
-
-                    {/* Status Pill Badges referencing app.css tokens */}
-                    <div className="mt-4 flex flex-wrap items-center gap-3 sm:gap-6 text-xs font-sans">
-                        <div className="flex items-center gap-2">
-                            <span className="size-2.5 rounded-full bg-chart-available" />
-                            <span className="text-muted-foreground">{t('adminDashboard.roomStatus.available')}:</span>
-                            <span className="font-bold text-foreground">{roomStatusCounts.available}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="size-2.5 rounded-full bg-chart-short-stay" />
-                            <span className="text-muted-foreground">{t('adminDashboard.roomStatus.occupied')}:</span>
-                            <span className="font-bold text-foreground">{roomStatusCounts.occupied}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="size-2.5 rounded-full bg-chart-long-stay" />
-                            <span className="text-muted-foreground">{t('adminDashboard.roomStatus.reserved')}:</span>
-                            <span className="font-bold text-foreground">{roomStatusCounts.reserved}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="size-2.5 rounded-full bg-chart-cleaning" />
-                            <span className="text-muted-foreground">{t('adminDashboard.roomStatus.cleaning')}:</span>
-                            <span className="font-bold text-foreground">{roomStatusCounts.cleaning}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="size-2.5 rounded-full bg-chart-maintenance" />
-                            <span className="text-muted-foreground">{t('adminDashboard.roomStatus.maintenance')}:</span>
-                            <span className="font-bold text-foreground">{roomStatusCounts.maintenance}</span>
-                        </div>
-                    </div>
-                </Card>
-
-                {/* Charts Grid */}
-                <div className="grid gap-6 lg:grid-cols-3">
-                    <div className="lg:col-span-2">
-                        <RevenueTrendChart data={revenueTrend} />
-                    </div>
-                    <div>
-                        <OccupancyBreakdownChart
-                            shortStay={occupancy.short_stay}
-                            longStay={occupancy.long_stay}
-                            available={availableRooms}
-                        />
-                    </div>
                 </div>
 
-                {/* Operational Section: Recent Bookings & Recent Payments */}
-                <div className="grid gap-6 lg:grid-cols-2">
-                    {/* Recent Bookings */}
-                    <Card className="rounded-2xl border border-border bg-card shadow-xs flex flex-col justify-between">
-                        <CardHeader className="flex flex-row items-center justify-between pb-3">
-                            <div>
-                                <CardTitle className="text-base font-bold tracking-tight font-sans">
-                                    {t('adminDashboard.recentBookings.title')}
-                                </CardTitle>
-                                <CardDescription className="text-xs text-muted-foreground font-sans">
-                                    Latest reservation records
-                                </CardDescription>
+                {/* 2. Today's Front-Desk Operational Pulse */}
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4">
+                    <div className="flex items-center gap-3.5 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                            <LogIn className="size-5" />
+                        </div>
+                        <div className="min-w-0">
+                            <p className="truncate text-xs font-medium text-muted-foreground font-sans">
+                                {t('adminDashboard.operations.todayCheckIns')}
+                            </p>
+                            <p className="text-xl font-bold tracking-tight text-foreground">
+                                {todayCheckIns} <span className="text-xs font-normal text-muted-foreground">rooms</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3.5 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                            <LogOut className="size-5" />
+                        </div>
+                        <div className="min-w-0">
+                            <p className="truncate text-xs font-medium text-muted-foreground font-sans">
+                                {t('adminDashboard.operations.todayCheckOuts')}
+                            </p>
+                            <p className="text-xl font-bold tracking-tight text-foreground">
+                                {todayCheckOuts} <span className="text-xs font-normal text-muted-foreground">rooms</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <Link
+                        href={staffHousekeepingIndex()}
+                        className="flex items-center gap-3.5 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs transition-colors hover:border-amber-500/40"
+                    >
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                            <Sparkles className="size-5" />
+                        </div>
+                        <div className="min-w-0">
+                            <p className="truncate text-xs font-medium text-muted-foreground font-sans">
+                                {t('adminDashboard.roomStatus.cleaning')}
+                            </p>
+                            <p className="text-xl font-bold tracking-tight text-foreground">
+                                {roomStatusCounts.cleaning} <span className="text-xs font-normal text-muted-foreground">dirty</span>
+                            </p>
+                        </div>
+                    </Link>
+
+                    <Link
+                        href={staffMaintenanceIndex()}
+                        className="flex items-center gap-3.5 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs transition-colors hover:border-rose-500/40"
+                    >
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                            <Wrench className="size-5" />
+                        </div>
+                        <div className="min-w-0">
+                            <p className="truncate text-xs font-medium text-muted-foreground font-sans">
+                                {t('adminDashboard.stats.openMaintenanceRequests')}
+                            </p>
+                            <p className="text-xl font-bold tracking-tight text-foreground">
+                                {openMaintenanceCount} <span className="text-xs font-normal text-muted-foreground">pending</span>
+                            </p>
+                        </div>
+                    </Link>
+                </div>
+
+                {/* 3. Core Financial & Performance Metric Cards */}
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    {/* Revenue Card */}
+                    <Card className="rounded-2xl border border-border/80 shadow-2xs">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                            <CardTitle className="text-sm font-medium text-muted-foreground font-sans">
+                                {t('adminDashboard.stats.revenueThisMonth')}
+                            </CardTitle>
+                            <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                <DollarSign className="size-4.5" />
                             </div>
-                            <Button asChild variant="ghost" size="sm" className="h-8 text-xs font-sans">
-                                <Link href={staffReservationsIndex().url} className="flex items-center gap-1 text-primary hover:underline">
-                                    <span>{t('adminDashboard.recentBookings.viewAll')}</span>
-                                    <ArrowUpRight className="size-3.5" />
-                                </Link>
-                            </Button>
                         </CardHeader>
-                        <CardContent className="pt-0">
-                            {recentReservations.length === 0 ? (
-                                <div className="py-8 text-center text-sm text-muted-foreground font-sans">
-                                    {t('adminDashboard.recentBookings.noBookings')}
-                                </div>
-                            ) : (
-                                <div className="divide-y divide-border/60">
-                                    {recentReservations.map((res) => (
-                                        <div key={res.id} className="flex items-center justify-between py-3 font-sans">
-                                            <div className="flex items-center gap-3">
-                                                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold text-xs">
-                                                    {res.room_number}
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm font-semibold text-foreground">
-                                                        {res.guest_name}
-                                                    </p>
-                                                    <p className="text-xs text-muted-foreground">
-                                                        {res.room_type} · {res.check_in_date || 'N/A'}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <Badge
-                                                variant="secondary"
-                                                className={`text-[11px] font-medium capitalize ${
-                                                    res.status === 'checked_in' || res.status === 'active'
-                                                        ? 'bg-success/10 text-success'
-                                                        : res.status === 'confirmed'
-                                                        ? 'bg-info/10 text-info'
-                                                        : 'bg-muted text-muted-foreground'
-                                                }`}
-                                            >
-                                                {res.status.replace('_', ' ')}
-                                            </Badge>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                        <CardContent className="space-y-1">
+                            <div className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                                {formatCurrency(revenueThisMonth)}
+                            </div>
+                            <p className="text-xs text-muted-foreground font-sans flex items-center gap-1.5 pt-1">
+                                <span className="inline-flex items-center text-emerald-600 dark:text-emerald-400 font-semibold">
+                                    ● Active
+                                </span>
+                                {t('adminDashboard.stats.revenueSubtitle')}
+                            </p>
                         </CardContent>
                     </Card>
 
-                    {/* Recent Payments */}
-                    <Card className="rounded-2xl border border-border bg-card shadow-xs flex flex-col justify-between">
-                        <CardHeader className="flex flex-row items-center justify-between pb-3">
-                            <div>
-                                <CardTitle className="text-base font-bold tracking-tight font-sans">
-                                    {t('adminDashboard.recentPayments.title')}
-                                </CardTitle>
-                                <CardDescription className="text-xs text-muted-foreground font-sans">
-                                    Confirmed transactions
-                                </CardDescription>
+                    {/* Occupancy Card */}
+                    <Card className="rounded-2xl border border-border/80 shadow-2xs">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                            <CardTitle className="text-sm font-medium text-muted-foreground font-sans">
+                                {t('adminDashboard.stats.occupancyRate')}
+                            </CardTitle>
+                            <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                <BedDouble className="size-4.5" />
                             </div>
-                            <Button asChild variant="ghost" size="sm" className="h-8 text-xs font-sans">
-                                <Link href={staffPaymentsIndex().url} className="flex items-center gap-1 text-primary hover:underline">
-                                    <span>{t('adminDashboard.recentPayments.viewAll')}</span>
-                                    <ArrowUpRight className="size-3.5" />
-                                </Link>
-                            </Button>
                         </CardHeader>
-                        <CardContent className="pt-0">
-                            {recentPayments.length === 0 ? (
-                                <div className="py-8 text-center text-sm text-muted-foreground font-sans">
-                                    {t('adminDashboard.recentPayments.noPayments')}
+                        <CardContent className="space-y-1">
+                            <div className="flex items-baseline gap-2">
+                                <span className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                                    {occupancyRate}%
+                                </span>
+                                <span className="text-xs font-semibold text-muted-foreground">
+                                    ({occupiedCount} / {totalRooms} rooms)
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2 pt-1">
+                                <div className="h-1.5 flex-1 rounded-full bg-muted overflow-hidden">
+                                    <div
+                                        className="h-full rounded-full bg-primary transition-all duration-500"
+                                        style={{ width: `${occupancyRate}%` }}
+                                    />
                                 </div>
-                            ) : (
-                                <div className="divide-y divide-border/60">
-                                    {recentPayments.map((payment) => (
-                                        <div key={payment.id} className="flex items-center justify-between py-3 font-sans">
-                                            <div className="flex items-center gap-3">
-                                                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-success/10 text-success">
-                                                    <CreditCard className="size-4.5" />
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Unpaid Invoices */}
+                    <Card className="rounded-2xl border border-border/80 shadow-2xs">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                            <CardTitle className="text-sm font-medium text-muted-foreground font-sans">
+                                {t('adminDashboard.stats.outstandingInvoices')}
+                            </CardTitle>
+                            <div className="flex size-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                                <FileText className="size-4.5" />
+                            </div>
+                        </CardHeader>
+                        <CardContent className="space-y-1">
+                            <div className="flex items-baseline gap-2">
+                                <span className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                                    {outstandingInvoicesCount}
+                                </span>
+                                {outstandingInvoicesCount > 0 && (
+                                    <Badge variant="outline" className="border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-sans text-xs">
+                                        Pending
+                                    </Badge>
+                                )}
+                            </div>
+                            <p className="text-xs text-muted-foreground font-sans pt-1">
+                                {t('adminDashboard.stats.invoicesSubtitle')}
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    {/* Available Inventory */}
+                    <Card className="rounded-2xl border border-border/80 shadow-2xs">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                            <CardTitle className="text-sm font-medium text-muted-foreground font-sans">
+                                {t('adminDashboard.roomStatus.available')}
+                            </CardTitle>
+                            <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                <CheckCircle2 className="size-4.5" />
+                            </div>
+                        </CardHeader>
+                        <CardContent className="space-y-1">
+                            <div className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                                {roomStatusCounts.available} <span className="text-sm font-normal text-muted-foreground">Ready</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground font-sans pt-1">
+                                Clean and ready for walk-ins
+                            </p>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* 4. Live Room Matrix Rack (The Heartbeat of the Guest House) */}
+                <Card className="rounded-2xl border border-border/80 shadow-2xs overflow-hidden">
+                    <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between border-b border-border/60">
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <Hotel className="size-5 text-primary" />
+                                <CardTitle className="text-base font-bold font-sans">
+                                    {t('adminDashboard.operations.roomMatrix')}
+                                </CardTitle>
+                            </div>
+                            <CardDescription className="font-sans text-xs pt-0.5">
+                                Real-time floor status, occupancy, and room inventory rack
+                            </CardDescription>
+                        </div>
+
+                        {/* Filter tabs */}
+                        <div className="flex flex-wrap items-center gap-1.5">
+                            {[
+                                { id: 'all', label: `All (${roomsList.length})` },
+                                { id: 'available', label: `${t('adminDashboard.roomStatus.available')} (${roomStatusCounts.available})` },
+                                { id: 'occupied', label: `${t('adminDashboard.roomStatus.occupied')} (${roomStatusCounts.occupied})` },
+                                { id: 'cleaning', label: `${t('adminDashboard.roomStatus.cleaning')} (${roomStatusCounts.cleaning})` },
+                                { id: 'maintenance', label: `${t('adminDashboard.roomStatus.maintenance')} (${roomStatusCounts.maintenance})` },
+                            ].map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    type="button"
+                                    onClick={() => setSelectedRoomStatusFilter(tab.id)}
+                                    className={`rounded-lg px-2.5 py-1 text-xs font-semibold font-sans transition-all cursor-pointer ${
+                                        selectedRoomStatusFilter === tab.id
+                                            ? 'bg-primary text-primary-foreground shadow-2xs'
+                                            : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground'
+                                    }`}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+                    </CardHeader>
+
+                    <CardContent className="p-4 sm:p-5">
+                        {filteredRooms.length === 0 ? (
+                            <div className="py-8 text-center text-sm text-muted-foreground font-sans">
+                                No rooms match the selected status filter.
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
+                                {filteredRooms.map((room) => {
+                                    const statusInfo = getRoomStatusColor(room.status);
+
+                                    return (
+                                        <Link
+                                            key={room.id}
+                                            href={adminRoomsIndex()}
+                                            className="group relative flex flex-col justify-between rounded-xl border border-border/80 bg-background p-3 transition-all hover:border-primary hover:shadow-xs"
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-base font-bold tracking-tight text-foreground group-hover:text-primary">
+                                                    #{room.room_number}
+                                                </span>
+                                                <span className={`size-2 rounded-full ${statusInfo.dot}`} />
+                                            </div>
+
+                                            <div className="mt-2 space-y-1.5">
+                                                <div className="truncate text-xs font-medium text-muted-foreground capitalize">
+                                                    {room.room_type}
                                                 </div>
-                                                <div>
-                                                    <p className="text-sm font-semibold text-foreground">
-                                                        {payment.guest_name}
+                                                <div className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-semibold border ${statusInfo.bg}`}>
+                                                    {statusInfo.label}
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-2.5 pt-2 border-t border-border/40 text-[11.5px] font-semibold text-foreground flex items-center justify-between">
+                                                <span>${room.price_per_night}</span>
+                                                <span className="text-[10px] font-normal text-muted-foreground">/ night</span>
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* 5. Analytics & Live Operational Feeds Split */}
+                <div className="grid gap-5 lg:grid-cols-12">
+                    {/* 14-Day Revenue Analytics (7 cols) */}
+                    <div className="lg:col-span-7">
+                        <RevenueTrendChart revenueTrend={revenueTrend} />
+                    </div>
+
+                    {/* Operational Feed: Recent Bookings & Payments (5 cols) */}
+                    <div className="space-y-5 lg:col-span-5">
+                        {/* Recent Bookings Feed */}
+                        <Card className="rounded-2xl border border-border/80 shadow-2xs">
+                            <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-border/50">
+                                <div>
+                                    <CardTitle className="text-base font-bold font-sans">
+                                        {t('adminDashboard.recentBookings.title')}
+                                    </CardTitle>
+                                    <CardDescription className="text-xs font-sans">
+                                        Latest reservation activity
+                                    </CardDescription>
+                                </div>
+                                <Button asChild variant="ghost" size="sm" className="h-8 gap-1 text-xs text-primary hover:text-primary">
+                                    <Link href={staffReservationsIndex()}>
+                                        View All
+                                        <ArrowUpRight className="size-3.5" />
+                                    </Link>
+                                </Button>
+                            </CardHeader>
+                            <CardContent className="p-0 divide-y divide-border/50">
+                                {recentReservations.length === 0 ? (
+                                    <div className="p-6 text-center text-sm text-muted-foreground font-sans">
+                                        {t('adminDashboard.recentBookings.noBookings')}
+                                    </div>
+                                ) : (
+                                    recentReservations.map((booking) => (
+                                        <div
+                                            key={booking.id}
+                                            className="flex items-center justify-between p-3.5 transition-colors hover:bg-muted/30"
+                                        >
+                                            <div className="flex items-center gap-3 min-w-0">
+                                                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold text-xs">
+                                                    {booking.room_number}
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="truncate text-sm font-semibold text-foreground font-sans">
+                                                        {booking.guest_name}
                                                     </p>
-                                                    <p className="text-xs text-muted-foreground capitalize">
-                                                        {payment.method.replace('_', ' ')} · {payment.paid_at}
+                                                    <p className="truncate text-xs text-muted-foreground font-sans">
+                                                        {booking.room_type} · {booking.check_in_date}
                                                     </p>
                                                 </div>
                                             </div>
-                                            <span className="text-sm font-bold text-success">
-                                                +${payment.amount.toFixed(2)}
-                                            </span>
+                                            <div className="shrink-0 pl-2">
+                                                {getReservationStatusBadge(booking.status)}
+                                            </div>
                                         </div>
-                                    ))}
+                                    ))
+                                )}
+                            </CardContent>
+                        </Card>
+
+                        {/* Recent Payments Feed */}
+                        <Card className="rounded-2xl border border-border/80 shadow-2xs">
+                            <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-border/50">
+                                <div>
+                                    <CardTitle className="text-base font-bold font-sans">
+                                        {t('adminDashboard.recentPayments.title')}
+                                    </CardTitle>
+                                    <CardDescription className="text-xs font-sans">
+                                        Confirmed revenue receipts
+                                    </CardDescription>
                                 </div>
-                            )}
-                        </CardContent>
-                    </Card>
+                                <Button asChild variant="ghost" size="sm" className="h-8 gap-1 text-xs text-primary hover:text-primary">
+                                    <Link href={staffPaymentsIndex()}>
+                                        View All
+                                        <ArrowUpRight className="size-3.5" />
+                                    </Link>
+                                </Button>
+                            </CardHeader>
+                            <CardContent className="p-0 divide-y divide-border/50">
+                                {recentPayments.length === 0 ? (
+                                    <div className="p-6 text-center text-sm text-muted-foreground font-sans">
+                                        {t('adminDashboard.recentPayments.noPayments')}
+                                    </div>
+                                ) : (
+                                    recentPayments.map((payment) => (
+                                        <div
+                                            key={payment.id}
+                                            className="flex items-center justify-between p-3.5 transition-colors hover:bg-muted/30"
+                                        >
+                                            <div className="flex items-center gap-3 min-w-0">
+                                                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                                    <CreditCard className="size-4.5" />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="truncate text-sm font-semibold text-foreground font-sans">
+                                                        {payment.guest_name}
+                                                    </p>
+                                                    <p className="truncate text-xs text-muted-foreground font-sans capitalize">
+                                                        {payment.method} · {payment.paid_at}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="shrink-0 text-right">
+                                                <span className="font-sans font-bold text-sm text-emerald-600 dark:text-emerald-400">
+                                                    +{formatCurrency(payment.amount)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
             </div>
         </>
     );
 }
 
-AdminDashboardIndex.layout = {
+AdminDashboard.layout = {
     breadcrumbs: [{ title: 'Admin dashboard', href: adminDashboardIndex() }],
 };

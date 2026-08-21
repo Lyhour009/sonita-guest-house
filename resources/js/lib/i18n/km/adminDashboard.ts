@@ -13,6 +13,15 @@ export const adminDashboard: Dictionary['adminDashboard'] = {
         payments: 'ការទូទាត់',
         staff: 'បុគ្គលិក',
     },
+    operations: {
+        todayCheckIns: 'ភ្ញៀវចូលថ្ងៃនេះ',
+        todayCheckOuts: 'ភ្ញៀវចេញថ្ងៃនេះ',
+        stayOvers: 'កំពុងស្នាក់នៅ',
+        roomMatrix: 'ប្លង់បន្ទប់ផ្ទាល់ជាក់ស្តែង',
+        allFloors: 'បន្ទប់ទាំងអស់',
+        floor: 'ជាន់ទី {{floor}}',
+        groundFloor: 'ជាន់ផ្ទាល់ដី',
+    },
     stats: {
         revenueThisMonth: 'ចំណូលខែនេះ',
         revenueSubtitle: 'ចំណូលសរុបដែលបានទទួល',

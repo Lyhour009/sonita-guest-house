@@ -73,6 +73,17 @@ export type DashboardRecentPayment = {
     paid_at: string;
 };
 
+export type DashboardRoomItem = {
+    id: string;
+    room_number: string;
+    room_type: string;
+    floor: number | null;
+    status: string;
+    rental_mode: string;
+    price_per_night: number;
+    monthly_rate: number;
+};
+
 export type AdminDashboardData = {
     occupancy: {
         short_stay: number;
@@ -90,6 +101,9 @@ export type AdminDashboardData = {
         cleaning: number;
         maintenance: number;
     };
+    todayCheckIns?: number;
+    todayCheckOuts?: number;
+    roomsList?: DashboardRoomItem[];
     recentReservations?: DashboardRecentReservation[];
     recentPayments?: DashboardRecentPayment[];
 };
