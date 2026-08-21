@@ -42,6 +42,16 @@ class ReservationController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        $statusCounts = [
+            'all' => Reservation::query()->count(),
+            'pending' => Reservation::query()->where('status', 'pending')->count(),
+            'confirmed' => Reservation::query()->where('status', 'confirmed')->count(),
+            'checked_in' => Reservation::query()->where('status', 'checked_in')->count(),
+            'active' => Reservation::query()->where('status', 'active')->count(),
+            'checked_out' => Reservation::query()->where('status', 'checked_out')->count(),
+            'cancelled' => Reservation::query()->where('status', 'cancelled')->count(),
+        ];
+
         return Inertia::render('staff/reservations/index', [
             'reservations' => $reservations->through(fn (Reservation $reservation) => [
                 'id' => $reservation->id,
@@ -66,6 +76,7 @@ class ReservationController extends Controller
                 'search' => $filters['search'] ?? null,
                 'status' => $filters['status'] ?? null,
             ],
+            'statusCounts' => $statusCounts,
             'guests' => User::query()
                 ->where('role', 'guest')
                 ->orderBy('full_name')
@@ -84,9 +95,7 @@ class ReservationController extends Controller
     {
         $action->handle($request->validated());
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Walk-in booking created.')]);
-
-        return to_route('staff.reservations.index');
+        return back()->with('success', 'Reservation created successfully.');
     }
 
     /**
@@ -96,33 +105,27 @@ class ReservationController extends Controller
     {
         $action->handle($reservation);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Reservation confirmed.')]);
-
-        return back();
+        return back()->with('success', 'Reservation confirmed.');
     }
 
     /**
-     * Check a guest in.
+     * Check in a guest for an active stay.
      */
     public function checkIn(Reservation $reservation, CheckInReservation $action): RedirectResponse
     {
         $action->handle($reservation);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Guest checked in.')]);
-
-        return back();
+        return back()->with('success', 'Guest checked in.');
     }
 
     /**
-     * Check a guest out.
+     * Check out a guest.
      */
     public function checkOut(Reservation $reservation, CheckOutReservation $action): RedirectResponse
     {
         $action->handle($reservation);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Guest checked out.')]);
-
-        return back();
+        return back()->with('success', 'Guest checked out.');
     }
 
     /**
@@ -132,8 +135,6 @@ class ReservationController extends Controller
     {
         $action->handle($reservation);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Reservation cancelled.')]);
-
-        return back();
+        return back()->with('success', 'Reservation cancelled.');
     }
 }

@@ -1,4 +1,5 @@
 import { Form } from '@inertiajs/react';
+import { Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import ReservationController from '@/actions/App/Http/Controllers/Staff/ReservationController';
 import InputError from '@/components/input-error';
@@ -61,7 +62,10 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>{t('staff.walkinDialog.newBooking')}</Button>
+                <Button className="gap-2 rounded-xl h-10 shadow-2xs font-sans text-sm font-semibold px-4 cursor-pointer">
+                    <Plus className="size-4" />
+                    {t('staff.walkinDialog.newBooking')}
+                </Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
                 <DialogHeader>
