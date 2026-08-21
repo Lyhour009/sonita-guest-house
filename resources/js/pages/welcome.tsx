@@ -21,6 +21,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { DatePicker } from '@/components/ui/date-picker';
 import { useTranslation } from '@/hooks/use-translation';
 import { dashboard, home, login } from '@/routes';
 import { register } from '@/routes';
@@ -115,27 +116,25 @@ export default function Welcome({ rooms, filters }: Props) {
                         </Select>
                     </div>
 
-                    <div className="grid gap-1.5">
+                    <div className="grid gap-1.5 min-w-44">
                         <Label htmlFor="from">
                             {t('welcome.filters.from')}
                         </Label>
-                        <input
+                        <DatePicker
                             id="from"
-                            type="date"
                             value={from}
-                            onChange={(event) => setFrom(event.target.value)}
-                            className="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"
+                            onChange={setFrom}
+                            placeholder={t('welcome.filters.from')}
                         />
                     </div>
 
-                    <div className="grid gap-1.5">
+                    <div className="grid gap-1.5 min-w-44">
                         <Label htmlFor="to">{t('welcome.filters.to')}</Label>
-                        <input
+                        <DatePicker
                             id="to"
-                            type="date"
                             value={to}
-                            onChange={(event) => setTo(event.target.value)}
-                            className="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"
+                            onChange={setTo}
+                            placeholder={t('welcome.filters.to')}
                         />
                     </div>
 

@@ -11,6 +11,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -39,6 +40,10 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
     const [isNewGuest, setIsNewGuest] = useState(false);
     const [roomId, setRoomId] = useState<string>(rooms[0]?.id ?? '');
     const [type, setType] = useState<ReservationType>('short_stay');
+    const [checkInDate, setCheckInDate] = useState('');
+    const [checkOutDate, setCheckOutDate] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
     const selectedRoom = useMemo(
         () => rooms.find((room) => room.id === roomId),
@@ -150,10 +155,11 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                     'staff.walkinDialog.checkInLabel',
                                                 )}
                                             </Label>
-                                            <Input
+                                            <DatePicker
                                                 id="check_in_date"
                                                 name="check_in_date"
-                                                type="date"
+                                                value={checkInDate}
+                                                onChange={setCheckInDate}
                                                 required
                                             />
                                             <InputError
@@ -166,10 +172,12 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                     'staff.walkinDialog.checkOutLabel',
                                                 )}
                                             </Label>
-                                            <Input
+                                            <DatePicker
                                                 id="check_out_date"
                                                 name="check_out_date"
-                                                type="date"
+                                                value={checkOutDate}
+                                                onChange={setCheckOutDate}
+                                                minDate={checkInDate}
                                                 required
                                             />
                                             <InputError
@@ -205,10 +213,11 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                 'staff.walkinDialog.moveInDateLabel',
                                             )}
                                         </Label>
-                                        <Input
+                                        <DatePicker
                                             id="start_date"
                                             name="start_date"
-                                            type="date"
+                                            value={startDate}
+                                            onChange={setStartDate}
                                             required
                                         />
                                         <InputError
@@ -221,10 +230,12 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                 'staff.walkinDialog.moveOutDateLabel',
                                             )}
                                         </Label>
-                                        <Input
+                                        <DatePicker
                                             id="end_date"
                                             name="end_date"
-                                            type="date"
+                                            value={endDate}
+                                            onChange={setEndDate}
+                                            minDate={startDate}
                                         />
                                         <InputError message={errors.end_date} />
                                     </div>

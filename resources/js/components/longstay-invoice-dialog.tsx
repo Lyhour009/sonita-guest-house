@@ -11,6 +11,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -30,6 +31,7 @@ type Props = {
 export default function LongStayInvoiceDialog({ reservations }: Props) {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
+    const [billingPeriod, setBillingPeriod] = useState('');
     const [reservationId, setReservationId] = useState(
         reservations[0]?.id ?? '',
     );
@@ -88,10 +90,12 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
                                 <Label htmlFor="billing_period">
                                     {t('adminInvoices.dialog.billingMonth')}
                                 </Label>
-                                <Input
+                                <DatePicker
                                     id="billing_period"
                                     name="billing_period"
-                                    type="date"
+                                    value={billingPeriod}
+                                    onChange={setBillingPeriod}
+                                    placeholder={t('adminInvoices.dialog.billingMonth')}
                                 />
                                 <InputError message={errors.billing_period} />
                             </div>
