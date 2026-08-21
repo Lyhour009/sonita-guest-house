@@ -7,6 +7,10 @@ export const nav: Dictionary['nav'] = {
         staff: 'បុគ្គលិក',
         housekeeping: 'សម្អាតបន្ទប់',
         admin: 'អ្នកគ្រប់គ្រង',
+        operations: 'ប្រតិបត្តិការ',
+        finance: 'ហិរញ្ញវត្ថុ',
+        maintenance: 'ការថែទាំ',
+        management: 'ការគ្រប់គ្រង',
     },
     guest: {
         myReservations: 'ការកក់របស់ខ្ញុំ',

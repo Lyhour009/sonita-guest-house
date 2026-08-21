@@ -30,7 +30,7 @@ export function NavUser() {
                     asChild
                     size="lg"
                     tooltip={{ children: t('nav.logout') }}
-                    className="group relative flex h-10.5 w-full items-center gap-3 rounded-xl border border-border/60 bg-muted/30 px-3 text-[14px] font-medium text-muted-foreground transition-all duration-200 hover:border-destructive/30 hover:bg-destructive/10 hover:text-destructive active:scale-[0.98]"
+                    className="group relative flex h-11 w-full items-center gap-3 rounded-xl border border-border/60 bg-muted/30 px-3.5 text-[15px] font-medium text-muted-foreground transition-all duration-200 hover:border-destructive/30 hover:bg-destructive/10 hover:text-destructive active:scale-[0.98]"
                     data-test="sidebar-logout-button"
                 >
                     <Link
@@ -40,7 +40,7 @@ export function NavUser() {
                         className="flex w-full items-center gap-3 cursor-pointer"
                         data-test="logout-button"
                     >
-                        <LogOut className="size-4.5 shrink-0 transition-transform duration-200 group-hover:scale-110 group-hover:-translate-x-0.5 text-muted-foreground group-hover:text-destructive" />
+                        <LogOut className="size-5 shrink-0 transition-transform duration-200 group-hover:scale-110 group-hover:-translate-x-0.5 text-muted-foreground group-hover:text-destructive" />
                         <span className="truncate font-sans font-medium text-left">
                             {t('nav.logout')}
                         </span>

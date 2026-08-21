@@ -22,7 +22,7 @@ export function NavMain({
     return (
         <SidebarGroup className="px-2.5 py-0.5">
             {label && (
-                <SidebarGroupLabel className="px-3 pt-3.5 pb-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground/60 select-none">
+                <SidebarGroupLabel className="px-3 pt-3.5 pb-1 text-[12px] font-bold uppercase tracking-wider text-muted-foreground/60 select-none">
                     {label}
                 </SidebarGroupLabel>
             )}
@@ -37,7 +37,7 @@ export function NavMain({
                                 isActive={active}
                                 tooltip={{ children: item.title }}
                                 className={cn(
-                                    'group/btn relative flex h-10 w-full items-center gap-3 rounded-xl px-3 text-[14px] font-medium transition-all duration-150 ease-out',
+                                    'group/btn relative flex h-10.5 w-full items-center gap-3 rounded-xl px-3.5 text-[15px] font-medium transition-all duration-150 ease-out',
                                     active
                                         ? 'bg-primary text-primary-foreground font-semibold shadow-2xs hover:bg-primary/95 hover:text-primary-foreground'
                                         : 'text-muted-foreground hover:bg-accent/70 hover:text-foreground',
@@ -47,7 +47,7 @@ export function NavMain({
                                     {item.icon && (
                                         <item.icon
                                             className={cn(
-                                                'size-4.5 shrink-0 transition-transform duration-150 group-hover/btn:scale-105',
+                                                'size-5 shrink-0 transition-transform duration-150 group-hover/btn:scale-105',
                                                 active
                                                     ? 'text-primary-foreground'
                                                     : 'text-muted-foreground group-hover/btn:text-foreground',

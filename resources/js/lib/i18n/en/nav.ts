@@ -5,6 +5,10 @@ export const nav = {
         staff: 'Staff',
         housekeeping: 'Housekeeping',
         admin: 'Admin',
+        operations: 'Operations',
+        finance: 'Billing & Finance',
+        maintenance: 'Maintenance',
+        management: 'Management',
     },
     guest: {
         myReservations: 'My Reservations',

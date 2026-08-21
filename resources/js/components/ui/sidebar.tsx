@@ -1,7 +1,7 @@
 import { Slot } from "@radix-ui/react-slot"
 import type { VariantProps} from "class-variance-authority";
 import { cva } from "class-variance-authority"
-import { PanelLeftCloseIcon, PanelLeftOpenIcon } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
@@ -237,7 +237,7 @@ function Sidebar({
       >
         <div
           data-sidebar="sidebar"
-          className="bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm"
+          className="bg-sidebar group-data-[variant=floating]:border-sidebar-border/80 group-data-[variant=inset]:border-sidebar-border/80 flex h-full w-full flex-col group-data-[variant=floating]:rounded-2xl group-data-[variant=floating]:border group-data-[variant=floating]:shadow-xs group-data-[variant=inset]:rounded-2xl group-data-[variant=inset]:border group-data-[variant=inset]:shadow-xs overflow-hidden"
         >
           {children}
         </div>
@@ -261,7 +261,7 @@ function SidebarTrigger({
       variant="outline"
       size="icon"
       className={cn(
-        "group relative h-9 w-9 rounded-lg border-sidebar-border/80 bg-background/80 shadow-2xs backdrop-blur-xs transition-all duration-200 hover:border-sidebar-border hover:bg-accent hover:text-accent-foreground active:scale-95",
+        "group relative h-9 w-9 rounded-xl border-border bg-background shadow-2xs transition-all duration-200 hover:bg-accent hover:text-accent-foreground active:scale-95",
         className
       )}
       onClick={(event) => {
@@ -270,9 +270,9 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      <PanelLeftCloseIcon
+      <ChevronLeft
         className={cn(
-          "size-4.5 transition-all duration-300 ease-out group-hover:scale-110",
+          "size-5 transition-transform duration-300 ease-out group-hover:scale-110",
           isCollapsed ? "rotate-180 text-muted-foreground" : "rotate-0 text-foreground"
         )}
       />
@@ -312,7 +312,8 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
       data-slot="sidebar-inset"
       className={cn(
         "bg-background relative flex max-w-full min-h-svh flex-1 flex-col",
-        "peer-data-[variant=inset]:min-h-[calc(100svh-(--spacing(4)))] md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-0",
+        "peer-data-[variant=inset]:min-h-[calc(100svh-(--spacing(4)))] md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-2xl md:peer-data-[variant=inset]:border md:peer-data-[variant=inset]:border-border/80 md:peer-data-[variant=inset]:shadow-xs md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-0 overflow-hidden",
+        "peer-data-[variant=floating]:min-h-[calc(100svh-(--spacing(4)))] md:peer-data-[variant=floating]:m-2 md:peer-data-[variant=floating]:ml-0 md:peer-data-[variant=floating]:rounded-2xl md:peer-data-[variant=floating]:border md:peer-data-[variant=floating]:border-border/80 md:peer-data-[variant=floating]:shadow-xs md:peer-data-[variant=floating]:peer-data-[state=collapsed]:ml-0 overflow-hidden",
         className
       )}
       {...props}

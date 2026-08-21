@@ -44,9 +44,11 @@ import type { NavItem } from '@/types';
 export function AppSidebar() {
     const { auth } = usePage().props;
     const { t } = useTranslation();
+    const role = auth.user?.role;
     const dashboardHref =
-        auth.user?.role === 'admin' ? adminDashboardIndex() : dashboard();
+        role === 'admin' ? adminDashboardIndex() : dashboard();
 
+    // 1. Overview
     const mainNavItems: NavItem[] = [
         {
             title: t('nav.dashboard'),
@@ -55,6 +57,7 @@ export function AppSidebar() {
         },
     ];
 
+    // Guest Navigation
     const guestNavItems: NavItem[] = [
         {
             title: t('nav.guest.myReservations'),
@@ -78,12 +81,66 @@ export function AppSidebar() {
         },
     ];
 
-    const staffNavItems: NavItem[] = [
+    // Admin & Staff Operations (Front Desk & Rooms)
+    const adminOperationsNavItems: NavItem[] = [
         {
             title: t('nav.staff.reservations'),
             href: staffReservationsIndex(),
             icon: CalendarCheck,
         },
+        {
+            title: t('nav.admin.rooms'),
+            href: adminRoomsIndex(),
+            icon: BedDouble,
+        },
+        {
+            title: t('nav.staff.roomStatus'),
+            href: staffHousekeepingIndex(),
+            icon: ClipboardList,
+        },
+    ];
+
+    const receptionistOperationsNavItems: NavItem[] = [
+        {
+            title: t('nav.staff.reservations'),
+            href: staffReservationsIndex(),
+            icon: CalendarCheck,
+        },
+        {
+            title: t('nav.staff.roomStatus'),
+            href: staffHousekeepingIndex(),
+            icon: ClipboardList,
+        },
+    ];
+
+    const housekeepingOperationsNavItems: NavItem[] = [
+        {
+            title: t('nav.staff.roomStatus'),
+            href: staffHousekeepingIndex(),
+            icon: ClipboardList,
+        },
+    ];
+
+    // Admin & Staff Finance (Billing & Payments)
+    const adminFinanceNavItems: NavItem[] = [
+        {
+            title: t('nav.admin.invoices'),
+            href: adminInvoicesIndex(),
+            icon: FileText,
+        },
+        {
+            title: t('nav.staff.payments'),
+            href: staffPaymentsIndex(),
+            icon: CreditCard,
+        },
+        {
+            title: t('nav.admin.services'),
+            href: adminServicesIndex(),
+            icon: ConciergeBell,
+        },
+    ];
+
+    const receptionistFinanceNavItems: NavItem[] = [
         {
             title: t('nav.staff.payments'),
             href: staffPaymentsIndex(),
@@ -91,12 +148,8 @@ export function AppSidebar() {
         },
     ];
 
-    const housekeepingNavItems: NavItem[] = [
-        {
-            title: t('nav.staff.roomStatus'),
-            href: staffHousekeepingIndex(),
-            icon: ClipboardList,
-        },
+    // Maintenance
+    const maintenanceNavItems: NavItem[] = [
         {
             title: t('nav.staff.maintenance'),
             href: staffMaintenanceIndex(),
@@ -104,22 +157,8 @@ export function AppSidebar() {
         },
     ];
 
-    const adminNavItems: NavItem[] = [
-        {
-            title: t('nav.admin.rooms'),
-            href: adminRoomsIndex(),
-            icon: BedDouble,
-        },
-        {
-            title: t('nav.admin.invoices'),
-            href: adminInvoicesIndex(),
-            icon: FileText,
-        },
-        {
-            title: t('nav.admin.services'),
-            href: adminServicesIndex(),
-            icon: ConciergeBell,
-        },
+    // Admin System Management
+    const adminManagementNavItems: NavItem[] = [
         {
             title: t('nav.admin.staffAccounts'),
             href: adminStaffIndex(),
@@ -133,7 +172,7 @@ export function AppSidebar() {
     ];
 
     return (
-        <Sidebar collapsible="icon" variant="inset" className="border-r border-sidebar-border/60">
+        <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader className="border-b border-sidebar-border/50 p-3">
                 <SidebarMenu>
                     <SidebarMenuItem>
@@ -147,31 +186,64 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent className="gap-1 py-3">
+                {/* 1. Main Dashboard */}
                 <NavMain items={mainNavItems} />
-                {auth.user?.role === 'guest' && (
+
+                {/* Guest Navigation */}
+                {role === 'guest' && (
                     <NavMain
                         items={guestNavItems}
                         label={t('nav.groups.reservations')}
                     />
                 )}
-                {(auth.user?.role === 'receptionist' ||
-                    auth.user?.role === 'admin') && (
+
+                {/* 2. Operations Group */}
+                {role === 'admin' && (
                     <NavMain
-                        items={staffNavItems}
-                        label={t('nav.groups.staff')}
+                        items={adminOperationsNavItems}
+                        label={t('nav.groups.operations')}
                     />
                 )}
-                {(auth.user?.role === 'housekeeping' ||
-                    auth.user?.role === 'admin') && (
+                {role === 'receptionist' && (
                     <NavMain
-                        items={housekeepingNavItems}
-                        label={t('nav.groups.housekeeping')}
+                        items={receptionistOperationsNavItems}
+                        label={t('nav.groups.operations')}
                     />
                 )}
-                {auth.user?.role === 'admin' && (
+                {role === 'housekeeping' && (
                     <NavMain
-                        items={adminNavItems}
-                        label={t('nav.groups.admin')}
+                        items={housekeepingOperationsNavItems}
+                        label={t('nav.groups.operations')}
+                    />
+                )}
+
+                {/* 3. Finance Group */}
+                {role === 'admin' && (
+                    <NavMain
+                        items={adminFinanceNavItems}
+                        label={t('nav.groups.finance')}
+                    />
+                )}
+                {role === 'receptionist' && (
+                    <NavMain
+                        items={receptionistFinanceNavItems}
+                        label={t('nav.groups.finance')}
+                    />
+                )}
+
+                {/* 4. Maintenance Group */}
+                {(role === 'admin' || role === 'housekeeping') && (
+                    <NavMain
+                        items={maintenanceNavItems}
+                        label={t('nav.groups.maintenance')}
+                    />
+                )}
+
+                {/* 5. Management Group */}
+                {role === 'admin' && (
+                    <NavMain
+                        items={adminManagementNavItems}
+                        label={t('nav.groups.management')}
                     />
                 )}
             </SidebarContent>
