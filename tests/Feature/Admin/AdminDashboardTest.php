@@ -52,5 +52,7 @@ test('the admin dashboard reports occupancy, revenue this month, outstanding inv
         ->where('occupancy.long_stay', 1)
         ->where('revenueThisMonth', fn ($value) => (float) $value === 100.0)
         ->where('outstandingInvoicesCount', 2)
-        ->where('openMaintenanceCount', 1));
+        ->where('openMaintenanceCount', 1)
+        ->has('revenueTrend', 14)
+        ->where('revenueTrend.13', fn ($value) => $value['date'] === now()->toDateString() && (float) $value['amount'] === 100.0));
 });

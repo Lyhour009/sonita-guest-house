@@ -49,6 +49,11 @@ export type HousekeepingDashboardData = {
     openAssignedMaintenance: number;
 };
 
+export type RevenueTrendPoint = {
+    date: string;
+    amount: number;
+};
+
 export type AdminDashboardData = {
     occupancy: {
         short_stay: number;
@@ -58,4 +63,5 @@ export type AdminDashboardData = {
     revenueThisMonth: number;
     outstandingInvoicesCount: number;
     openMaintenanceCount: number;
+    revenueTrend: RevenueTrendPoint[];
 };

@@ -42,6 +42,35 @@ class DashboardController extends Controller
             'revenueThisMonth' => $revenueThisMonth,
             'outstandingInvoicesCount' => Invoice::query()->whereIn('status', ['unpaid', 'partial'])->count(),
             'openMaintenanceCount' => MaintenanceRequest::query()->whereIn('status', ['pending', 'in_progress'])->count(),
+            'revenueTrend' => $this->revenueTrend(),
         ]);
+    }
+
+    /**
+     * Confirmed payment revenue for each of the last 14 days, including days with no revenue.
+     *
+     * @return array<int, array{date: string, amount: float}>
+     */
+    private function revenueTrend(): array
+    {
+        $days = 14;
+
+        $dailyTotals = Payment::query()
+            ->selectRaw('DATE(paid_at) as date, SUM(amount) as total')
+            ->where('status', 'confirmed')
+            ->where('paid_at', '>=', now()->subDays($days - 1)->startOfDay())
+            ->groupBy('date')
+            ->pluck('total', 'date');
+
+        return collect(range($days - 1, 0))
+            ->map(function (int $daysAgo) use ($dailyTotals) {
+                $date = now()->subDays($daysAgo)->toDateString();
+
+                return [
+                    'date' => $date,
+                    'amount' => (float) ($dailyTotals[$date] ?? 0),
+                ];
+            })
+            ->all();
     }
 }

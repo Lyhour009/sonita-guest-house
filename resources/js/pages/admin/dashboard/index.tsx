@@ -1,4 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
+import { OccupancyBreakdownChart } from '@/components/charts/occupancy-breakdown-chart';
+import { RevenueTrendChart } from '@/components/charts/revenue-trend-chart';
 import { index as adminDashboardIndex } from '@/routes/admin/dashboard';
 import { index as adminInvoicesIndex } from '@/routes/admin/invoices';
 import { index as staffMaintenanceIndex } from '@/routes/staff/maintenance';
@@ -30,6 +32,7 @@ export default function AdminDashboardIndex({
     revenueThisMonth,
     outstandingInvoicesCount,
     openMaintenanceCount,
+    revenueTrend,
 }: Props) {
     const availableRooms =
         occupancy.total_rooms - occupancy.short_stay - occupancy.long_stay;
@@ -62,32 +65,15 @@ export default function AdminDashboardIndex({
                     />
                 </div>
 
-                <div className="rounded-xl border p-4">
-                    <h2 className="mb-3 font-medium">Occupancy</h2>
-                    <div className="grid grid-cols-3 gap-4 text-sm">
-                        <div>
-                            <p className="text-muted-foreground">
-                                Short-stay occupied
-                            </p>
-                            <p className="text-lg font-semibold">
-                                {occupancy.short_stay}
-                            </p>
-                        </div>
-                        <div>
-                            <p className="text-muted-foreground">
-                                Long-stay occupied
-                            </p>
-                            <p className="text-lg font-semibold">
-                                {occupancy.long_stay}
-                            </p>
-                        </div>
-                        <div>
-                            <p className="text-muted-foreground">Available</p>
-                            <p className="text-lg font-semibold">
-                                {availableRooms}
-                            </p>
-                        </div>
+                <div className="grid gap-4 lg:grid-cols-3">
+                    <div className="lg:col-span-2">
+                        <RevenueTrendChart data={revenueTrend} />
                     </div>
+                    <OccupancyBreakdownChart
+                        shortStay={occupancy.short_stay}
+                        longStay={occupancy.long_stay}
+                        available={availableRooms}
+                    />
                 </div>
             </div>
         </>
