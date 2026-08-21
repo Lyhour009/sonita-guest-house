@@ -1,7 +1,9 @@
 import { Head } from '@inertiajs/react';
+import { Download } from 'lucide-react';
 import Pagination from '@/components/pagination';
 import PaymentSubmitDialog from '@/components/payment-submit-dialog';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Table,
     TableBody,
@@ -10,7 +12,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { index as invoicesIndex } from '@/routes/invoices';
+import { index as invoicesIndex, pdf as invoicePdf } from '@/routes/invoices';
 import type { Invoice, Paginated } from '@/types';
 
 type Props = {
@@ -78,13 +80,30 @@ export default function InvoicesIndex({ invoices }: Props) {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        {payableStatuses.includes(
-                                            invoice.status,
-                                        ) && (
-                                            <PaymentSubmitDialog
-                                                invoice={invoice}
-                                            />
-                                        )}
+                                        <div className="flex items-center justify-end gap-2">
+                                            <Button
+                                                asChild
+                                                variant="outline"
+                                                size="icon"
+                                                title="Download PDF"
+                                            >
+                                                <a
+                                                    href={
+                                                        invoicePdf(invoice.id)
+                                                            .url
+                                                    }
+                                                >
+                                                    <Download />
+                                                </a>
+                                            </Button>
+                                            {payableStatuses.includes(
+                                                invoice.status,
+                                            ) && (
+                                                <PaymentSubmitDialog
+                                                    invoice={invoice}
+                                                />
+                                            )}
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))}

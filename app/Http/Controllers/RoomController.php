@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Reservation;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -75,7 +76,44 @@ class RoomController extends Controller
                     'url' => Storage::disk('public')->url($image->image_path),
                 ]),
             ],
+            'bookedRanges' => $this->bookedRanges($room),
         ]);
+    }
+
+    /**
+     * Booked date ranges for this room over the next 12 months, for the availability calendar.
+     *
+     * @return array<int, array{start: string, end: string}>
+     */
+    private function bookedRanges(Room $room): array
+    {
+        $windowStart = now()->startOfDay();
+        $windowEnd = now()->addMonths(12)->endOfDay();
+
+        return $room->reservations()
+            ->whereIn('status', ['pending', 'confirmed', 'checked_in', 'active'])
+            ->where(function ($query) use ($windowStart, $windowEnd) {
+                $query->where(function ($shortStay) use ($windowStart, $windowEnd) {
+                    $shortStay->where('check_in_date', '<', $windowEnd)
+                        ->where('check_out_date', '>', $windowStart);
+                })->orWhere(function ($longStay) use ($windowStart, $windowEnd) {
+                    $longStay->where('start_date', '<', $windowEnd)
+                        ->where(function ($openEnded) use ($windowStart) {
+                            $openEnded->whereNull('end_date')->orWhere('end_date', '>', $windowStart);
+                        });
+                });
+            })
+            ->get()
+            ->map(function (Reservation $reservation) use ($windowEnd) {
+                $start = $reservation->check_in_date ?? $reservation->start_date;
+                $end = $reservation->check_out_date ?? $reservation->end_date ?? $windowEnd;
+
+                return [
+                    'start' => $start->toDateString(),
+                    'end' => $end->min($windowEnd)->toDateString(),
+                ];
+            })
+            ->all();
     }
 
     /**

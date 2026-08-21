@@ -1,8 +1,10 @@
 import { Head, router } from '@inertiajs/react';
+import { Download } from 'lucide-react';
 import { useState } from 'react';
 import LongStayInvoiceDialog from '@/components/longstay-invoice-dialog';
 import Pagination from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Select,
     SelectContent,
@@ -18,7 +20,10 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { index as adminInvoicesIndex } from '@/routes/admin/invoices';
+import {
+    index as adminInvoicesIndex,
+    pdf as adminInvoicePdf,
+} from '@/routes/admin/invoices';
 import type {
     ActiveLongStayReservationOption,
     AdminInvoice,
@@ -91,13 +96,16 @@ export default function AdminInvoicesIndex({
                                 <TableHead>Total</TableHead>
                                 <TableHead>Due date</TableHead>
                                 <TableHead>Status</TableHead>
+                                <TableHead className="text-right">
+                                    Actions
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {invoices.data.length === 0 && (
                                 <TableRow>
                                     <TableCell
-                                        colSpan={7}
+                                        colSpan={8}
                                         className="text-center text-muted-foreground"
                                     >
                                         No invoices match your filters.
@@ -130,6 +138,23 @@ export default function AdminInvoicesIndex({
                                         <Badge variant="outline">
                                             {invoice.status}
                                         </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            size="icon"
+                                            title="Download PDF"
+                                        >
+                                            <a
+                                                href={
+                                                    adminInvoicePdf(invoice.id)
+                                                        .url
+                                                }
+                                            >
+                                                <Download />
+                                            </a>
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}

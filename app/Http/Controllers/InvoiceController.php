@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Invoices\RenderInvoicePdf;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class InvoiceController extends Controller
 {
@@ -24,6 +26,18 @@ class InvoiceController extends Controller
         return Inertia::render('invoices/index', [
             'invoices' => $invoices->through(fn (Invoice $invoice) => $this->invoicePayload($invoice)),
         ]);
+    }
+
+    /**
+     * Download the authenticated guest's own invoice as a PDF.
+     */
+    public function download(Request $request, Invoice $invoice, RenderInvoicePdf $renderInvoicePdf): SymfonyResponse
+    {
+        $invoice->loadMissing('reservation');
+
+        abort_unless($invoice->reservation->guest_id === $request->user()->id, 403);
+
+        return $renderInvoicePdf->handle($invoice)->download("invoice-{$invoice->id}.pdf");
     }
 
     /**

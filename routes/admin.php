@@ -19,6 +19,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
 
     Route::get('invoices', [InvoiceController::class, 'index'])->name('invoices.index');
     Route::post('invoices', [InvoiceController::class, 'store'])->name('invoices.store');
+    Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'download'])->name('invoices.pdf');
 
     Route::get('settings', [SettingController::class, 'edit'])->name('settings.edit');
     Route::patch('settings', [SettingController::class, 'update'])->name('settings.update');

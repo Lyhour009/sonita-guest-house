@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Actions\Invoices\GenerateLongStayInvoice;
+use App\Actions\Invoices\RenderInvoicePdf;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\LongStayInvoiceStoreRequest;
 use App\Models\Invoice;
@@ -11,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class InvoiceController extends Controller
 {
@@ -73,5 +75,13 @@ class InvoiceController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Invoice generated.')]);
 
         return to_route('admin.invoices.index');
+    }
+
+    /**
+     * Download any invoice as a PDF.
+     */
+    public function download(Invoice $invoice, RenderInvoicePdf $renderInvoicePdf): SymfonyResponse
+    {
+        return $renderInvoicePdf->handle($invoice)->download("invoice-{$invoice->id}.pdf");
     }
 }

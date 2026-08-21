@@ -10,7 +10,10 @@
       "Bash(powershell -NoProfile -Command 'Get-Process php -ErrorAction SilentlyContinue | Where-Object {\\($_.CommandLine -match '\\\\''artisan serve'\\\\''\\)} | Stop-Process -Force')",
       "Bash(taskkill //F //IM php.exe //FI \"WINDOWTITLE eq*\")",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:8001/ --max-time 2)",
-      "Bash(npx shadcn@latest add chart --yes)"
+      "Bash(npx shadcn@latest add chart --yes)",
+      "Bash(composer require *)",
+      "Bash(grep -n \"rooms/{room}\\\\|rooms.show\\\\|room-show\\\\|RoomController::class, 'show'\" \"d:/Code/Laravel/Sonita-Guest-House/routes/web.php\")",
+      "Bash(npx shadcn@latest add calendar --yes)"
     ],
     "additionalDirectories": [
       "\\tmp"
