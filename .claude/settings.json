@@ -18,7 +18,9 @@
       "Bash(grep -n \"^\\\\s*[A-Za-z].*[A-Za-z]$\\\\|>[A-Z][a-z]\" \"d:/Code/Laravel/Sonita-Guest-House/resources/js/components/nav-footer.tsx\" \"d:/Code/Laravel/Sonita-Guest-House/resources/js/components/user-menu-content.tsx\" \"d:/Code/Laravel/Sonita-Guest-House/resources/js/components/nav-user.tsx\")",
       "Bash(npx tsc *)",
       "Bash(git stash *)",
-      "Bash(grep -A6 \"reservation-details-drawer.tsx\\\\|reservation-timeline-view.tsx\\\\|welcome.tsx\\\\|staff\\\\\\\\\\\\\\\\reservations\\\\\\\\\\\\\\\\index.tsx\" /tmp/before_lint.txt)"
+      "Bash(grep -A6 \"reservation-details-drawer.tsx\\\\|reservation-timeline-view.tsx\\\\|welcome.tsx\\\\|staff\\\\\\\\\\\\\\\\reservations\\\\\\\\\\\\\\\\index.tsx\" /tmp/before_lint.txt)",
+      "Bash(git mv *)",
+      "Bash(git rm *)"
     ],
     "additionalDirectories": [
       "\\tmp"

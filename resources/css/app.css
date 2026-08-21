@@ -2,6 +2,24 @@
 
 @import 'tw-animate-css';
 
+/* Inter Variable Font */
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../fonts/Inter.ttf') format('truetype');
+}
+
+/* Kantumruy Pro Variable Font (Complete Khmer + Latin) */
+@font-face {
+    font-family: 'Kantumruy Pro';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../fonts/KantumruyPro.ttf') format('truetype');
+}
+
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
