@@ -60,7 +60,7 @@ export default function RoomShow({ room, bookedRanges }: Props) {
 
                     {/* Airbnb Style Photo Gallery */}
                     <div className="grid h-[50vh] min-h-[400px] max-h-[600px] gap-2 grid-cols-4 grid-rows-2 rounded-3xl overflow-hidden shadow-sm">
-                        {room.images.length > 0 ? (
+                        {room.images && room.images.length > 0 ? (
                             <>
                                 <div className="col-span-4 sm:col-span-2 row-span-2 relative group overflow-hidden bg-muted">
                                     <img

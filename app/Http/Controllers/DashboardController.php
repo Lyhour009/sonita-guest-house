@@ -17,7 +17,7 @@ class DashboardController extends Controller
     /**
      * Display the role-appropriate dashboard.
      */
-    public function index(Request $request): Response
+    public function index(Request $request): \Inertia\Response|\Illuminate\Http\RedirectResponse
     {
         $user = $request->user();
 
@@ -53,7 +53,7 @@ class DashboardController extends Controller
         $notifications = $guest->notifications()->latest()->limit(5)->get();
 
         return [
-            'reservations' => ReservationResource::collection($reservations),
+            'reservations' => ReservationResource::collection($reservations)->resolve(),
             'latestInvoice' => $latestInvoice ? [
                 'id' => $latestInvoice->id,
                 'invoice_type' => $latestInvoice->invoice_type,

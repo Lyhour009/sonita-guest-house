@@ -61,7 +61,7 @@ class RoomController extends Controller
         $room->load('roomImages');
 
         return Inertia::render('rooms/show', [
-            'room' => new RoomResource($room),
+            'room' => (new RoomResource($room))->resolve(),
             'bookedRanges' => $this->bookedRanges($room),
         ]);
     }

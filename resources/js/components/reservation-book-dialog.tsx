@@ -53,7 +53,7 @@ export default function ReservationBookDialog({ room }: Props) {
                     {t('reservations.bookDialog.trigger')}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[85vh] overflow-y-auto">
+            <DialogContent className="max-h-[85vh] sm:max-w-xl">
                 <DialogHeader>
                     <DialogTitle>
                         {t('reservations.bookDialog.title', {

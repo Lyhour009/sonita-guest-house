@@ -71,7 +71,6 @@ export default function ReservationDateFields({
                                 minDate={todayString}
                                 value={checkInDate}
                                 onChange={setCheckInDate}
-                                portaled={false}
                                 required
                             />
                             <InputError message={errors.check_in_date} />
@@ -89,7 +88,6 @@ export default function ReservationDateFields({
                                 value={checkOutDate}
                                 onChange={setCheckOutDate}
                                 minDate={checkInDate || todayString}
-                                portaled={false}
                                 required
                             />
                             <InputError message={errors.check_out_date} />
@@ -112,7 +110,7 @@ export default function ReservationDateFields({
                                         <SelectTrigger id="num_guests" className={inputClass}>
                                             <SelectValue />
                                         </SelectTrigger>
-                                        <SelectContent portaled={false} className="z-[100] max-h-48 rounded-xl border-border shadow-xl">
+                                        <SelectContent className="z-[100] max-h-48 rounded-xl border-border shadow-xl">
                                             {Array.from(
                                                 { length: maxOccupants },
                                                 (_, i) => i + 1,
@@ -153,7 +151,6 @@ export default function ReservationDateFields({
                             minDate={todayString}
                             value={startDate}
                             onChange={setStartDate}
-                            portaled={false}
                             required
                         />
                         <InputError message={errors.start_date} />
@@ -171,7 +168,6 @@ export default function ReservationDateFields({
                             value={endDate}
                             onChange={setEndDate}
                             minDate={startDate || todayString}
-                            portaled={false}
                         />
                         <InputError message={errors.end_date} />
                     </div>
