@@ -1,4 +1,4 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import {
     Calendar,
     CalendarCheck,
@@ -14,15 +14,18 @@ import {
     Search,
     X,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReservationController from '@/actions/App/Http/Controllers/Staff/ReservationController';
 import Pagination from '@/components/pagination';
 import ReservationCheckinDialog from '@/components/reservation-checkin-dialog';
+import ReservationCheckoutInvoiceDialog, {
+    type CheckoutInvoiceSummary,
+} from '@/components/reservation-checkout-invoice-dialog';
 import ReservationDetailsDrawer from '@/components/reservation-details-drawer';
 import ReservationPrintSlip from '@/components/reservation-print-slip';
 import ReservationTimelineView from '@/components/reservation-timeline-view';
 import ReservationWalkinDialog from '@/components/reservation-walkin-dialog';
-import { Badge } from '@/components/ui/badge';
+import { ReservationStatusBadge, PaymentStatusBadge } from '@/components/reservation-badges';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -96,6 +99,20 @@ export default function StaffReservationsIndex({
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isCheckinOpen, setIsCheckinOpen] = useState(false);
     const [isPrintSlipOpen, setIsPrintSlipOpen] = useState(false);
+    const [checkoutInvoice, setCheckoutInvoice] =
+        useState<CheckoutInvoiceSummary | null>(null);
+    const [isCheckoutInvoiceOpen, setIsCheckoutInvoiceOpen] = useState(false);
+
+    // Listen for checkout invoice flash on every navigation
+    const { props } = usePage<{ flash?: { checkoutInvoice?: CheckoutInvoiceSummary | null } }>();
+    useEffect(() => {
+        const inv = props.flash?.checkoutInvoice;
+        if (inv) {
+            setCheckoutInvoice(inv);
+            setIsCheckoutInvoiceOpen(true);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.flash?.checkoutInvoice]);
 
     const applyFilters = (next: Partial<Filters>) => {
         const nextSearch = next.search !== undefined ? next.search : search;
@@ -121,8 +138,13 @@ export default function StaffReservationsIndex({
     };
 
     const debouncedSearch = useDebouncedValue(search, 300);
+    const isFirstRender = useRef(true);
 
     useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
         applyFilters({ search: debouncedSearch });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearch]);
@@ -147,90 +169,7 @@ export default function StaffReservationsIndex({
         return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     };
 
-    const getStatusBadge = (resStatus: string) => {
-        switch (resStatus) {
-            case 'confirmed':
-                return (
-                    <Badge
-                        variant="outline"
-                        className="border-primary/40 bg-primary/10 font-sans text-xs font-semibold text-primary"
-                    >
-                        {t('common.reservationStatus.confirmed')}
-                    </Badge>
-                );
-            case 'checked_in':
-            case 'active':
-                return (
-                    <Badge
-                        variant="outline"
-                        className="gap-1.5 border-emerald-500/40 bg-emerald-500/10 font-sans text-xs font-semibold text-emerald-700 dark:text-emerald-300"
-                    >
-                        <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
-                        {t(`common.reservationStatus.${resStatus}`)}
-                    </Badge>
-                );
-            case 'checked_out':
-                return (
-                    <Badge
-                        variant="outline"
-                        className="border-border bg-muted/50 font-sans text-xs text-muted-foreground"
-                    >
-                        {t('common.reservationStatus.checked_out')}
-                    </Badge>
-                );
-            case 'cancelled':
-                return (
-                    <Badge
-                        variant="outline"
-                        className="border-rose-500/40 bg-rose-500/10 font-sans text-xs text-rose-600 dark:text-rose-400"
-                    >
-                        {t('common.reservationStatus.cancelled')}
-                    </Badge>
-                );
-            default:
-                return (
-                    <Badge
-                        variant="outline"
-                        className="border-amber-500/40 bg-amber-500/10 font-sans text-xs font-semibold text-amber-700 dark:text-amber-300"
-                    >
-                        {t('common.reservationStatus.pending')}
-                    </Badge>
-                );
-        }
-    };
 
-    const getPaymentBadge = (payStatus?: string) => {
-        switch (payStatus) {
-            case 'paid':
-                return (
-                    <Badge
-                        variant="outline"
-                        className="gap-1 border-emerald-500/40 bg-emerald-500/10 font-sans text-[11px] font-semibold text-emerald-700 dark:text-emerald-300"
-                    >
-                        <span className="size-1 rounded-full bg-emerald-500" />
-                        {t('staff.reservations.paymentStatus.paid')}
-                    </Badge>
-                );
-            case 'pending':
-                return (
-                    <Badge
-                        variant="outline"
-                        className="border-amber-500/40 bg-amber-500/10 font-sans text-[11px] font-semibold text-amber-700 dark:text-amber-300"
-                    >
-                        {t('staff.reservations.paymentStatus.pending')}
-                    </Badge>
-                );
-            default:
-                return (
-                    <Badge
-                        variant="outline"
-                        className="border-rose-500/40 bg-rose-500/10 font-sans text-[11px] font-semibold text-rose-600 dark:text-rose-400"
-                    >
-                        {t('staff.reservations.paymentStatus.unpaid')}
-                    </Badge>
-                );
-        }
-    };
 
     return (
         <>
@@ -540,17 +479,12 @@ export default function StaffReservationsIndex({
 
                                             {/* Status */}
                                             <TableCell className="px-4 py-3.5">
-                                                {getStatusBadge(
-                                                    reservation.status,
-                                                )}
+                                                <ReservationStatusBadge status={reservation.status} />
                                             </TableCell>
 
                                             {/* Payment Status Pill */}
                                             <TableCell className="px-4 py-3.5">
-                                                {getPaymentBadge(
-                                                    reservation.latest_invoice
-                                                        ?.status,
-                                                )}
+                                                <PaymentStatusBadge status={reservation.latest_invoice?.status} />
                                             </TableCell>
 
                                             {/* Action Buttons */}
@@ -756,6 +690,13 @@ export default function StaffReservationsIndex({
                 reservation={selectedReservation}
                 open={isPrintSlipOpen}
                 onOpenChange={setIsPrintSlipOpen}
+            />
+
+            {/* Invoice Summary after Check-Out */}
+            <ReservationCheckoutInvoiceDialog
+                invoice={checkoutInvoice}
+                open={isCheckoutInvoiceOpen}
+                onOpenChange={setIsCheckoutInvoiceOpen}
             />
         </>
     );

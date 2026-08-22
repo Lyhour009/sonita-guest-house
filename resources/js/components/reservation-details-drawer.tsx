@@ -14,7 +14,7 @@ import {
     Users,
     X,
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { ReservationStatusBadge, PaymentStatusBadge } from '@/components/reservation-badges';
 import { Button } from '@/components/ui/button';
 import {
     Sheet,
@@ -65,96 +65,7 @@ export default function ReservationDetailsDrawer({
             ? `${reservation.check_in_date} → ${reservation.check_out_date}`
             : `${reservation.start_date} → ${reservation.end_date ?? t('staff.reservations.openEnded')}`;
 
-    const getPaymentBadge = (status?: string) => {
-        switch (status) {
-            case 'paid':
-                return (
-                    <Badge
-                        variant="outline"
-                        className="gap-1 border-emerald-500/40 bg-emerald-500/10 font-sans text-xs font-semibold text-emerald-700 dark:text-emerald-300"
-                    >
-                        <span className="size-1.5 rounded-full bg-emerald-500" />
-                        {t('staff.reservations.paymentStatus.paid')}
-                    </Badge>
-                );
-            case 'pending':
-                return (
-                    <Badge
-                        variant="outline"
-                        className="border-amber-500/40 bg-amber-500/10 font-sans text-xs font-semibold text-amber-700 dark:text-amber-300"
-                    >
-                        {t('staff.reservations.paymentStatus.pending')}
-                    </Badge>
-                );
-            default:
-                return (
-                    <Badge
-                        variant="outline"
-                        className="border-rose-500/40 bg-rose-500/10 font-sans text-xs font-semibold text-rose-600 dark:text-rose-400"
-                    >
-                        {t('staff.reservations.paymentStatus.unpaid')}
-                    </Badge>
-                );
-        }
-    };
-
-    const getStatusBadge = (resStatus: string) => {
-        switch (resStatus) {
-            case 'confirmed':
-                return (
-                    <Badge
-                        variant="outline"
-                        className="border-primary/40 bg-primary/10 font-sans text-xs font-semibold text-primary"
-                    >
-                        {t('common.reservationStatus.confirmed')}
-                    </Badge>
-                );
-            case 'checked_in':
-            case 'active':
-                return (
-                    <Badge
-                        variant="outline"
-                        className="gap-1.5 border-emerald-500/40 bg-emerald-500/10 font-sans text-xs font-semibold text-emerald-700 dark:text-emerald-300"
-                    >
-                        <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
-                        {t(`common.reservationStatus.${resStatus}`)}
-                    </Badge>
-                );
-            case 'checked_out':
-                return (
-                    <Badge
-                        variant="outline"
-                        className="border-border bg-muted/50 font-sans text-xs text-muted-foreground"
-                    >
-                        {t('common.reservationStatus.checked_out')}
-                    </Badge>
-                );
-            case 'cancelled':
-                return (
-                    <Badge
-                        variant="outline"
-                        className="border-rose-500/40 bg-rose-500/10 font-sans text-xs text-rose-600 dark:text-rose-400"
-                    >
-                        {t('common.reservationStatus.cancelled')}
-                    </Badge>
-                );
-            default:
-                return (
-                    <Badge
-                        variant="outline"
-                        className="border-amber-500/40 bg-amber-500/10 font-sans text-xs font-semibold text-amber-700 dark:text-amber-300"
-                    >
-                        {t('common.reservationStatus.pending')}
-                    </Badge>
-                );
-        }
-    };
-
-    const totalAmount =
-        reservation.latest_invoice?.total_amount ??
-        (reservation.reservation_type === 'short_stay'
-            ? (reservation.room.price_per_night ?? 0)
-            : (reservation.room.price_per_month ?? 0));
+    const totalAmount = reservation.total_amount ?? 0;
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
@@ -165,10 +76,8 @@ export default function ReservationDetailsDrawer({
                             #{reservation.id.substring(0, 8)}
                         </span>
                         <div className="flex items-center gap-2">
-                            {getStatusBadge(reservation.status)}
-                            {getPaymentBadge(
-                                reservation.latest_invoice?.status,
-                            )}
+                            <ReservationStatusBadge status={reservation.status} />
+                            <PaymentStatusBadge status={reservation.latest_invoice?.status} />
                         </div>
                     </div>
                     <SheetTitle className="font-sans text-xl font-bold text-foreground">
@@ -304,9 +213,7 @@ export default function ReservationDetailsDrawer({
                                         'staff.reservations.details.paymentStatus',
                                     )}
                                 </span>
-                                {getPaymentBadge(
-                                    reservation.latest_invoice?.status,
-                                )}
+                                <PaymentStatusBadge status={reservation.latest_invoice?.status} />
                             </div>
 
                             {reservation.deposit_amount && (
@@ -325,16 +232,70 @@ export default function ReservationDetailsDrawer({
                                 </div>
                             )}
 
-                            <div className="flex items-center justify-between border-t border-border/60 pt-2 text-sm">
-                                <span className="font-bold text-foreground">
-                                    {t(
-                                        'staff.reservations.details.totalAmount',
+                            {reservation.latest_invoice ? (
+                                <>
+                                    <div className="flex items-center justify-between border-t border-border/60 pt-2">
+                                        <span className="text-muted-foreground flex items-center gap-1">
+                                            <DollarSign className="size-3" />
+                                            {t('staff.reservations.details.roomCharge')}
+                                        </span>
+                                        <span className="font-semibold text-foreground">
+                                            ${Number(reservation.latest_invoice.room_charge ?? 0).toFixed(2)}
+                                        </span>
+                                    </div>
+
+                                    {(reservation.latest_invoice.service_charge ?? 0) > 0 && (
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-muted-foreground">
+                                                {t('staff.reservations.details.serviceCharge')}
+                                            </span>
+                                            <span className="font-semibold text-foreground">
+                                                ${Number(reservation.latest_invoice.service_charge).toFixed(2)}
+                                            </span>
+                                        </div>
                                     )}
-                                </span>
-                                <span className="text-base font-bold text-emerald-600 dark:text-emerald-400">
-                                    ${Number(totalAmount).toFixed(2)}
-                                </span>
-                            </div>
+
+                                    {(reservation.latest_invoice.tax_amount ?? 0) > 0 && (
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-muted-foreground">
+                                                {t('staff.reservations.details.taxAmount')}
+                                            </span>
+                                            <span className="font-semibold text-foreground">
+                                                ${Number(reservation.latest_invoice.tax_amount).toFixed(2)}
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    <div className="flex items-center justify-between border-t border-border/60 pt-2 text-sm">
+                                        <span className="font-bold text-foreground">
+                                            {t(
+                                                'staff.reservations.details.totalAmount',
+                                            )}
+                                        </span>
+                                        <span className="text-base font-bold text-emerald-600 dark:text-emerald-400">
+                                            ${Number(reservation.latest_invoice.total_amount).toFixed(2)}
+                                        </span>
+                                    </div>
+
+                                    {reservation.latest_invoice.due_date && (
+                                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                            <span>{t('staff.reservations.details.dueDate')}</span>
+                                            <span>{reservation.latest_invoice.due_date}</span>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="flex items-center justify-between border-t border-border/60 pt-2 text-sm">
+                                    <span className="font-bold text-foreground">
+                                        {t(
+                                            'staff.reservations.details.totalAmount',
+                                        )}
+                                    </span>
+                                    <span className="text-base font-bold text-emerald-600 dark:text-emerald-400">
+                                        ${Number(totalAmount).toFixed(2)}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     </div>
 

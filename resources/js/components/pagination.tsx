@@ -40,7 +40,7 @@ export default function Pagination<T>({ meta }: Props<T>) {
                     asChild={!!link.url}
                 >
                     {link.url ? (
-                        <Link href={link.url} preserveScroll>
+                        <Link href={link.url} preserveScroll preserveState>
                             {labelFor(link.label)}
                         </Link>
                     ) : (

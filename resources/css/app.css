@@ -27,7 +27,7 @@
 
 @theme {
     --font-sans:
-        'Inter', 'Kantumruy Pro', ui-sans-serif, system-ui,
+        'Kantumruy Pro', 'Inter', ui-sans-serif, system-ui,
         sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
     --font-khmer: 'Kantumruy Pro', sans-serif;

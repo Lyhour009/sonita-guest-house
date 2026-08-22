@@ -137,7 +137,7 @@ export default function ReservationCheckinDialog({
                         type="button"
                         variant="outline"
                         onClick={() => onOpenChange(false)}
-                        className="h-10 rounded-xl font-sans text-xs"
+                        className="h-10 rounded-xl font-sans text-xs px-6"
                     >
                         {t('staff.reservations.checkInDialog.cancelButton')}
                     </Button>
@@ -145,7 +145,7 @@ export default function ReservationCheckinDialog({
                         type="button"
                         onClick={handleConfirmCheckin}
                         disabled={isSubmitting}
-                        className="h-10 cursor-pointer gap-1.5 rounded-xl bg-primary font-sans text-xs font-semibold text-primary-foreground shadow-2xs"
+                        className="h-10 cursor-pointer gap-1.5 rounded-xl bg-primary font-sans text-xs font-semibold text-primary-foreground shadow-2xs px-6"
                     >
                         {isSubmitting ? (
                             <Spinner className="size-4" />

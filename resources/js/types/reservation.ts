@@ -28,7 +28,10 @@ export type ReservationGuestSummary = {
 export type ReservationInvoiceSummary = {
     id: string;
     total_amount: number;
-    status: 'pending' | 'paid' | 'overdue' | 'cancelled';
+    room_charge?: number;
+    service_charge?: number;
+    tax_amount?: number;
+    status: 'pending' | 'paid' | 'overdue' | 'cancelled' | 'unpaid';
     due_date?: string | null;
 };
 
@@ -52,6 +55,7 @@ export type Reservation = {
     num_guests?: number | null;
     created_at?: string;
     room: ReservationRoomSummary;
+    total_amount: number;
 };
 
 export type StaffReservation = Reservation & {

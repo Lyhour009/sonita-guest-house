@@ -46,6 +46,10 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
     const [startDate, setStartDate] = useState<string>('');
     const [endDate, setEndDate] = useState<string>('');
     const [isNewGuest, setIsNewGuest] = useState(false);
+    const [numGuests, setNumGuests] = useState<string>('1');
+    const [guestId, setGuestId] = useState<string>('');
+    const [newGuestName, setNewGuestName] = useState<string>('');
+    const [newGuestEmail, setNewGuestEmail] = useState<string>('');
 
     const selectedRoom = useMemo(
         () => rooms.find((room) => room.id === roomId),
@@ -68,7 +72,40 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
         setStartDate('');
         setEndDate('');
         setIsNewGuest(false);
+        setNumGuests('1');
+        setGuestId('');
+        setNewGuestName('');
+        setNewGuestEmail('');
     };
+
+    const isFormValid = useMemo(() => {
+        if (!roomId || !type) return false;
+
+        if (type === 'short_stay') {
+            if (!checkInDate || !checkOutDate || !numGuests) return false;
+        } else {
+            if (!startDate) return false;
+        }
+
+        if (isNewGuest) {
+            if (!newGuestName || !newGuestEmail) return false;
+        } else {
+            if (!guestId) return false;
+        }
+
+        return true;
+    }, [
+        roomId,
+        type,
+        checkInDate,
+        checkOutDate,
+        numGuests,
+        startDate,
+        isNewGuest,
+        newGuestName,
+        newGuestEmail,
+        guestId,
+    ]);
 
     const todayString = new Date().toISOString().split('T')[0];
 
@@ -288,19 +325,32 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                     'staff.walkinDialog.numGuestsLabel',
                                                 )}
                                             </Label>
-                                            <Input
-                                                id="num_guests"
+                                            <Select
                                                 name="num_guests"
-                                                type="number"
-                                                min="1"
-                                                max={
-                                                    selectedRoom?.max_occupants ??
-                                                    10
-                                                }
-                                                defaultValue={1}
-                                                className="h-10 rounded-xl border-border bg-background font-sans"
+                                                value={numGuests}
+                                                onValueChange={setNumGuests}
                                                 required
-                                            />
+                                            >
+                                                <SelectTrigger
+                                                    id="num_guests"
+                                                    className="h-10 w-full rounded-xl border-border bg-background"
+                                                >
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent className="z-[100] max-h-48 rounded-xl border-border shadow-xl">
+                                                    {Array.from(
+                                                        { length: selectedRoom?.max_occupants ?? 10 },
+                                                        (_, i) => i + 1,
+                                                    ).map((num) => (
+                                                        <SelectItem
+                                                            key={num}
+                                                            value={num.toString()}
+                                                        >
+                                                            {num}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
                                             <InputError
                                                 message={errors.num_guests}
                                             />
@@ -406,6 +456,8 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                             <Input
                                                 id="new_guest_full_name"
                                                 name="new_guest[full_name]"
+                                                value={newGuestName}
+                                                onChange={(e) => setNewGuestName(e.target.value)}
                                                 placeholder="e.g. John Smith"
                                                 className="h-10 rounded-xl border-border bg-background"
                                                 required
@@ -433,6 +485,8 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                 id="new_guest_email"
                                                 name="new_guest[email]"
                                                 type="email"
+                                                value={newGuestEmail}
+                                                onChange={(e) => setNewGuestEmail(e.target.value)}
                                                 placeholder="e.g. john@example.com"
                                                 className="h-10 rounded-xl border-border bg-background"
                                                 required
@@ -455,7 +509,7 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                             )}{' '}
                                             *
                                         </Label>
-                                        <Select name="guest_id">
+                                        <Select name="guest_id" value={guestId} onValueChange={setGuestId}>
                                             <SelectTrigger
                                                 id="guest_id"
                                                 className="h-10 w-full rounded-xl border-border bg-background"
@@ -499,7 +553,7 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                 </Button>
                                 <Button
                                     type="submit"
-                                    disabled={processing}
+                                    disabled={processing || !isFormValid}
                                     className="h-11 cursor-pointer gap-2 rounded-xl bg-primary px-6 font-sans text-sm font-semibold text-primary-foreground shadow-2xs"
                                 >
                                     {processing ? (

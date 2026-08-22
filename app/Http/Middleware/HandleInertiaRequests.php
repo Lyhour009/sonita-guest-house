@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
                 'warning' => $request->session()->get('warning'),
                 'info' => $request->session()->get('info'),
                 'toast' => $request->session()->get('toast'),
+                'checkoutInvoice' => $request->session()->get('checkoutInvoice'),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'unreadNotificationsCount' => $request->user()?->notifications()->where('is_read', false)->count() ?? 0,

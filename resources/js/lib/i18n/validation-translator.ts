@@ -55,42 +55,42 @@ export function translateValidationError(message: string, locale: Locale): strin
     const trimmed = message.trim();
 
     // 1. "The :field field is required when :other is :val."
-    const reqWhenMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)\s+field is required when\s+(.+?)\s+is\s+(.+?)\.?$/i);
+    const reqWhenMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)(?:\s+field)?\s+is required when\s+(.+?)\s+is\s+(.+?)\.?$/i);
     if (reqWhenMatch) {
         const field = getKhmerField(reqWhenMatch[1]);
         return `សូមជ្រើសរើស ឬបញ្ចូល ${field}។`;
     }
 
-    // 2. "The :field field is required when :other is not present."
-    const reqWhenNotPresentMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)\s+field is required when\s+(.+?)\s+is not present\.?$/i);
+    // 2. "The :field field is required when :other is not present." / "is present"
+    const reqWhenNotPresentMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)(?:\s+field)?\s+is required when\s+(.+?)\s+is( not)? present\.?$/i);
     if (reqWhenNotPresentMatch) {
         const field = getKhmerField(reqWhenNotPresentMatch[1]);
         return `សូមជ្រើសរើស ឬបញ្ចូល ${field}។`;
     }
 
     // 3. "The :field field is required."
-    const reqMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)\s+field is required\.?$/i);
+    const reqMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)(?:\s+field)?\s+is required\.?$/i);
     if (reqMatch) {
         const field = getKhmerField(reqMatch[1]);
         return `សូមបញ្ចូល ឬជ្រើសរើស ${field}។`;
     }
 
     // 4. "The :field has already been taken."
-    const takenMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)\s+has already been taken\.?$/i);
+    const takenMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)(?:\s+field)?\s+has already been taken\.?$/i);
     if (takenMatch) {
         const field = getKhmerField(takenMatch[1]);
         return `${field} នេះត្រូវបានប្រើប្រាស់រួចហើយ។`;
     }
 
     // 5. "The :field must be a valid email address."
-    const emailMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)\s+must be a valid email address\.?$/i);
+    const emailMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)(?:\s+field)?\s+must be a valid email address\.?$/i);
     if (emailMatch) {
         const field = getKhmerField(emailMatch[1]);
         return `${field} មិនត្រឹមត្រូវតាមទម្រង់អ៊ីមែលទេ។`;
     }
 
-    // 6. "The :field must be after :other."
-    const afterMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)\s+must be after\s+([a-zA-Z0-9_\s.]+?)\.?$/i);
+    // 6. "The :field must be after :other." or "The :field field must be a date after :other."
+    const afterMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)(?:\s+field)?\s+must be (?:a date )?after\s+([a-zA-Z0-9_\s.]+?)\.?$/i);
     if (afterMatch) {
         const field = getKhmerField(afterMatch[1]);
         const other = getKhmerField(afterMatch[2]);
@@ -98,14 +98,14 @@ export function translateValidationError(message: string, locale: Locale): strin
     }
 
     // 7. "The :field must be after or equal to :other."
-    const afterEqualMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)\s+must be after or equal to\s+(.+?)\.?$/i);
+    const afterEqualMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)(?:\s+field)?\s+must be (?:a date )?after or equal to\s+(.+?)\.?$/i);
     if (afterEqualMatch) {
         const field = getKhmerField(afterEqualMatch[1]);
         return `${field} ត្រូវតែចាប់ពីថ្ងៃនេះតទៅ។`;
     }
 
     // 8. "The :field must be an integer." / "The :field must be at least :min."
-    const intMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)\s+must be (an integer|at least \d+)\.?$/i);
+    const intMatch = trimmed.match(/^The\s+([a-zA-Z0-9_\s.]+?)(?:\s+field)?\s+must be (an integer|at least \d+)\.?$/i);
     if (intMatch) {
         const field = getKhmerField(intMatch[1]);
         return `${field} ត្រូវតែជាចំនួនគត់យ៉ាងតិច ១ នាក់។`;

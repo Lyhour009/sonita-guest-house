@@ -34,8 +34,7 @@ export default function ReservationPrintSlip({
             ? `${reservation.check_in_date} → ${reservation.check_out_date}`
             : `${reservation.start_date} → ${reservation.end_date ?? t('staff.reservations.openEnded')}`;
 
-    const totalAmount = reservation.latest_invoice?.total_amount
-        ?? (reservation.reservation_type === 'short_stay' ? (reservation.room.price_per_night ?? 0) : (reservation.room.price_per_month ?? 0));
+    const totalAmount = reservation.latest_invoice?.total_amount ?? reservation.total_amount ?? 0;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -173,19 +172,19 @@ export default function ReservationPrintSlip({
                     </div>
                 </div>
 
-                <DialogFooter className="gap-2 sm:gap-0 pt-3 print:hidden">
+                <DialogFooter className="gap-3 pt-3 print:hidden">
                     <Button
                         type="button"
                         variant="outline"
                         onClick={() => onOpenChange(false)}
-                        className="rounded-xl font-sans text-xs h-10"
+                        className="rounded-xl font-sans text-xs h-10 px-8"
                     >
                         {t('staff.reservations.printSlip.closeButton')}
                     </Button>
                     <Button
                         type="button"
                         onClick={handlePrint}
-                        className="rounded-xl font-sans text-xs font-semibold h-10 gap-2 bg-primary text-primary-foreground shadow-2xs cursor-pointer"
+                        className="rounded-xl font-sans text-xs font-semibold h-10 gap-2 px-8 bg-primary text-primary-foreground shadow-2xs cursor-pointer"
                     >
                         <Printer className="size-4" />
                         {t('staff.reservations.printSlip.printButton')}

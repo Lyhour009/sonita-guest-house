@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Carbon;
 
 /**
@@ -87,5 +88,28 @@ class Reservation extends Model
         return $this->belongsToMany(Service::class, 'reservation_service')
             ->withPivot('quantity')
             ->withTimestamps();
+    }
+
+    /**
+     * Get the total amount for the reservation (calculated on the fly if no invoice exists).
+     */
+    protected function totalAmount(): Attribute
+    {
+        return Attribute::get(function () {
+            if ($this->relationLoaded('invoices') && $this->invoices->isNotEmpty()) {
+                return $this->invoices->sortByDesc('created_at')->first()->total_amount;
+            }
+
+            if ($this->reservation_type === 'short_stay' && $this->check_in_date && $this->check_out_date && $this->relationLoaded('room') && $this->room) {
+                $nights = max(1, $this->check_in_date->diffInDays($this->check_out_date));
+                return $this->room->price_per_night * $nights;
+            }
+
+            if ($this->reservation_type === 'long_stay' && $this->relationLoaded('room') && $this->room) {
+                return $this->room->price_per_month;
+            }
+
+            return 0;
+        });
     }
 }

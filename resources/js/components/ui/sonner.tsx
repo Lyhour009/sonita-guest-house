@@ -11,7 +11,7 @@ function Toaster({ ...props }: ToasterProps) {
         <Sonner
             theme={appearance}
             richColors
-            className="toaster group"
+            className="toaster group font-sans"
             position="top-right"
             style={
                 {
