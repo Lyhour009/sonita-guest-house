@@ -2,8 +2,10 @@
 
 namespace App\Actions\Reservations;
 
+use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
 use App\Models\Room;
+use App\Models\Service;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -22,7 +24,7 @@ class ReservationIndexData
         $timelineRooms = $this->timelineRooms($rooms);
 
         return [
-            'reservations' => $reservations->through(fn (Reservation $reservation) => $this->formatReservation($reservation)),
+            'reservations' => ReservationResource::collection($reservations),
             'filters' => [
                 'search' => $filters['search'] ?? null,
                 'status' => $filters['status'] ?? null,
@@ -34,6 +36,7 @@ class ReservationIndexData
                 ->orderBy('full_name')
                 ->get(['id', 'full_name', 'email', 'phone_number']),
             'rooms' => $rooms->filter(fn (Room $r) => $r->status !== 'maintenance')->values(),
+            'available_services' => Service::query()->orderBy('name')->get(['id', 'name', 'price']),
         ];
     }
 
@@ -144,54 +147,4 @@ class ReservationIndexData
         });
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function formatReservation(Reservation $reservation): array
-    {
-        $latestInvoice = $reservation->invoices->first();
-
-        return [
-            'id' => $reservation->id,
-            'reservation_type' => $reservation->reservation_type,
-            'check_in_date' => $reservation->check_in_date?->toDateString(),
-            'check_out_date' => $reservation->check_out_date?->toDateString(),
-            'start_date' => $reservation->start_date?->toDateString(),
-            'end_date' => $reservation->end_date?->toDateString(),
-            'deposit_amount' => $reservation->deposit_amount ? (float) $reservation->deposit_amount : null,
-            'monthly_due_day' => $reservation->monthly_due_day,
-            'num_guests' => $reservation->num_guests ?? 1,
-            'created_at' => $reservation->created_at?->format('M d, Y H:i'),
-            'status' => $reservation->status,
-            'total_amount' => (float) $reservation->total_amount,
-            'guest' => [
-                'id' => $reservation->guest?->id,
-                'full_name' => $reservation->guest?->full_name ?? 'Guest',
-                'email' => $reservation->guest?->email ?? '',
-                'phone_number' => $reservation->guest?->phone_number,
-            ],
-            'room' => [
-                'id' => $reservation->room->id,
-                'room_number' => $reservation->room->room_number,
-                'room_type' => $reservation->room->room_type,
-                'price_per_night' => (float) $reservation->room->price_per_night,
-                'price_per_month' => (float) $reservation->room->price_per_month,
-            ],
-            'latest_invoice' => $latestInvoice ? [
-                'id' => $latestInvoice->id,
-                'total_amount' => (float) $latestInvoice->total_amount,
-                'room_charge' => (float) $latestInvoice->room_charge,
-                'service_charge' => (float) $latestInvoice->service_charge,
-                'tax_amount' => (float) $latestInvoice->tax_amount,
-                'status' => $latestInvoice->status,
-                'due_date' => $latestInvoice->due_date?->toDateString(),
-            ] : null,
-            'services' => $reservation->services->map(fn ($s) => [
-                'id' => $s->id,
-                'name' => $s->name,
-                'price' => (float) $s->price,
-                'quantity' => (int) $s->pivot->quantity,
-            ]),
-        ];
-    }
 }

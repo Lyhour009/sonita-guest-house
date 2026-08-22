@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RoomStoreRequest;
 use App\Http\Requests\Admin\RoomUpdateRequest;
+use App\Http\Resources\RoomResource;
 use App\Models\Room;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -38,7 +39,7 @@ class RoomController extends Controller
             ->withQueryString();
 
         return Inertia::render('admin/rooms/index', [
-            'rooms' => $rooms->through(fn (Room $room) => $this->roomPayload($room)),
+            'rooms' => RoomResource::collection($rooms),
             'filters' => [
                 'search' => $filters['search'] ?? null,
                 'rental_mode' => $filters['rental_mode'] ?? null,
@@ -101,27 +102,4 @@ class RoomController extends Controller
         return to_route('admin.rooms.index');
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function roomPayload(Room $room): array
-    {
-        return [
-            'id' => $room->id,
-            'room_number' => $room->room_number,
-            'room_type' => $room->room_type,
-            'rental_mode' => $room->rental_mode,
-            'price_per_night' => $room->price_per_night,
-            'price_per_month' => $room->price_per_month,
-            'status' => $room->status,
-            'floor' => $room->floor,
-            'max_occupants' => $room->max_occupants,
-            'amenities' => $room->amenities,
-            'description' => $room->description,
-            'images' => $room->roomImages->map(fn ($image) => [
-                'id' => $image->id,
-                'url' => Storage::disk('public')->url($image->image_path),
-            ]),
-        ];
-    }
 }

@@ -11,10 +11,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
+import ServiceForm from './service-form';
 
 export default function ServiceCreateDialog() {
     const { t } = useTranslation();
@@ -37,28 +37,7 @@ export default function ServiceCreateDialog() {
                 >
                     {({ processing, errors }) => (
                         <>
-                            <div className="grid gap-1.5">
-                                <Label htmlFor="name">
-                                    {t('services.form.name')}
-                                </Label>
-                                <Input id="name" name="name" required />
-                                <InputError message={errors.name} />
-                            </div>
-
-                            <div className="grid gap-1.5">
-                                <Label htmlFor="price">
-                                    {t('services.form.price')}
-                                </Label>
-                                <Input
-                                    id="price"
-                                    name="price"
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    required
-                                />
-                                <InputError message={errors.price} />
-                            </div>
+                            <ServiceForm errors={errors} />
 
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>

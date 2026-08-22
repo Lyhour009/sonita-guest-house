@@ -25,7 +25,7 @@ export default function RoomEditDialog({ room, onOpenChange }: Props) {
 
     return (
         <Dialog open={room !== null} onOpenChange={onOpenChange}>
-            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl lg:max-w-5xl rounded-3xl p-8">
                 <DialogHeader>
                     <DialogTitle>
                         {t('adminRooms.editRoom', {
@@ -35,44 +35,30 @@ export default function RoomEditDialog({ room, onOpenChange }: Props) {
                 </DialogHeader>
 
                 {room && (
-                    <>
-                        <Form
-                            {...RoomController.update.form(room.id)}
-                            encType="multipart/form-data"
-                            onSuccess={() => onOpenChange(false)}
-                            className="space-y-6"
-                        >
-                            {({ processing, errors, isDirty }) => (
-                                <>
-                                    <RoomForm room={room} errors={errors} />
+                    <Form
+                        {...RoomController.update.form(room.id)}
+                        encType="multipart/form-data"
+                        onSuccess={() => onOpenChange(false)}
+                        className="space-y-6"
+                    >
+                        {({ processing, errors, isDirty }) => (
+                            <>
+                                <RoomForm room={room} errors={errors} />
 
-                                    <DialogFooter>
-                                        <Button
-                                            type="submit"
-                                            disabled={processing || !isDirty}
-                                        >
-                                            {processing && (
-                                                <Spinner className="mr-2" />
-                                            )}
-                                            {t('common.actions.saveChanges')}
-                                        </Button>
-                                    </DialogFooter>
-                                </>
-                            )}
-                        </Form>
-
-                        <Separator />
-
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-medium">
-                                {t('adminRooms.images')}
-                            </h3>
-                            <RoomImageManager
-                                roomId={room.id}
-                                images={room.images}
-                            />
-                        </div>
-                    </>
+                                <DialogFooter>
+                                    <Button
+                                        type="submit"
+                                        disabled={processing || !isDirty}
+                                    >
+                                        {processing && (
+                                            <Spinner className="mr-2" />
+                                        )}
+                                        {t('common.actions.saveChanges')}
+                                    </Button>
+                                </DialogFooter>
+                            </>
+                        )}
+                    </Form>
                 )}
             </DialogContent>
         </Dialog>

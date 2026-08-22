@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Invoice;
 use App\Models\MaintenanceRequest;
+use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
 use App\Models\Room;
 use App\Models\User;
@@ -48,19 +49,7 @@ class DashboardController extends Controller
         $notifications = $guest->notifications()->latest()->limit(5)->get();
 
         return [
-            'reservations' => $reservations->map(fn (Reservation $reservation) => [
-                'id' => $reservation->id,
-                'reservation_type' => $reservation->reservation_type,
-                'status' => $reservation->status,
-                'check_in_date' => $reservation->check_in_date?->toDateString(),
-                'check_out_date' => $reservation->check_out_date?->toDateString(),
-                'start_date' => $reservation->start_date?->toDateString(),
-                'end_date' => $reservation->end_date?->toDateString(),
-                'room' => [
-                    'room_number' => $reservation->room->room_number,
-                    'room_type' => $reservation->room->room_type,
-                ],
-            ]),
+            'reservations' => ReservationResource::collection($reservations),
             'latestInvoice' => $latestInvoice ? [
                 'id' => $latestInvoice->id,
                 'invoice_type' => $latestInvoice->invoice_type,

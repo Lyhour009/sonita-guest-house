@@ -39,7 +39,9 @@ export type ReservationServiceSummary = {
     id: string;
     name: string;
     price: number;
+    pivot_id: number;
     quantity: number;
+    unit_price: number;
 };
 
 export type Reservation = {

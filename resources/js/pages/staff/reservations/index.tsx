@@ -77,6 +77,7 @@ type Props = {
     timelineRooms?: TimelineRoom[];
     guests: ReservationGuestSummary[];
     rooms: RoomOption[];
+    available_services: { id: string; name: string; price: number }[];
 };
 
 export default function StaffReservationsIndex({
@@ -86,6 +87,7 @@ export default function StaffReservationsIndex({
     timelineRooms = [],
     guests,
     rooms,
+    available_services,
 }: Props) {
     const { t } = useTranslation();
 
@@ -661,6 +663,7 @@ export default function StaffReservationsIndex({
 
             {/* Slide-over Details Drawer */}
             <ReservationDetailsDrawer
+                available_services={available_services}
                 reservation={selectedReservation}
                 open={isDetailsOpen}
                 onOpenChange={setIsDetailsOpen}

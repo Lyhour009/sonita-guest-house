@@ -18,6 +18,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
     Select,
     SelectContent,
     SelectItem,
@@ -25,14 +32,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+import { BedDouble, MoreHorizontal, Pencil, Trash } from 'lucide-react';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { usePendingAction } from '@/hooks/use-pending-action';
 import { useTranslation } from '@/hooks/use-translation';
@@ -99,20 +99,25 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
         <>
             <Head title={t('adminRooms.title')} />
 
-            <div className="space-y-6 p-4">
-                <div className="flex items-center justify-between">
-                    <h1 className="text-xl font-semibold">
-                        {t('adminRooms.title')}
-                    </h1>
+            <div className="space-y-8 p-6 lg:p-10">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">
+                            {t('adminRooms.title')}
+                        </h1>
+                        <p className="text-muted-foreground mt-1 text-sm">
+                            Manage all your properties, pricing, and statuses in one place.
+                        </p>
+                    </div>
                     <RoomCreateDialog />
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center gap-4 bg-card/50 p-4 rounded-2xl border border-border/50 shadow-sm">
                     <Input
                         placeholder={t('adminRooms.searchPlaceholder')}
                         value={search}
                         onChange={(event) => setSearch(event.target.value)}
-                        className="max-w-xs"
+                        className="max-w-xs bg-background rounded-xl h-10"
                     />
 
                     <Select
@@ -122,12 +127,12 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                             applyFilters({ rental_mode: value });
                         }}
                     >
-                        <SelectTrigger className="w-44">
+                        <SelectTrigger className="w-44 bg-background rounded-xl h-10">
                             <SelectValue
                                 placeholder={t('adminRooms.filters.rentalMode')}
                             />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent portaled={false}>
                             <SelectItem value="any">
                                 {t('adminRooms.filters.anyRentalMode')}
                             </SelectItem>
@@ -150,12 +155,12 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                             applyFilters({ status: value });
                         }}
                     >
-                        <SelectTrigger className="w-44">
+                        <SelectTrigger className="w-44 bg-background rounded-xl h-10">
                             <SelectValue
                                 placeholder={t('common.labels.status')}
                             />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent portaled={false}>
                             <SelectItem value="any">
                                 {t('adminRooms.filters.anyStatus')}
                             </SelectItem>
@@ -178,147 +183,118 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                     </Select>
                 </div>
 
-                <div className="rounded-xl border">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>{t('common.labels.room')}</TableHead>
-                                <TableHead>{t('common.labels.type')}</TableHead>
-                                <TableHead>
-                                    {t('adminRooms.table.rentalMode')}
-                                </TableHead>
-                                <TableHead>
-                                    {t('adminRooms.table.pricePerNight')}
-                                </TableHead>
-                                <TableHead>
-                                    {t('adminRooms.table.pricePerMonth')}
-                                </TableHead>
-                                <TableHead>
-                                    {t('common.labels.status')}
-                                </TableHead>
-                                <TableHead className="text-right">
-                                    {t('common.actions.actions')}
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {rooms.data.length === 0 && (
-                                <TableRow>
-                                    <TableCell
-                                        colSpan={7}
-                                        className="text-center text-muted-foreground"
-                                    >
-                                        {t('adminRooms.empty')}
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                            {rooms.data.map((room) => (
-                                <TableRow key={room.id}>
-                                    <TableCell>{room.room_number}</TableCell>
-                                    <TableCell>{room.room_type}</TableCell>
-                                    <TableCell>
-                                        <Badge variant="secondary">
-                                            {room.rental_mode === 'both'
-                                                ? t('adminRooms.filters.both')
-                                                : t(
-                                                      `common.reservationType.${room.rental_mode}`,
-                                                  )}
+                {rooms.data.length === 0 ? (
+                    <div className="py-20 text-center flex flex-col items-center justify-center bg-card rounded-3xl border border-dashed">
+                        <BedDouble className="size-12 text-muted-foreground mb-4 opacity-50" />
+                        <p className="text-lg font-medium text-muted-foreground">{t('adminRooms.empty')}</p>
+                    </div>
+                ) : (
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        {rooms.data.map((room) => (
+                            <div
+                                key={room.id}
+                                className="group flex flex-col overflow-hidden rounded-3xl border border-border/50 bg-card shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+                            >
+                                <div className="aspect-[4/3] relative w-full bg-muted flex items-center justify-center overflow-hidden">
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                    
+                                    {room.images && room.images.length > 0 ? (
+                                        <img
+                                            src={room.images[0].url}
+                                            alt={room.room_type}
+                                            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                        />
+                                    ) : (
+                                        <BedDouble className="size-12 text-muted-foreground/30" />
+                                    )}
+
+                                    <div className="absolute top-3 left-3 z-20 flex flex-col gap-2">
+                                        <Badge variant="secondary" className="bg-background/80 backdrop-blur shadow-sm">
+                                            {room.rental_mode === 'both' ? t('adminRooms.filters.both') : t(`common.reservationType.${room.rental_mode}`)}
                                         </Badge>
-                                    </TableCell>
-                                    <TableCell>
-                                        ${room.price_per_night}
-                                    </TableCell>
-                                    <TableCell>
-                                        ${room.price_per_month}
-                                    </TableCell>
-                                    <TableCell>
                                         <Badge
-                                            variant={
-                                                room.status === 'available'
-                                                    ? 'default'
-                                                    : 'outline'
-                                            }
+                                            variant={room.status === 'available' ? 'default' : 'secondary'}
+                                            className="bg-background/80 backdrop-blur shadow-sm"
                                         >
-                                            {t(
-                                                `common.roomStatus.${room.status}`,
-                                            )}
+                                            {t(`common.roomStatus.${room.status}`)}
                                         </Badge>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() =>
-                                                    setEditingRoomId(room.id)
-                                                }
-                                            >
-                                                {t('common.actions.edit')}
-                                            </Button>
-                                            <AlertDialog>
-                                                <AlertDialogTrigger asChild>
-                                                    <Button
-                                                        variant="destructive"
-                                                        size="sm"
-                                                    >
-                                                        {t(
-                                                            'common.actions.delete',
-                                                        )}
-                                                    </Button>
-                                                </AlertDialogTrigger>
-                                                <AlertDialogContent>
-                                                    <AlertDialogHeader>
-                                                        <AlertDialogTitle>
-                                                            {t(
-                                                                'adminRooms.deleteRoom.title',
-                                                                {
-                                                                    roomNumber:
-                                                                        room.room_number,
-                                                                },
-                                                            )}
-                                                        </AlertDialogTitle>
-                                                        <AlertDialogDescription>
-                                                            {t(
-                                                                'adminRooms.deleteRoom.description',
-                                                            )}
-                                                        </AlertDialogDescription>
-                                                    </AlertDialogHeader>
-                                                    <AlertDialogFooter>
-                                                        <AlertDialogCancel>
-                                                            {t(
-                                                                'common.actions.cancel',
-                                                            )}
-                                                        </AlertDialogCancel>
-                                                        <AlertDialogAction
-                                                            variant="destructive"
-                                                            disabled={isPending(
-                                                                `delete-${room.id}`,
-                                                            )}
-                                                            onClick={() =>
-                                                                deleteRoom(
-                                                                    room.id,
-                                                                )
-                                                            }
+                                    </div>
+
+                                    <div className="absolute top-3 right-3 z-20">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="secondary" size="icon" className="h-8 w-8 rounded-full bg-background/80 backdrop-blur shadow-sm hover:bg-background">
+                                                    <MoreHorizontal className="size-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="w-48 rounded-xl" portaled={false}>
+                                                <DropdownMenuItem onClick={() => setEditingRoomId(room.id)}>
+                                                    <Pencil className="mr-2 size-4" />
+                                                    {t('common.actions.edit')}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuSeparator />
+                                                <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <DropdownMenuItem
+                                                            className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer"
+                                                            onSelect={(e) => e.preventDefault()}
                                                         >
-                                                            {isPending(
-                                                                `delete-${room.id}`,
-                                                            ) && (
-                                                                <Spinner className="mr-2" />
-                                                            )}
-                                                            {t(
-                                                                'common.actions.delete',
-                                                            )}
-                                                        </AlertDialogAction>
-                                                    </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
+                                                            <Trash className="mr-2 size-4" />
+                                                            {t('common.actions.delete')}
+                                                        </DropdownMenuItem>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent className="rounded-2xl">
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle>
+                                                                {t('adminRooms.deleteRoom.title', { roomNumber: room.room_number })}
+                                                            </AlertDialogTitle>
+                                                            <AlertDialogDescription>
+                                                                {t('adminRooms.deleteRoom.description')}
+                                                            </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel className="rounded-xl">{t('common.actions.cancel')}</AlertDialogCancel>
+                                                            <AlertDialogAction
+                                                                variant="destructive"
+                                                                className="rounded-xl"
+                                                                disabled={isPending(`delete-${room.id}`)}
+                                                                onClick={() => deleteRoom(room.id)}
+                                                            >
+                                                                {isPending(`delete-${room.id}`) && <Spinner className="mr-2" />}
+                                                                {t('common.actions.delete')}
+                                                            </AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+                                </div>
+                                <div className="p-5 flex flex-col flex-1">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h3 className="font-bold text-lg leading-none mb-1">{room.room_type}</h3>
+                                            <span className="text-sm font-medium text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded-md">
+                                                #{room.room_number}
+                                            </span>
                                         </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
+                                    </div>
+                                    
+                                    <div className="mt-auto pt-4 border-t border-border/50 flex justify-between items-center text-sm">
+                                        <div className="flex flex-col">
+                                            <span className="text-muted-foreground text-xs">{t('adminRooms.table.pricePerNight')}</span>
+                                            <span className="font-semibold">${room.price_per_night}</span>
+                                        </div>
+                                        <div className="flex flex-col text-right">
+                                            <span className="text-muted-foreground text-xs">{t('adminRooms.table.pricePerMonth')}</span>
+                                            <span className="font-semibold">${room.price_per_month}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 <Pagination meta={rooms} />
             </div>

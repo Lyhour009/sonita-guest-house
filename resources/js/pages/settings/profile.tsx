@@ -10,7 +10,6 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import { edit } from '@/routes/profile';
-import { send } from '@/routes/verification';
 import type { Auth } from '@/types';
 
 type PageProps = {
@@ -96,34 +95,7 @@ export default function Profile({
                                 />
                             </div>
 
-                            {mustVerifyEmail &&
-                                auth.user.email_verified_at === null && (
-                                    <div>
-                                        <p className="-mt-4 text-sm text-muted-foreground">
-                                            {t(
-                                                'auth.settings.profile.unverifiedPrefix',
-                                            )}{' '}
-                                            <Link
-                                                href={send()}
-                                                as="button"
-                                                className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
-                                            >
-                                                {t(
-                                                    'auth.settings.profile.resendLinkText',
-                                                )}
-                                            </Link>
-                                        </p>
 
-                                        {status ===
-                                            'verification-link-sent' && (
-                                            <div className="mt-2 text-sm font-medium text-green-600">
-                                                {t(
-                                                    'auth.settings.profile.verificationSentMessage',
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
 
                             <div className="flex items-center gap-4">
                                 <Button

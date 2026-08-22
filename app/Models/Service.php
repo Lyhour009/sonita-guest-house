@@ -33,4 +33,14 @@ class Service extends Model
             'price' => 'decimal:2',
         ];
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<Reservation, $this>
+     */
+    public function reservations(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Reservation::class, 'reservation_service')
+            ->withPivot('id', 'quantity', 'unit_price')
+            ->withTimestamps();
+    }
 }

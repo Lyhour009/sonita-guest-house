@@ -9,10 +9,10 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
+import ServiceForm from './service-form';
 import type { Service } from '@/types';
 
 type Props = {
@@ -42,34 +42,7 @@ export default function ServiceEditDialog({ service, onOpenChange }: Props) {
                     >
                         {({ processing, errors, isDirty }) => (
                             <>
-                                <div className="grid gap-1.5">
-                                    <Label htmlFor="name">
-                                        {t('services.form.name')}
-                                    </Label>
-                                    <Input
-                                        id="name"
-                                        name="name"
-                                        defaultValue={service.name}
-                                        required
-                                    />
-                                    <InputError message={errors.name} />
-                                </div>
-
-                                <div className="grid gap-1.5">
-                                    <Label htmlFor="price">
-                                        {t('services.form.price')}
-                                    </Label>
-                                    <Input
-                                        id="price"
-                                        name="price"
-                                        type="number"
-                                        step="0.01"
-                                        min="0"
-                                        defaultValue={service.price}
-                                        required
-                                    />
-                                    <InputError message={errors.price} />
-                                </div>
+                                <ServiceForm service={service} errors={errors} />
 
                                 <DialogFooter>
                                     <Button

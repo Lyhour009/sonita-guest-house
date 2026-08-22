@@ -8,12 +8,16 @@ import {
     LogIn,
     LogOut,
     Mail,
-    Phone,
+    Plus,
     Printer,
+    Trash2,
     User,
     Users,
     X,
+    ConciergeBell,
+    Phone,
 } from 'lucide-react';
+import { useForm, router } from '@inertiajs/react';
 import { ReservationStatusBadge, PaymentStatusBadge } from '@/components/reservation-badges';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,10 +27,15 @@ import {
     SheetHeader,
     SheetTitle,
 } from '@/components/ui/sheet';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { store as storeService, destroy as destroyService } from '@/routes/staff/reservations/services';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import type { StaffReservation } from '@/types/reservation';
 
 type Props = {
+    available_services?: { id: string; name: string; price: number }[];
     reservation: StaffReservation | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -39,6 +48,7 @@ type Props = {
 };
 
 export default function ReservationDetailsDrawer({
+    available_services = [],
     reservation,
     open,
     onOpenChange,
@@ -50,6 +60,11 @@ export default function ReservationDetailsDrawer({
     cancelUrl,
 }: Props) {
     const { t } = useTranslation();
+
+    const addServiceForm = useForm({
+        service_id: '',
+        quantity: 1,
+    });
 
     if (!reservation) return null;
 
@@ -298,6 +313,99 @@ export default function ReservationDetailsDrawer({
                             )}
                         </div>
                     </div>
+
+                    {/* Extra Services Section */}
+                    {reservation.status !== 'pending' && reservation.status !== 'cancelled' && (
+                        <div className="space-y-3 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
+                            <h4 className="flex items-center gap-1.5 text-xs font-bold tracking-wider text-muted-foreground uppercase">
+                                <ConciergeBell className="size-3.5" />
+                                {t('staff.reservations.details.extraServices') || 'Extra Services'}
+                            </h4>
+
+                            {reservation.services && reservation.services.length > 0 && (
+                                <div className="space-y-2">
+                                    {reservation.services.map((service, index) => (
+                                        <div key={service.pivot_id || index} className="flex items-center justify-between text-xs">
+                                            <div>
+                                                <span className="font-semibold text-foreground">{service.name}</span>
+                                                <span className="ml-1 text-muted-foreground">x{service.quantity}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                                                    ${(service.unit_price * service.quantity).toFixed(2)}
+                                                </span>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="size-6 bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive"
+                                                    onClick={() => {
+                                                        if (confirm('Are you sure you want to remove this service?')) {
+                                                            router.delete(destroyService({ reservation: reservation.id, service: service.id }).url, {
+                                                                preserveScroll: true
+                                                            });
+                                                        }
+                                                    }}
+                                                >
+                                                    <Trash2 className="size-3" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {available_services.length > 0 && (
+                                <form
+                                    className="flex items-start gap-2 pt-2 border-t border-border/60"
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        addServiceForm.post(storeService(reservation.id).url, {
+                                            preserveScroll: true,
+                                            onSuccess: () => {
+                                                addServiceForm.reset();
+                                            }
+                                        });
+                                    }}
+                                >
+                                    <div className="flex-1">
+                                        <Select
+                                            value={addServiceForm.data.service_id}
+                                            onValueChange={(val) => addServiceForm.setData('service_id', val)}
+                                        >
+                                            <SelectTrigger className="h-8 text-xs">
+                                                <SelectValue placeholder="Select service..." />
+                                            </SelectTrigger>
+                                            <SelectContent portaled={false}>
+                                                {available_services.map((s) => (
+                                                    <SelectItem key={s.id} value={s.id} className="text-xs">
+                                                        {s.name} (${Number(s.price).toFixed(2)})
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="w-16">
+                                        <Input
+                                            type="number"
+                                            min={1}
+                                            value={addServiceForm.data.quantity}
+                                            onChange={(e) => addServiceForm.setData('quantity', parseInt(e.target.value) || 1)}
+                                            className="h-8 text-xs"
+                                        />
+                                    </div>
+                                    <Button
+                                        type="submit"
+                                        size="sm"
+                                        disabled={!addServiceForm.data.service_id || addServiceForm.processing}
+                                        className="h-8 shrink-0 bg-primary/10 text-primary hover:bg-primary/20"
+                                    >
+                                        {addServiceForm.processing ? <Spinner className="size-3" /> : <Plus className="size-3" />}
+                                    </Button>
+                                </form>
+                            )}
+                        </div>
+                    )}
 
                     {/* 4. Action Buttons */}
                     <div className="flex flex-col gap-2 pt-2">

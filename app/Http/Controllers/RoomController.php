@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\RoomResource;
 use App\Models\Reservation;
 use App\Models\Room;
 use Illuminate\Http\Request;
@@ -43,7 +44,7 @@ class RoomController extends Controller
             ->withQueryString();
 
         return Inertia::render('welcome', [
-            'rooms' => $rooms->through(fn (Room $room) => $this->roomSummary($room)),
+            'rooms' => RoomResource::collection($rooms),
             'filters' => [
                 'stay_type' => $filters['stay_type'] ?? null,
                 'from' => $filters['from'] ?? null,
@@ -60,22 +61,7 @@ class RoomController extends Controller
         $room->load('roomImages');
 
         return Inertia::render('rooms/show', [
-            'room' => [
-                'id' => $room->id,
-                'room_number' => $room->room_number,
-                'room_type' => $room->room_type,
-                'rental_mode' => $room->rental_mode,
-                'price_per_night' => $room->price_per_night,
-                'price_per_month' => $room->price_per_month,
-                'floor' => $room->floor,
-                'max_occupants' => $room->max_occupants,
-                'amenities' => $room->amenities,
-                'description' => $room->description,
-                'images' => $room->roomImages->map(fn ($image) => [
-                    'id' => $image->id,
-                    'url' => Storage::disk('public')->url($image->image_path),
-                ]),
-            ],
+            'room' => new RoomResource($room),
             'bookedRanges' => $this->bookedRanges($room),
         ]);
     }
@@ -116,22 +102,4 @@ class RoomController extends Controller
             ->all();
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function roomSummary(Room $room): array
-    {
-        return [
-            'id' => $room->id,
-            'room_number' => $room->room_number,
-            'room_type' => $room->room_type,
-            'rental_mode' => $room->rental_mode,
-            'price_per_night' => $room->price_per_night,
-            'price_per_month' => $room->price_per_month,
-            'max_occupants' => $room->max_occupants,
-            'thumbnail' => $room->roomImages->first()
-                ? Storage::disk('public')->url($room->roomImages->first()->image_path)
-                : null,
-        ];
-    }
 }

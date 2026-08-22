@@ -32,10 +32,10 @@ function DropdownMenuTrigger({
 function DropdownMenuContent({
   className,
   sideOffset = 4,
+  portaled = true,
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
-  return (
-    <DropdownMenuPrimitive.Portal>
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & { portaled?: boolean }) {
+  const content = (
       <DropdownMenuPrimitive.Content
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
@@ -45,6 +45,15 @@ function DropdownMenuContent({
         )}
         {...props}
       />
+  )
+
+  if (!portaled) {
+      return content
+  }
+
+  return (
+    <DropdownMenuPrimitive.Portal>
+      {content}
     </DropdownMenuPrimitive.Portal>
   )
 }

@@ -13,6 +13,8 @@ Route::middleware(['auth', 'role:receptionist,admin'])->prefix('staff')->name('s
     Route::patch('reservations/{reservation}/check-in', [ReservationController::class, 'checkIn'])->name('reservations.check-in');
     Route::patch('reservations/{reservation}/check-out', [ReservationController::class, 'checkOut'])->name('reservations.check-out');
     Route::patch('reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
+    Route::post('reservations/{reservation}/services', [\App\Http\Controllers\Staff\ReservationServiceController::class, 'store'])->name('reservations.services.store');
+    Route::delete('reservations/{reservation}/services/{service}', [\App\Http\Controllers\Staff\ReservationServiceController::class, 'destroy'])->name('reservations.services.destroy');
 
     Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
     Route::patch('payments/{payment}/confirm', [PaymentController::class, 'confirm'])->name('payments.confirm');

@@ -23,7 +23,7 @@ export default function RoomCreateDialog() {
             <DialogTrigger asChild>
                 <Button>{t('adminRooms.addRoom')}</Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl lg:max-w-5xl rounded-3xl p-8">
                 <DialogHeader>
                     <DialogTitle>{t('adminRooms.addRoom')}</DialogTitle>
                 </DialogHeader>

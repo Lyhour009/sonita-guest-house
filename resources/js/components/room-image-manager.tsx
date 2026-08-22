@@ -84,23 +84,6 @@ export default function RoomImageManager({ roomId, images }: Props) {
                 )}
             </div>
 
-            <div className="grid gap-2">
-                <Label htmlFor="room_images">
-                    {t('adminRooms.imageManager.upload')}
-                </Label>
-                <div className="flex items-center gap-2">
-                    <input
-                        id="room_images"
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleUpload}
-                        disabled={isPending(UPLOAD_KEY)}
-                        className="text-sm disabled:opacity-50"
-                    />
-                    {isPending(UPLOAD_KEY) && <Spinner />}
-                </div>
-            </div>
         </div>
     );
 }

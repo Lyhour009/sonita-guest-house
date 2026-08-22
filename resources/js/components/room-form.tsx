@@ -1,4 +1,5 @@
 import { ImagePlus, X } from 'lucide-react';
+import RoomImageManager from '@/components/room-image-manager';
 import { useState, type ChangeEvent } from 'react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -36,8 +37,10 @@ export default function RoomForm({ room, errors }: Props) {
     };
 
     return (
-        <div className="grid gap-6 sm:grid-cols-2">
-            <div className="grid gap-2">
+        <div className="flex flex-col md:flex-row gap-8">
+            {/* Left side: Form fields */}
+            <div className="flex-1 grid gap-5 sm:grid-cols-2">
+                <div className="grid gap-2">
                 <Label htmlFor="room_number">
                     {t('adminRooms.form.roomNumber')}
                 </Label>
@@ -77,7 +80,7 @@ export default function RoomForm({ room, errors }: Props) {
                     <SelectTrigger id="rental_mode" className="w-full">
                         <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent portaled={false}>
                         <SelectItem value="short_stay">
                             {t('adminRooms.form.rentalModeShortStayOnly')}
                         </SelectItem>
@@ -103,7 +106,7 @@ export default function RoomForm({ room, errors }: Props) {
                     <SelectTrigger id="status" className="w-full">
                         <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent portaled={false}>
                         <SelectItem value="available">
                             {t('common.roomStatus.available')}
                         </SelectItem>
@@ -206,46 +209,58 @@ export default function RoomForm({ room, errors }: Props) {
                 />
                 <InputError message={errors.description} />
             </div>
+            </div>
 
-            {/* Room Images Upload Section */}
-            <div className="grid gap-3 sm:col-span-2">
-                <Label htmlFor="room_images" className="text-sm font-semibold">
-                    {t('adminRooms.images')}
-                </Label>
+            {/* Right side: Sticky Image Upload */}
+            <div className="w-full md:w-[320px] shrink-0 space-y-4">
+                <div className="sticky top-0 bg-muted/30 p-5 rounded-2xl border border-border/50">
+                    <Label htmlFor="room_images" className="text-base font-semibold block mb-4">
+                        {t('adminRooms.images')}
+                    </Label>
 
-                <div className="relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border/80 bg-muted/20 p-6 text-center transition-colors hover:border-primary/50 hover:bg-muted/40">
-                    <ImagePlus className="mb-2 size-8 text-muted-foreground" />
-                    <p className="text-sm font-medium text-foreground">
-                        {t('adminRooms.imageManager.upload')}
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                        JPG, PNG, WebP up to 5MB
-                    </p>
-                    <input
-                        id="room_images"
-                        name="images[]"
-                        type="file"
-                        multiple
-                        accept="image/png,image/jpeg,image/jpg,image/webp"
-                        onChange={handleFileChange}
-                        className="absolute inset-0 cursor-pointer opacity-0"
-                    />
-                </div>
+                    {room && room.images && room.images.length > 0 && (
+                        <div className="mb-6">
+                            <RoomImageManager roomId={room.id} images={room.images} />
+                            <div className="my-4 h-px bg-border/50" />
+                        </div>
+                    )}
 
-                {previewUrls.length > 0 && (
-                    <div className="mt-2 grid grid-cols-3 gap-3 sm:grid-cols-4">
-                        {previewUrls.map((url, idx) => (
-                            <div key={idx} className="relative aspect-video overflow-hidden rounded-lg border border-border bg-muted shadow-2xs">
-                                <img
-                                    src={url}
-                                    alt={`Preview ${idx + 1}`}
-                                    className="h-full w-full object-cover"
-                                />
-                            </div>
-                        ))}
+                    <div className="relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border/80 bg-background hover:bg-muted/40 p-8 text-center transition-all hover:border-primary/50 group">
+                        <div className="p-4 bg-primary/5 rounded-full mb-3 group-hover:scale-110 transition-transform">
+                            <ImagePlus className="size-8 text-primary" />
+                        </div>
+                        <p className="text-sm font-semibold text-foreground">
+                            {t('adminRooms.imageManager.upload')}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                            JPG, PNG, WebP up to 5MB
+                        </p>
+                        <input
+                            id="room_images"
+                            name="images[]"
+                            type="file"
+                            multiple
+                            accept="image/png,image/jpeg,image/jpg,image/webp"
+                            onChange={handleFileChange}
+                            className="absolute inset-0 cursor-pointer opacity-0"
+                        />
                     </div>
-                )}
-                <InputError message={errors.images} />
+
+                    {previewUrls.length > 0 && (
+                        <div className="mt-4 grid grid-cols-2 gap-2">
+                            {previewUrls.map((url, idx) => (
+                                <div key={idx} className="relative aspect-square overflow-hidden rounded-xl border border-border bg-muted shadow-sm group">
+                                    <img
+                                        src={url}
+                                        alt={`Preview ${idx + 1}`}
+                                        className="h-full w-full object-cover transition-transform group-hover:scale-110"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    <InputError message={errors.images} className="mt-2" />
+                </div>
             </div>
         </div>
     );

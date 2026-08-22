@@ -24,8 +24,8 @@ import {
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { Switch } from '@/components/ui/switch';
-import { DatePicker } from '@/components/ui/date-picker';
 import { useTranslation } from '@/hooks/use-translation';
+import ReservationDateFields from './reservation-date-fields';
 import type {
     ReservationGuestSummary,
     ReservationType,
@@ -257,145 +257,22 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                 </div>
 
                                 {/* Dates & Guests Matrix */}
-                                {type === 'short_stay' ? (
-                                    <div className="grid grid-cols-1 gap-4 pt-1 sm:grid-cols-3">
-                                        <div className="grid gap-1.5">
-                                            <Label
-                                                htmlFor="check_in_date"
-                                                className="text-xs font-semibold"
-                                            >
-                                                {t(
-                                                    'staff.walkinDialog.checkInLabel',
-                                                )}{' '}
-                                                *
-                                            </Label>
-                                            <DatePicker
-                                                id="check_in_date"
-                                                name="check_in_date"
-                                                minDate={todayString}
-                                                value={checkInDate}
-                                                onChange={setCheckInDate}
-                                                portaled={false}
-                                                required
-                                            />
-                                            <InputError
-                                                message={errors.check_in_date}
-                                            />
-                                        </div>
-
-                                        <div className="grid gap-1.5">
-                                            <Label
-                                                htmlFor="check_out_date"
-                                                className="text-xs font-semibold"
-                                            >
-                                                {t(
-                                                    'staff.walkinDialog.checkOutLabel',
-                                                )}{' '}
-                                                *
-                                            </Label>
-                                            <DatePicker
-                                                id="check_out_date"
-                                                name="check_out_date"
-                                                minDate={checkInDate || todayString}
-                                                value={checkOutDate}
-                                                onChange={setCheckOutDate}
-                                                portaled={false}
-                                                required
-                                            />
-                                            <InputError
-                                                message={errors.check_out_date}
-                                            />
-                                        </div>
-
-                                        <div className="grid gap-1.5">
-                                            <Label
-                                                htmlFor="num_guests"
-                                                className="text-xs font-semibold"
-                                            >
-                                                {t(
-                                                    'staff.walkinDialog.numGuestsLabel',
-                                                )}
-                                            </Label>
-                                            <Select
-                                                name="num_guests"
-                                                value={numGuests}
-                                                onValueChange={setNumGuests}
-                                                required
-                                            >
-                                                <SelectTrigger
-                                                    id="num_guests"
-                                                    className="h-10 w-full rounded-xl border-border bg-background"
-                                                >
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent portaled={false} className="z-[100] max-h-48 rounded-xl border-border shadow-xl">
-                                                    {Array.from(
-                                                        { length: selectedRoom?.max_occupants ?? 10 },
-                                                        (_, i) => i + 1,
-                                                    ).map((num) => (
-                                                        <SelectItem
-                                                            key={num}
-                                                            value={num.toString()}
-                                                        >
-                                                            {num}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <InputError
-                                                message={errors.num_guests}
-                                            />
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="grid grid-cols-1 gap-4 pt-1 sm:grid-cols-2">
-                                        <div className="grid gap-1.5">
-                                            <Label
-                                                htmlFor="start_date"
-                                                className="text-xs font-semibold"
-                                            >
-                                                {t(
-                                                    'staff.walkinDialog.moveInDateLabel',
-                                                )}{' '}
-                                                *
-                                            </Label>
-                                            <DatePicker
-                                                id="start_date"
-                                                name="start_date"
-                                                minDate={todayString}
-                                                value={startDate}
-                                                onChange={setStartDate}
-                                                portaled={false}
-                                                required
-                                            />
-                                            <InputError
-                                                message={errors.start_date}
-                                            />
-                                        </div>
-
-                                        <div className="grid gap-1.5">
-                                            <Label
-                                                htmlFor="end_date"
-                                                className="text-xs font-semibold"
-                                            >
-                                                {t(
-                                                    'staff.walkinDialog.moveOutDateLabel',
-                                                )}
-                                            </Label>
-                                            <DatePicker
-                                                id="end_date"
-                                                name="end_date"
-                                                minDate={startDate || todayString}
-                                                value={endDate}
-                                                onChange={setEndDate}
-                                                portaled={false}
-                                            />
-                                            <InputError
-                                                message={errors.end_date}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
+                                <ReservationDateFields
+                                    type={type}
+                                    checkInDate={checkInDate}
+                                    setCheckInDate={setCheckInDate}
+                                    checkOutDate={checkOutDate}
+                                    setCheckOutDate={setCheckOutDate}
+                                    startDate={startDate}
+                                    setStartDate={setStartDate}
+                                    endDate={endDate}
+                                    setEndDate={setEndDate}
+                                    numGuests={numGuests}
+                                    setNumGuests={setNumGuests}
+                                    maxOccupants={selectedRoom?.max_occupants}
+                                    errors={errors}
+                                    isStaffView={true}
+                                />
                             </div>
 
                             {/* Section 2: Guest Details */}

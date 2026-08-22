@@ -20,9 +20,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { DatePicker } from '@/components/ui/date-picker';
 import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
+import ReservationDateFields from './reservation-date-fields';
 import type { ReservationType, RoomDetail } from '@/types';
 
 type Props = {
@@ -53,7 +53,7 @@ export default function ReservationBookDialog({ room }: Props) {
                     {t('reservations.bookDialog.trigger')}
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-h-[85vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
                         {t('reservations.bookDialog.title', {
@@ -119,107 +119,20 @@ export default function ReservationBookDialog({ room }: Props) {
                                 />
                             )}
 
-                            {type === 'short_stay' ? (
-                                <>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="grid gap-1.5">
-                                            <Label htmlFor="check_in_date">
-                                                {t(
-                                                    'reservations.bookDialog.checkIn',
-                                                )}
-                                            </Label>
-                                            <DatePicker
-                                                id="check_in_date"
-                                                name="check_in_date"
-                                                minDate={todayString}
-                                                value={checkInDate}
-                                                onChange={setCheckInDate}
-                                                portaled={false}
-                                                required
-                                            />
-                                            <InputError
-                                                message={errors.check_in_date}
-                                            />
-                                        </div>
-                                        <div className="grid gap-1.5">
-                                            <Label htmlFor="check_out_date">
-                                                {t(
-                                                    'reservations.bookDialog.checkOut',
-                                                )}
-                                            </Label>
-                                            <DatePicker
-                                                id="check_out_date"
-                                                name="check_out_date"
-                                                value={checkOutDate}
-                                                onChange={setCheckOutDate}
-                                                minDate={checkInDate || todayString}
-                                                portaled={false}
-                                                required
-                                            />
-                                            <InputError
-                                                message={errors.check_out_date}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="grid gap-1.5">
-                                        <Label htmlFor="num_guests">
-                                            {t(
-                                                'reservations.bookDialog.guests',
-                                            )}
-                                        </Label>
-                                        <Input
-                                            id="num_guests"
-                                            name="num_guests"
-                                            type="number"
-                                            min="1"
-                                            max={room.max_occupants}
-                                            defaultValue={1}
-                                            required
-                                        />
-                                        <InputError
-                                            message={errors.num_guests}
-                                        />
-                                    </div>
-                                </>
-                            ) : (
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="grid gap-1.5">
-                                        <Label htmlFor="start_date">
-                                            {t(
-                                                'reservations.bookDialog.moveInDate',
-                                            )}
-                                        </Label>
-                                        <DatePicker
-                                            id="start_date"
-                                            name="start_date"
-                                            minDate={todayString}
-                                            value={startDate}
-                                            onChange={setStartDate}
-                                            portaled={false}
-                                            required
-                                        />
-                                        <InputError
-                                            message={errors.start_date}
-                                        />
-                                    </div>
-                                    <div className="grid gap-1.5">
-                                        <Label htmlFor="end_date">
-                                            {t(
-                                                'reservations.bookDialog.moveOutDateOptional',
-                                            )}
-                                        </Label>
-                                        <DatePicker
-                                            id="end_date"
-                                            name="end_date"
-                                            value={endDate}
-                                            onChange={setEndDate}
-                                            minDate={startDate || todayString}
-                                            portaled={false}
-                                        />
-                                        <InputError message={errors.end_date} />
-                                    </div>
-                                </div>
-                            )}
+                            <ReservationDateFields
+                                type={type}
+                                checkInDate={checkInDate}
+                                setCheckInDate={setCheckInDate}
+                                checkOutDate={checkOutDate}
+                                setCheckOutDate={setCheckOutDate}
+                                startDate={startDate}
+                                setStartDate={setStartDate}
+                                endDate={endDate}
+                                setEndDate={setEndDate}
+                                setNumGuests={type === 'short_stay' ? () => {} : undefined} // Mock for book dialog to render input, not select
+                                maxOccupants={room.max_occupants}
+                                errors={errors}
+                            />
 
                             <InputError message={errors.room_id} />
 
