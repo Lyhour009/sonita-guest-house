@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -35,11 +36,12 @@ class Service extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<Reservation, $this>
+     * @return BelongsToMany<Reservation, $this, ReservationService>
      */
-    public function reservations(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function reservations(): BelongsToMany
     {
         return $this->belongsToMany(Reservation::class, 'reservation_service')
+            ->using(ReservationService::class)
             ->withPivot('id', 'quantity', 'unit_price')
             ->withTimestamps();
     }

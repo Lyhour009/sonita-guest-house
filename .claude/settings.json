@@ -21,7 +21,11 @@
       "Bash(grep -A6 \"reservation-details-drawer.tsx\\\\|reservation-timeline-view.tsx\\\\|welcome.tsx\\\\|staff\\\\\\\\\\\\\\\\reservations\\\\\\\\\\\\\\\\index.tsx\" /tmp/before_lint.txt)",
       "Bash(git mv *)",
       "Bash(git rm *)",
-      "Bash(xargs grep -l \"isDirty\")"
+      "Bash(xargs grep -l \"isDirty\")",
+      "Bash(composer dump-autoload *)",
+      "Bash(git checkout *)",
+      "Skill(claude-api)",
+      "Skill(claude-api:*)"
     ],
     "additionalDirectories": [
       "\\tmp"

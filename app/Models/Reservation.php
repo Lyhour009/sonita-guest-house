@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Database\Factories\ReservationFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Carbon;
 
 /**
@@ -81,11 +81,12 @@ class Reservation extends Model
     }
 
     /**
-     * @return BelongsToMany<Service, $this>
+     * @return BelongsToMany<Service, $this, ReservationService>
      */
     public function services(): BelongsToMany
     {
         return $this->belongsToMany(Service::class, 'reservation_service')
+            ->using(ReservationService::class)
             ->withPivot('id', 'quantity', 'unit_price')
             ->withTimestamps();
     }
@@ -102,6 +103,7 @@ class Reservation extends Model
 
             if ($this->reservation_type === 'short_stay' && $this->check_in_date && $this->check_out_date && $this->relationLoaded('room') && $this->room) {
                 $nights = max(1, $this->check_in_date->diffInDays($this->check_out_date));
+
                 return $this->room->price_per_night * $nights;
             }
 
