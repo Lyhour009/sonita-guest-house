@@ -25,7 +25,15 @@
       "Bash(composer dump-autoload *)",
       "Bash(git checkout *)",
       "Skill(claude-api)",
-      "Skill(claude-api:*)"
+      "Skill(claude-api:*)",
+      "Bash(mkdir -p \"C:/Users/ASUS/AppData/Local/Temp/claude/d--Code-Laravel-Sonita-Guest-House/dbde6e1d-facf-4002-a5ee-cd09b053af82/scratchpad/welcome-design\")",
+      "Bash(python -c ' *)",
+      "Bash(node \"C:/Users/ASUS/AppData/Local/Temp/claude/bundled-skills/2.1.238/65d578e966120dcc957f27bfcfb2b320/design/seed-canvas.mjs\" --template \"C:/Users/ASUS/AppData/Local/Temp/claude/bundled-skills/2.1.238/65d578e966120dcc957f27bfcfb2b320/design/payload.template.html\" --out hour-guest-house-landing.html --title \"Hour Guest House Landing\" --artboard Main.dc.html --artboard WarmEditorial.dc.html --artboard BookingFirst.dc.html --image hero.jpg --canvas canvas.json)",
+      "Bash(node \"C:/Users/ASUS/AppData/Local/Temp/claude/bundled-skills/2.1.238/65d578e966120dcc957f27bfcfb2b320/design/seed-canvas.mjs\" --check hour-guest-house-landing.html)",
+      "Bash(echo \"--- lint exit: $? ---\")",
+      "Read(//c/Users/ASUS/AppData/Local/npm-cache/_npx/**)",
+      "Bash(npm root *)",
+      "Bash(ls -d \"$\\(npm root -g\\)/playwright\")"
     ],
     "additionalDirectories": [
       "\\tmp"

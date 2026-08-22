@@ -9,9 +9,15 @@ import { dashboard, login, register } from '@/routes';
 type Props = {
     left: ReactNode;
     className?: string;
+    /** Render the nav for a dark photographic background instead of the page surface. */
+    overlay?: boolean;
 };
 
-export default function PublicHeader({ left, className }: Props) {
+export default function PublicHeader({
+    left,
+    className,
+    overlay = false,
+}: Props) {
     const { auth } = usePage().props;
     const { t } = useTranslation();
 
@@ -26,15 +32,37 @@ export default function PublicHeader({ left, className }: Props) {
             <nav className="flex items-center gap-3 text-sm">
                 <LanguageToggle />
                 {auth.user ? (
-                    <Button asChild size="sm">
+                    <Button
+                        asChild
+                        size="sm"
+                        className={cn(
+                            overlay &&
+                                'bg-white text-foreground hover:bg-white/90',
+                        )}
+                    >
                         <Link href={dashboard()}>{t('nav.dashboard')}</Link>
                     </Button>
                 ) : (
                     <>
-                        <Button asChild variant="ghost" size="sm">
+                        <Button
+                            asChild
+                            variant="ghost"
+                            size="sm"
+                            className={cn(
+                                overlay &&
+                                    'text-white hover:bg-white/15 hover:text-white',
+                            )}
+                        >
                             <Link href={login()}>{t('nav.login')}</Link>
                         </Button>
-                        <Button asChild size="sm">
+                        <Button
+                            asChild
+                            size="sm"
+                            className={cn(
+                                overlay &&
+                                    'bg-white text-foreground hover:bg-white/90',
+                            )}
+                        >
                             <Link href={register()}>{t('nav.register')}</Link>
                         </Button>
                     </>

@@ -1,228 +1,480 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { BedDouble } from 'lucide-react';
-import type { FormEvent } from 'react';
+import { addDays, format, parseISO } from 'date-fns';
+import {
+    BedDouble,
+    Check,
+    Home,
+    MapPin,
+    Moon,
+    Search,
+    Users,
+} from 'lucide-react';
 import { useState } from 'react';
 import Pagination from '@/components/pagination';
 import PublicHeader from '@/components/public-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { DatePicker } from '@/components/ui/date-picker';
+import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/hooks/use-translation';
+import { cn } from '@/lib/utils';
 import { home } from '@/routes';
 import { show } from '@/routes/rooms';
-import type { Paginated, RoomFilters, RoomSummary } from '@/types';
+import type { PaginatedResource, RoomFilters, RoomSummary } from '@/types';
+
+type StayMode = 'short_stay' | 'long_stay';
 
 type Props = {
-    rooms: Paginated<RoomSummary>;
+    rooms: PaginatedResource<RoomSummary>;
     filters: RoomFilters;
 };
 
+/** The API rejects `to` unless it is strictly after `from`, so the end picker starts a day later. */
+function dayAfter(date: string): string | undefined {
+    if (!date) {
+        return undefined;
+    }
+
+    try {
+        return format(addDays(parseISO(date), 1), 'yyyy-MM-dd');
+    } catch {
+        return undefined;
+    }
+}
+
 export default function Welcome({ rooms, filters }: Props) {
     const { t } = useTranslation();
-    const [stayType, setStayType] = useState(filters.stay_type ?? 'any');
-    const [from, setFrom] = useState(filters.from ?? '');
-    const [to, setTo] = useState(filters.to ?? '');
 
-    const submitFilters = (event: FormEvent) => {
-        event.preventDefault();
+    const startedLong = filters.stay_type === 'long_stay';
+    const [stayType, setStayType] = useState<StayMode>(
+        filters.stay_type ?? 'short_stay',
+    );
+    const [shortFrom, setShortFrom] = useState(
+        startedLong ? '' : (filters.from ?? ''),
+    );
+    const [shortTo, setShortTo] = useState(
+        startedLong ? '' : (filters.to ?? ''),
+    );
+    const [longFrom, setLongFrom] = useState(
+        startedLong ? (filters.from ?? '') : '',
+    );
+    const [longTo, setLongTo] = useState(startedLong ? (filters.to ?? '') : '');
+
+    const submit = (mode: StayMode) => {
+        setStayType(mode);
+
+        const from = mode === 'short_stay' ? shortFrom : longFrom;
+        const to = mode === 'short_stay' ? shortTo : longTo;
 
         router.get(
             home().url,
             {
-                stay_type: stayType === 'any' ? undefined : stayType,
+                stay_type: mode,
                 from: from || undefined,
                 to: to || undefined,
             },
-            { preserveState: true, replace: true },
+            { preserveState: true, preserveScroll: true, replace: true },
         );
     };
+
+    const isShort = stayType === 'short_stay';
 
     return (
         <>
             <Head title={t('welcome.header.brand')} />
+
             <div className="min-h-screen bg-background">
-                {/* Hero Section */}
-                <div 
-                    className="relative h-[65vh] min-h-[500px] w-full bg-cover bg-center bg-no-repeat"
-                    style={{ backgroundImage: "url('/images/hero.jpg')" }}
-                >
-                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
-                    
-                    {/* Header Overlay */}
-                    <div className="absolute top-0 left-0 right-0 z-20 p-6 lg:p-10">
-                        <PublicHeader className="max-w-6xl mx-auto" left={
-                            <div className="text-white drop-shadow-md">
-                                <h1 className="text-2xl font-bold tracking-wide">
-                                    {t('welcome.header.brand')}
-                                </h1>
-                            </div>
-                        } />
+                {/* ---------- Hero ---------- */}
+                <div className="relative h-[46vh] min-h-[380px] w-full bg-cover bg-center bg-no-repeat lg:h-[52vh]">
+                    <img
+                        src="/images/hero.jpg"
+                        alt=""
+                        aria-hidden="true"
+                        className="absolute inset-0 size-full object-cover"
+                    />
+                    <div
+                        aria-hidden="true"
+                        className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/25 to-black/70"
+                    />
+
+                    <div className="relative z-20 px-6 pt-6 lg:px-10">
+                        <PublicHeader
+                            overlay
+                            className="mx-auto max-w-6xl"
+                            left={
+                                <div className="flex items-center gap-2.5">
+                                    <span className="flex size-9 items-center justify-center rounded-lg border border-white/25 bg-white/15 backdrop-blur-sm">
+                                        <BedDouble className="size-5 text-white" />
+                                    </span>
+                                    <span className="text-lg font-semibold tracking-wide text-white drop-shadow-sm">
+                                        {t('welcome.header.brand')}
+                                    </span>
+                                </div>
+                            }
+                        />
                     </div>
 
-                    {/* Hero Content */}
-                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-4 text-center">
-                        <h1 className="text-4xl md:text-6xl font-bold text-white drop-shadow-lg mb-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                            Discover Your Perfect Stay
-                        </h1>
-                        <p className="text-lg md:text-xl text-white/90 drop-shadow mb-12 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-150">
-                            {t('welcome.header.address')} - Experience luxury and comfort in the heart of the city.
+                    {/*
+                     * bottom-24 keeps the copy clear of the stay panels, which are
+                     * pulled up 56px (-mt-14) over the bottom of the hero.
+                     * Leading stays generous: Khmer stacks subscript consonants below
+                     * the baseline and clips at the tighter display line-heights.
+                     */}
+                    <div className="absolute inset-x-0 bottom-24 z-10 px-6 lg:px-10">
+                        <div className="mx-auto flex max-w-6xl flex-col gap-2">
+                            <p className="flex items-center gap-1.5 text-sm leading-relaxed font-medium text-white/85">
+                                <MapPin className="size-4 shrink-0" />
+                                {t('welcome.header.address')}
+                            </p>
+                            <h1 className="max-w-2xl text-3xl leading-[1.4] font-bold text-pretty text-white drop-shadow-md md:text-[2.5rem]">
+                                {t('welcome.hero.headline')}
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+
+                {/* ---------- The fork: nightly vs monthly ---------- */}
+                <div className="relative z-30 mx-auto max-w-6xl px-6 lg:px-10">
+                    <div className="-mt-14 grid gap-5 md:grid-cols-2">
+                        <StayPanel
+                            active={isShort}
+                            icon={<Moon className="size-5" />}
+                            title={t('welcome.stay.short.title')}
+                            billing={t('welcome.stay.short.billing')}
+                            selectedLabel={t('welcome.stay.selected')}
+                            onSelect={() => setStayType('short_stay')}
+                        >
+                            <div className="grid gap-3 sm:grid-cols-2">
+                                <Field
+                                    id="short_from"
+                                    label={t('welcome.stay.short.checkIn')}
+                                >
+                                    <DatePicker
+                                        id="short_from"
+                                        value={shortFrom}
+                                        onChange={setShortFrom}
+                                        minDate={format(
+                                            new Date(),
+                                            'yyyy-MM-dd',
+                                        )}
+                                        placeholder={t(
+                                            'welcome.stay.short.checkIn',
+                                        )}
+                                    />
+                                </Field>
+                                <Field
+                                    id="short_to"
+                                    label={t('welcome.stay.short.checkOut')}
+                                >
+                                    <DatePicker
+                                        id="short_to"
+                                        value={shortTo}
+                                        onChange={setShortTo}
+                                        minDate={dayAfter(shortFrom)}
+                                        placeholder={t(
+                                            'welcome.stay.short.checkOut',
+                                        )}
+                                    />
+                                </Field>
+                            </div>
+
+                            <Button
+                                type="button"
+                                size="lg"
+                                className="h-11 w-full rounded-xl font-semibold sm:w-auto sm:self-end"
+                                onClick={() => submit('short_stay')}
+                            >
+                                <Search className="size-4" />
+                                {t('welcome.stay.short.action')}
+                            </Button>
+                        </StayPanel>
+
+                        <StayPanel
+                            active={!isShort}
+                            icon={<Home className="size-5" />}
+                            title={t('welcome.stay.long.title')}
+                            billing={t('welcome.stay.long.billing')}
+                            selectedLabel={t('welcome.stay.selected')}
+                            onSelect={() => setStayType('long_stay')}
+                        >
+                            <div className="grid gap-3 sm:grid-cols-2">
+                                <Field
+                                    id="long_from"
+                                    label={t('welcome.stay.long.moveIn')}
+                                >
+                                    <DatePicker
+                                        id="long_from"
+                                        value={longFrom}
+                                        onChange={setLongFrom}
+                                        minDate={format(
+                                            new Date(),
+                                            'yyyy-MM-dd',
+                                        )}
+                                        placeholder={t(
+                                            'welcome.stay.long.moveIn',
+                                        )}
+                                    />
+                                </Field>
+                                <Field
+                                    id="long_to"
+                                    label={t('welcome.stay.long.until')}
+                                >
+                                    <DatePicker
+                                        id="long_to"
+                                        value={longTo}
+                                        onChange={setLongTo}
+                                        minDate={dayAfter(longFrom)}
+                                        placeholder={t(
+                                            'welcome.stay.long.until',
+                                        )}
+                                    />
+                                </Field>
+                            </div>
+
+                            <Button
+                                type="button"
+                                size="lg"
+                                variant={isShort ? 'outline' : 'default'}
+                                className="h-11 w-full rounded-xl font-semibold sm:w-auto sm:self-end"
+                                onClick={() => submit('long_stay')}
+                            >
+                                {t('welcome.stay.long.action')}
+                            </Button>
+                        </StayPanel>
+                    </div>
+                </div>
+
+                {/* ---------- Results ---------- */}
+                <div className="mx-auto w-full max-w-6xl px-6 pt-12 pb-20 lg:px-10">
+                    <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+                        <h2 className="text-2xl font-bold tracking-tight">
+                            {t('welcome.results.heading')}
+                        </h2>
+                        <p className="text-sm text-muted-foreground">
+                            {t(
+                                rooms.meta.total === 1
+                                    ? 'welcome.results.countOne'
+                                    : 'welcome.results.countOther',
+                                { count: rooms.meta.total },
+                            )}
                         </p>
                     </div>
 
-                    {/* Glassmorphism Search Bar (Positioned at bottom of Hero) */}
-                    <div className="absolute -bottom-16 left-0 right-0 z-30 px-4">
-                        <form
-                            onSubmit={submitFilters}
-                            className="mx-auto flex w-full max-w-5xl flex-wrap items-end gap-4 rounded-3xl border border-white/20 bg-background/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-xl transition-all duration-300 hover:shadow-[0_8px_40px_rgb(0,0,0,0.16)] dark:bg-zinc-950/80"
-                        >
-                    <div className="grid gap-1.5">
-                        <Label htmlFor="stay_type">
-                            {t('rooms.stayType.label')}
-                        </Label>
-                        <Select value={stayType} onValueChange={setStayType}>
-                            <SelectTrigger id="stay_type" className="w-44">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="any">
-                                    {t('rooms.stayType.any')}
-                                </SelectItem>
-                                <SelectItem value="short_stay">
-                                    {t('rooms.stayType.shortStayNightly')}
-                                </SelectItem>
-                                <SelectItem value="long_stay">
-                                    {t('rooms.stayType.longStayMonthly')}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <div className="grid gap-1.5 min-w-44">
-                        <Label htmlFor="from">
-                            {t('welcome.filters.from')}
-                        </Label>
-                        <DatePicker
-                            id="from"
-                            value={from}
-                            onChange={setFrom}
-                            placeholder={t('welcome.filters.from')}
-                        />
-                    </div>
-
-                    <div className="grid gap-1.5 min-w-44">
-                        <Label htmlFor="to">{t('welcome.filters.to')}</Label>
-                        <DatePicker
-                            id="to"
-                            value={to}
-                            onChange={setTo}
-                            placeholder={t('welcome.filters.to')}
-                        />
-                    </div>
-
-                    <Button type="submit" size="lg" className="h-11 rounded-xl px-8 font-semibold shadow-lg transition-transform active:scale-95">
-                        {t('common.actions.search')}
-                    </Button>
-                </form>
-            </div>
-        </div>
-
-        {/* Room Grid Section */}
-        <div className="mx-auto w-full max-w-6xl px-6 lg:px-10 pt-32 pb-24">
                     {rooms.data.length === 0 ? (
-                        <p className="py-12 text-center text-sm text-muted-foreground">
+                        <p className="py-16 text-center text-sm text-muted-foreground">
                             {t('welcome.empty.noResults')}
                         </p>
                     ) : (
-                        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                            {rooms.data.map((room, index) => (
-                                <Card
+                        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                            {rooms.data.map((room) => (
+                                <RoomCard
                                     key={room.id}
-                                    className="group relative flex flex-col overflow-hidden rounded-3xl border-0 bg-card shadow-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
-                                    style={{ animationDelay: `${index * 100}ms` }}
-                                >
-                                    <div className="aspect-[4/3] w-full bg-muted relative overflow-hidden flex items-center justify-center">
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                                        
-                                        {room.thumbnail ? (
-                                            <img
-                                                src={room.thumbnail}
-                                                alt={room.room_type}
-                                                className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                                            />
-                                        ) : (
-                                            <div className="flex flex-col items-center justify-center text-muted-foreground/50 select-none">
-                                                <BedDouble className="size-12 stroke-[1] mb-2 opacity-40" />
-                                                <span className="text-xs font-medium opacity-60">Sonita Guest House</span>
-                                            </div>
-                                        )}
-                                        
-                                        <Badge className="absolute top-4 right-4 z-20 bg-background/90 text-foreground backdrop-blur-md hover:bg-background shadow-sm">
-                                            {t(`rooms.rentalModeBadge.${room.rental_mode}`)}
-                                        </Badge>
-                                    </div>
-                                    <CardHeader className="pt-6 pb-2">
-                                        <div className="flex items-center justify-between">
-                                            <CardTitle className="text-xl font-bold tracking-tight">
-                                                {room.room_type}
-                                            </CardTitle>
-                                            <span className="text-sm font-semibold text-muted-foreground bg-secondary/50 px-2 py-1 rounded-md">
-                                                #{room.room_number}
-                                            </span>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent className="space-y-2 text-sm text-muted-foreground flex-1">
-                                        <div className="flex items-end gap-1 mb-2">
-                                            <span className="text-2xl font-bold text-foreground">${room.price_per_night}</span>
-                                            <span className="mb-1">{t('welcome.card.perNightSuffix')}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between text-xs">
-                                            <span>${room.price_per_month} {t('welcome.card.perMonthSuffix')}</span>
-                                            <span className="flex items-center gap-1 bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">
-                                                <BedDouble className="size-3.5" />
-                                                {t(
-                                                    room.max_occupants > 1
-                                                        ? 'rooms.maxOccupants.other'
-                                                        : 'rooms.maxOccupants.one',
-                                                    { count: room.max_occupants },
-                                                )}
-                                            </span>
-                                        </div>
-                                    </CardContent>
-                                    <CardFooter className="pt-4 pb-6 mt-auto">
-                                        <Button
-                                            asChild
-                                            className="w-full rounded-xl h-11 text-sm font-semibold transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98]"
-                                        >
-                                            <Link href={show(room.id)}>
-                                                {t('welcome.card.viewRoom')}
-                                            </Link>
-                                        </Button>
-                                    </CardFooter>
-                                </Card>
+                                    room={room}
+                                    stayType={stayType}
+                                />
                             ))}
                         </div>
                     )}
 
-                    <div className="mt-8">
+                    <div className="mt-10">
                         <Pagination meta={rooms} />
                     </div>
                 </div>
             </div>
         </>
+    );
+}
+
+function Field({
+    id,
+    label,
+    children,
+}: {
+    id: string;
+    label: string;
+    children: React.ReactNode;
+}) {
+    return (
+        <div className="grid gap-1.5">
+            <Label htmlFor={id} className="text-[13px]">
+                {label}
+            </Label>
+            {children}
+        </div>
+    );
+}
+
+function StayPanel({
+    active,
+    icon,
+    title,
+    billing,
+    selectedLabel,
+    onSelect,
+    children,
+}: {
+    active: boolean;
+    icon: React.ReactNode;
+    title: string;
+    billing: string;
+    selectedLabel: string;
+    onSelect: () => void;
+    children: React.ReactNode;
+}) {
+    return (
+        <div
+            className={cn(
+                'flex flex-col gap-4 rounded-2xl bg-card p-5 transition-all',
+                active
+                    ? 'border-2 border-primary shadow-xl'
+                    : 'border border-border shadow-sm',
+            )}
+        >
+            <button
+                type="button"
+                onClick={onSelect}
+                aria-pressed={active}
+                className="flex items-start justify-between gap-3 rounded-lg text-left outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+                <span className="flex items-center gap-3">
+                    <span
+                        className={cn(
+                            'flex size-10 shrink-0 items-center justify-center rounded-lg',
+                            active
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-secondary text-secondary-foreground',
+                        )}
+                    >
+                        {icon}
+                    </span>
+                    <span className="flex flex-col">
+                        <span className="text-base font-bold">{title}</span>
+                        <span className="text-[13px] leading-snug text-muted-foreground">
+                            {billing}
+                        </span>
+                    </span>
+                </span>
+
+                {active && (
+                    <Badge className="shrink-0 gap-1">
+                        <Check className="size-3" />
+                        {selectedLabel}
+                    </Badge>
+                )}
+            </button>
+
+            {children}
+        </div>
+    );
+}
+
+function RoomCard({
+    room,
+    stayType,
+}: {
+    room: RoomSummary;
+    stayType: StayMode;
+}) {
+    const { t } = useTranslation();
+
+    const supportsLong =
+        room.rental_mode === 'long_stay' || room.rental_mode === 'both';
+    const supportsShort =
+        room.rental_mode === 'short_stay' || room.rental_mode === 'both';
+
+    // Lead with the price for the stay the visitor actually chose.
+    const leadMonthly =
+        stayType === 'long_stay' ? supportsLong : !supportsShort;
+
+    const leadPrice = leadMonthly ? room.price_per_month : room.price_per_night;
+    const leadSuffix = leadMonthly
+        ? t('welcome.card.perMonthSuffix')
+        : t('welcome.card.perNightSuffix');
+
+    let secondary: string;
+
+    if (room.rental_mode === 'both') {
+        secondary = leadMonthly
+            ? t('welcome.card.orPerNight', {
+                  price: `$${room.price_per_night}`,
+              })
+            : t('welcome.card.orPerMonth', {
+                  price: `$${room.price_per_month}`,
+              });
+    } else {
+        secondary = leadMonthly
+            ? t('welcome.card.monthlyOnly')
+            : t('welcome.card.nightlyOnly');
+    }
+
+    return (
+        <div className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+            <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+                {room.thumbnail ? (
+                    <img
+                        src={room.thumbnail}
+                        alt={room.room_type}
+                        className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                ) : (
+                    <div className="flex size-full flex-col items-center justify-center gap-1.5 bg-secondary">
+                        <BedDouble className="size-8 stroke-[1.1] text-muted-foreground/55" />
+                        <span className="text-xs font-medium text-muted-foreground/80">
+                            {t('welcome.card.noPhoto')}
+                        </span>
+                    </div>
+                )}
+
+                <Badge
+                    variant="secondary"
+                    className="absolute top-3 right-3 bg-background/90 text-foreground shadow-sm backdrop-blur-sm"
+                >
+                    {t(`rooms.rentalModeBadge.${room.rental_mode}`)}
+                </Badge>
+            </div>
+
+            <div className="flex flex-1 flex-col gap-3.5 p-4">
+                <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-lg font-semibold tracking-tight">
+                        {room.room_type}
+                    </h3>
+                    <span className="text-sm font-medium text-muted-foreground">
+                        #{room.room_number}
+                    </span>
+                </div>
+
+                <p className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+                    <Users className="size-4 shrink-0" />
+                    {t(
+                        room.max_occupants > 1
+                            ? 'rooms.maxOccupants.other'
+                            : 'rooms.maxOccupants.one',
+                        { count: room.max_occupants },
+                    )}
+                </p>
+
+                <div className="mt-auto flex items-end justify-between gap-3 border-t border-border pt-3.5">
+                    <div className="flex flex-col">
+                        <span className="flex items-baseline gap-1">
+                            <span className="text-2xl font-bold tracking-tight">
+                                ${leadPrice}
+                            </span>
+                            <span className="text-sm text-muted-foreground">
+                                {leadSuffix}
+                            </span>
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                            {secondary}
+                        </span>
+                    </div>
+
+                    <Button asChild className="rounded-lg font-medium">
+                        <Link href={show(room.id)}>
+                            {t('welcome.card.viewRoom')}
+                        </Link>
+                    </Button>
+                </div>
+            </div>
+        </div>
     );
 }

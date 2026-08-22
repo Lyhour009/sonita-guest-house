@@ -4,6 +4,33 @@ export const welcome = {
         address:
             'Street 644, Sangkat Chak Angre Ti 1, Khan Chak Angre, Phnom Penh',
     },
+    hero: {
+        headline: 'A room for the night — or for the year.',
+    },
+    stay: {
+        selected: 'Selected',
+        short: {
+            title: 'Stay a few nights',
+            billing: 'Billed per night',
+            checkIn: 'Check in',
+            checkOut: 'Check out',
+            fromPrice: 'From {{price}} / night',
+            action: 'Search rooms',
+        },
+        long: {
+            title: 'Stay a few months',
+            billing: 'Billed monthly, utilities metered',
+            moveIn: 'Move in',
+            until: 'Until',
+            fromPrice: 'From {{price}} / month',
+            action: 'Browse monthly',
+        },
+    },
+    results: {
+        heading: 'Available rooms',
+        countOne: '{{count}} room',
+        countOther: '{{count}} rooms',
+    },
     filters: {
         from: 'From',
         to: 'To',
@@ -15,5 +42,10 @@ export const welcome = {
         perNightSuffix: '/ night',
         perMonthSuffix: '/ month',
         viewRoom: 'View room',
+        orPerMonth: 'or {{price}} / month',
+        orPerNight: 'or {{price}} / night',
+        nightlyOnly: 'Nightly only',
+        monthlyOnly: 'Monthly only',
+        noPhoto: 'Photo coming soon',
     },
 };

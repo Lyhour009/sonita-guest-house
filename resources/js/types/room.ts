@@ -53,10 +53,42 @@ export type RoomFilters = {
     to: string | null;
 };
 
+export type PaginationLink = {
+    url: string | null;
+    label: string;
+    active: boolean;
+};
+
+/** Shape of `$paginator->through(...)` — pagination fields sit at the top level. */
 export type Paginated<T> = {
     data: T[];
-    links: { url: string | null; label: string; active: boolean }[];
+    links: PaginationLink[];
     current_page: number;
     last_page: number;
     total: number;
+};
+
+/**
+ * Shape of `SomeResource::collection($paginator)` — Laravel nests the pagination
+ * fields under `meta` and replaces `links` with first/last/prev/next URLs.
+ * Not interchangeable with {@link Paginated}.
+ */
+export type PaginatedResource<T> = {
+    data: T[];
+    links: {
+        first: string | null;
+        last: string | null;
+        prev: string | null;
+        next: string | null;
+    };
+    meta: {
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+        from: number | null;
+        to: number | null;
+        path: string;
+        links: PaginationLink[];
+    };
 };
