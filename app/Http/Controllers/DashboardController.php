@@ -21,8 +21,12 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard.index');
+        }
+
         return Inertia::render('dashboard', match ($user->role) {
-            'receptionist', 'admin' => $this->receptionistData(),
+            'receptionist' => $this->receptionistData(),
             'housekeeping' => $this->housekeepingData($user),
             default => $this->guestData($user),
         });

@@ -106,7 +106,7 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                             {t('adminRooms.title')}
                         </h1>
                         <p className="text-muted-foreground mt-1 text-sm">
-                            Manage all your properties, pricing, and statuses in one place.
+                            {t('adminRooms.description')}
                         </p>
                     </div>
                     <RoomCreateDialog />
@@ -209,12 +209,12 @@ export default function AdminRoomsIndex({ rooms, filters }: Props) {
                                     )}
 
                                     <div className="absolute top-3 left-3 z-20 flex flex-col gap-2">
-                                        <Badge variant="secondary" className="bg-background/80 backdrop-blur shadow-sm">
+                                        <Badge variant="outline" className="bg-background/90 text-foreground backdrop-blur shadow-sm border-border/50 font-medium">
                                             {room.rental_mode === 'both' ? t('adminRooms.filters.both') : t(`common.reservationType.${room.rental_mode}`)}
                                         </Badge>
                                         <Badge
-                                            variant={room.status === 'available' ? 'default' : 'secondary'}
-                                            className="bg-background/80 backdrop-blur shadow-sm"
+                                            variant={room.status === 'available' ? 'default' : 'outline'}
+                                            className={`shadow-sm backdrop-blur font-medium ${room.status === 'available' ? 'bg-primary/90' : 'bg-background/90 text-foreground border-border/50'}`}
                                         >
                                             {t(`common.roomStatus.${room.status}`)}
                                         </Badge>

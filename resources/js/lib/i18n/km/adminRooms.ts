@@ -2,6 +2,7 @@ import type { Dictionary } from '../translate';
 
 export const adminRooms: Dictionary['adminRooms'] = {
     title: 'បន្ទប់',
+    description: 'គ្រប់គ្រងបន្ទប់ តម្លៃ និងស្ថានភាពនៅកន្លែងតែមួយ។',
     searchPlaceholder: 'ស្វែងរកតាមលេខបន្ទប់ ឬប្រភេទបន្ទប់...',
     filters: {
         rentalMode: 'ទម្រង់ជួល',

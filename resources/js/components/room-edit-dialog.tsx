@@ -36,13 +36,15 @@ export default function RoomEditDialog({ room, onOpenChange }: Props) {
 
                 {room && (
                     <Form
-                        {...RoomController.update.form(room.id)}
+                        action={RoomController.update.form(room.id).action}
+                        method="post"
                         encType="multipart/form-data"
                         onSuccess={() => onOpenChange(false)}
                         className="space-y-6"
                     >
                         {({ processing, errors, isDirty }) => (
                             <>
+                                <input type="hidden" name="_method" value="put" />
                                 <RoomForm room={room} errors={errors} />
 
                                 <DialogFooter>

@@ -4,7 +4,7 @@ import { useTranslation } from '@/hooks/use-translation';
 import type { Paginated } from '@/types';
 
 type Props<T> = {
-    meta: Omit<Paginated<T>, 'data'>;
+    meta: any;
 };
 
 export default function Pagination<T>({ meta }: Props<T>) {
@@ -22,7 +22,10 @@ export default function Pagination<T>({ meta }: Props<T>) {
         return label;
     };
 
-    if (meta.last_page <= 1) {
+    // Support both raw paginators and API Resources
+    const paginationMeta = meta.meta ? meta.meta : meta;
+
+    if (!paginationMeta || !paginationMeta.links || paginationMeta.last_page <= 1) {
         return null;
     }
 
@@ -31,7 +34,7 @@ export default function Pagination<T>({ meta }: Props<T>) {
             aria-label={t('common.pagination.ariaLabel')}
             className="flex flex-wrap items-center justify-center gap-1"
         >
-            {meta.links.map((link, index) => (
+            {paginationMeta.links.map((link: any, index: number) => (
                 <Button
                     key={`${link.label}-${index}`}
                     variant={link.active ? 'default' : 'outline'}

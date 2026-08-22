@@ -1,5 +1,6 @@
 export const adminRooms = {
     title: 'Rooms',
+    description: 'Manage all your properties, pricing, and statuses in one place.',
     searchPlaceholder: 'Search by room number or type...',
     filters: {
         rentalMode: 'Rental mode',
