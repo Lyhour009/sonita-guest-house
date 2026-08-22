@@ -6,7 +6,7 @@ use App\Http\Controllers\Staff\PaymentController;
 use App\Http\Controllers\Staff\ReservationController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified', 'role:receptionist,admin'])->prefix('staff')->name('staff.')->group(function () {
+Route::middleware(['auth', 'role:receptionist,admin'])->prefix('staff')->name('staff.')->group(function () {
     Route::get('reservations', [ReservationController::class, 'index'])->name('reservations.index');
     Route::post('reservations', [ReservationController::class, 'store'])->name('reservations.store');
     Route::patch('reservations/{reservation}/confirm', [ReservationController::class, 'confirm'])->name('reservations.confirm');
@@ -19,7 +19,7 @@ Route::middleware(['auth', 'verified', 'role:receptionist,admin'])->prefix('staf
     Route::patch('payments/{payment}/reject', [PaymentController::class, 'reject'])->name('payments.reject');
 });
 
-Route::middleware(['auth', 'verified', 'role:housekeeping,admin'])->prefix('staff')->name('staff.')->group(function () {
+Route::middleware(['auth', 'role:housekeeping,admin'])->prefix('staff')->name('staff.')->group(function () {
     Route::get('housekeeping', [HousekeepingController::class, 'index'])->name('housekeeping.index');
     Route::patch('housekeeping/{room}/clean', [HousekeepingController::class, 'markClean'])->name('housekeeping.clean');
 

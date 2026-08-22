@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [RoomController::class, 'index'])->name('home');
 Route::get('rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('payments/{payment}/proof', [PaymentProofController::class, 'show'])->name('payments.proof');
@@ -25,7 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
 });
 
-Route::middleware(['auth', 'verified', 'role:guest'])->group(function () {
+Route::middleware(['auth', 'role:guest'])->group(function () {
     Route::get('reservations', [ReservationController::class, 'index'])->name('reservations.index');
     Route::post('reservations', [ReservationController::class, 'store'])->name('reservations.store');
     Route::patch('reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');

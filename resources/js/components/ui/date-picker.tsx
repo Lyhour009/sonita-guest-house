@@ -24,6 +24,7 @@ export interface DatePickerProps {
     align?: 'start' | 'center' | 'end';
     side?: 'top' | 'right' | 'bottom' | 'left';
     sideOffset?: number;
+    portaled?: boolean;
 }
 
 export function DatePicker({
@@ -40,6 +41,7 @@ export function DatePicker({
     align = 'start',
     side = 'bottom',
     sideOffset = 6,
+    portaled = true,
 }: DatePickerProps) {
     const [open, setOpen] = React.useState(false);
 
@@ -132,7 +134,8 @@ export function DatePicker({
                     align={align}
                     side="bottom"
                     sideOffset={4}
-                    avoidCollisions={false}
+                    avoidCollisions={true}
+                    portaled={portaled}
                     className="w-72 p-3 rounded-2xl shadow-xl border-border z-[100] bg-popover"
                 >
                     <Calendar

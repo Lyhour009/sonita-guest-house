@@ -1,6 +1,5 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import LanguageToggle from '@/components/language-toggle';
-import { NotificationBell } from '@/components/notification-bell';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
 
@@ -17,7 +16,6 @@ export function AppSidebarHeader({
             </div>
             <div className="flex items-center gap-3">
                 <LanguageToggle />
-                <NotificationBell />
             </div>
         </header>
     );

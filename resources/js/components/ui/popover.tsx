@@ -21,10 +21,10 @@ function PopoverContent({
   side = "bottom",
   sideOffset = 4,
   avoidCollisions = false,
+  portaled = true,
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Content>) {
-  return (
-    <PopoverPrimitive.Portal>
+}: React.ComponentProps<typeof PopoverPrimitive.Content> & { portaled?: boolean }) {
+  const content = (
       <PopoverPrimitive.Content
         data-slot="popover-content"
         align={align}
@@ -37,8 +37,10 @@ function PopoverContent({
         )}
         {...props}
       />
-    </PopoverPrimitive.Portal>
   )
+
+  if (!portaled) return content;
+  return <PopoverPrimitive.Portal>{content}</PopoverPrimitive.Portal>;
 }
 
 function PopoverAnchor({

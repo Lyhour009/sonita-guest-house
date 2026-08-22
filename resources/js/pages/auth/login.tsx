@@ -11,14 +11,12 @@ import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
-import { request } from '@/routes/password';
 
 type Props = {
     status?: string;
-    canResetPassword: boolean;
 };
 
-export default function Login({ status, canResetPassword }: Props) {
+export default function Login({ status }: Props) {
     const { t } = useTranslation();
 
     return (
@@ -69,15 +67,6 @@ export default function Login({ status, canResetPassword }: Props) {
                                     <Label htmlFor="password" className="text-sm font-semibold text-foreground/90 font-sans">
                                         {t('auth.login.passwordLabel')}
                                     </Label>
-                                    {canResetPassword && (
-                                        <TextLink
-                                            href={request()}
-                                            className="text-sm text-primary font-medium hover:underline font-sans"
-                                            tabIndex={5}
-                                        >
-                                            {t('auth.login.forgotPasswordLink')}
-                                        </TextLink>
-                                    )}
                                 </div>
                                 <div className="relative">
                                     <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3.5 text-muted-foreground">

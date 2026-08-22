@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { Switch } from '@/components/ui/switch';
+import { DatePicker } from '@/components/ui/date-picker';
 import { useTranslation } from '@/hooks/use-translation';
 import type {
     ReservationGuestSummary,
@@ -186,7 +187,7 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                             >
                                                 <SelectValue placeholder="Select available room" />
                                             </SelectTrigger>
-                                            <SelectContent className="z-[100] rounded-xl border-border">
+                                            <SelectContent portaled={false} className="z-[100] rounded-xl border-border">
                                                 {rooms.map((room) => (
                                                     <SelectItem
                                                         key={room.id}
@@ -228,7 +229,7 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                             >
                                                 <SelectValue />
                                             </SelectTrigger>
-                                            <SelectContent className="z-[100] rounded-xl border-border">
+                                            <SelectContent portaled={false} className="z-[100] rounded-xl border-border">
                                                 {availableTypes.includes(
                                                     'short_stay',
                                                 ) && (
@@ -268,18 +269,13 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                 )}{' '}
                                                 *
                                             </Label>
-                                            <Input
+                                            <DatePicker
                                                 id="check_in_date"
                                                 name="check_in_date"
-                                                type="date"
-                                                min={todayString}
+                                                minDate={todayString}
                                                 value={checkInDate}
-                                                onChange={(e) =>
-                                                    setCheckInDate(
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                className="h-10 cursor-pointer rounded-xl border-border bg-background font-sans"
+                                                onChange={setCheckInDate}
+                                                portaled={false}
                                                 required
                                             />
                                             <InputError
@@ -297,18 +293,13 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                 )}{' '}
                                                 *
                                             </Label>
-                                            <Input
+                                            <DatePicker
                                                 id="check_out_date"
                                                 name="check_out_date"
-                                                type="date"
-                                                min={checkInDate || todayString}
+                                                minDate={checkInDate || todayString}
                                                 value={checkOutDate}
-                                                onChange={(e) =>
-                                                    setCheckOutDate(
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                className="h-10 cursor-pointer rounded-xl border-border bg-background font-sans"
+                                                onChange={setCheckOutDate}
+                                                portaled={false}
                                                 required
                                             />
                                             <InputError
@@ -337,7 +328,7 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                 >
                                                     <SelectValue />
                                                 </SelectTrigger>
-                                                <SelectContent className="z-[100] max-h-48 rounded-xl border-border shadow-xl">
+                                                <SelectContent portaled={false} className="z-[100] max-h-48 rounded-xl border-border shadow-xl">
                                                     {Array.from(
                                                         { length: selectedRoom?.max_occupants ?? 10 },
                                                         (_, i) => i + 1,
@@ -368,16 +359,13 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                 )}{' '}
                                                 *
                                             </Label>
-                                            <Input
+                                            <DatePicker
                                                 id="start_date"
                                                 name="start_date"
-                                                type="date"
-                                                min={todayString}
+                                                minDate={todayString}
                                                 value={startDate}
-                                                onChange={(e) =>
-                                                    setStartDate(e.target.value)
-                                                }
-                                                className="h-10 cursor-pointer rounded-xl border-border bg-background font-sans"
+                                                onChange={setStartDate}
+                                                portaled={false}
                                                 required
                                             />
                                             <InputError
@@ -394,16 +382,13 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                     'staff.walkinDialog.moveOutDateLabel',
                                                 )}
                                             </Label>
-                                            <Input
+                                            <DatePicker
                                                 id="end_date"
                                                 name="end_date"
-                                                type="date"
-                                                min={startDate || todayString}
+                                                minDate={startDate || todayString}
                                                 value={endDate}
-                                                onChange={(e) =>
-                                                    setEndDate(e.target.value)
-                                                }
-                                                className="h-10 cursor-pointer rounded-xl border-border bg-background font-sans"
+                                                onChange={setEndDate}
+                                                portaled={false}
                                             />
                                             <InputError
                                                 message={errors.end_date}
@@ -521,6 +506,7 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                 />
                                             </SelectTrigger>
                                             <SelectContent
+                                                portaled={false}
                                                 side="top"
                                                 align="start"
                                                 className="z-[100] max-h-48 rounded-xl border-border shadow-xl"

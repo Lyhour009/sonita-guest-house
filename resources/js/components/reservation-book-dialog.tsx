@@ -39,6 +39,7 @@ export default function ReservationBookDialog({ room }: Props) {
     const [checkOutDate, setCheckOutDate] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const todayString = new Date().toISOString().split('T')[0];
 
     const availableTypes: ReservationType[] =
         room.rental_mode === 'both'
@@ -92,7 +93,7 @@ export default function ReservationBookDialog({ room }: Props) {
                                         >
                                             <SelectValue />
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent portaled={false}>
                                             <SelectItem value="short_stay">
                                                 {t(
                                                     'rooms.stayType.shortStayNightly',
@@ -130,8 +131,10 @@ export default function ReservationBookDialog({ room }: Props) {
                                             <DatePicker
                                                 id="check_in_date"
                                                 name="check_in_date"
+                                                minDate={todayString}
                                                 value={checkInDate}
                                                 onChange={setCheckInDate}
+                                                portaled={false}
                                                 required
                                             />
                                             <InputError
@@ -149,7 +152,8 @@ export default function ReservationBookDialog({ room }: Props) {
                                                 name="check_out_date"
                                                 value={checkOutDate}
                                                 onChange={setCheckOutDate}
-                                                minDate={checkInDate}
+                                                minDate={checkInDate || todayString}
+                                                portaled={false}
                                                 required
                                             />
                                             <InputError
@@ -188,8 +192,10 @@ export default function ReservationBookDialog({ room }: Props) {
                                         <DatePicker
                                             id="start_date"
                                             name="start_date"
+                                            minDate={todayString}
                                             value={startDate}
                                             onChange={setStartDate}
+                                            portaled={false}
                                             required
                                         />
                                         <InputError
@@ -207,7 +213,8 @@ export default function ReservationBookDialog({ room }: Props) {
                                             name="end_date"
                                             value={endDate}
                                             onChange={setEndDate}
-                                            minDate={startDate}
+                                            minDate={startDate || todayString}
+                                            portaled={false}
                                         />
                                         <InputError message={errors.end_date} />
                                     </div>
