@@ -3,11 +3,15 @@ import type { Dictionary } from '../translate';
 export const staff: Dictionary['staff'] = {
     housekeeping: {
         pageTitle: 'ស្ថានភាពបន្ទប់',
+        subtitle: 'បន្ទប់ដែលត្រូវការសម្អាតមុននឹងអាចលក់បានវិញ។',
         heading: 'បន្ទប់ដែលត្រូវសម្អាត',
         table: {
             floor: 'ជាន់',
+            hasNotes: 'មានកំណត់ចំណាំផ្ទៃក្នុង',
         },
         empty: 'បច្ចុប្បន្នមិនមានបន្ទប់ត្រូវសម្អាតទេ។',
+        emptyDescription:
+            'អ្នកបានធ្វើរួចរាល់ហើយ — គ្រប់បន្ទប់ទាំងអស់ស្អាត និងរួចរាល់។',
         markClean: 'សម្គាល់ថាស្អាត',
     },
     maintenance: {
@@ -28,12 +32,21 @@ export const staff: Dictionary['staff'] = {
         resolve: 'ដោះស្រាយ',
     },
     payments: {
+        pageTitle: 'ការទូទាត់',
+        subtitle: 'ពិនិត្យ និងបញ្ជាក់ការទូទាត់ប្រាក់ដែលភ្ញៀវបានដាក់ស្នើ។',
         searchPlaceholder: 'ស្វែងរកតាមភ្ញៀវ...',
         anyStatus: 'គ្រប់ស្ថានភាព',
+        stats: {
+            total: 'ការទូទាត់សរុប',
+        },
+        stale: 'យូរមិនទាន់ពិនិត្យ',
+        settlesInvoice: 'ការបញ្ជាក់នេះនឹងបង់វិក្កយបត្រនេះឲ្យអស់',
         table: {
             amount: 'ចំនួនទឹកប្រាក់',
+            outstanding: 'នៅជំពាក់',
             method: 'វិធីបង់ប្រាក់',
             proof: 'ភស្តុតាង',
+            submitted: 'ដាក់ស្នើនៅ',
         },
         method: {
             cash: 'សាច់ប្រាក់',
@@ -41,6 +54,8 @@ export const staff: Dictionary['staff'] = {
             qr: 'ស្កេន QR',
         },
         empty: 'មិនមានការបង់ប្រាក់ត្រូវនឹងតម្រងរបស់អ្នកទេ។',
+        emptyDescription: 'សាកល្បងកែតម្រូវការស្វែងរក ឬតម្រងរបស់អ្នក។',
+        showingCount: 'កំពុងបង្ហាញ {{shown}} នៃ {{total}} ការទូទាត់',
         viewProof: 'មើល',
         reject: 'បដិសេធ',
     },

@@ -21,14 +21,18 @@ test('receptionist is forbidden from the housekeeping area', function () {
 
 test('housekeeping only sees rooms currently awaiting cleaning', function () {
     $housekeeper = User::factory()->housekeeping()->create();
-    $cleaningRoom = Room::factory()->create(['status' => 'cleaning']);
+    $cleaningRoom = Room::factory()->create([
+        'status' => 'cleaning',
+        'notes' => 'AC unit noisy, part on order.',
+    ]);
     Room::factory()->create(['status' => 'available']);
 
     $response = $this->actingAs($housekeeper)->get(route('staff.housekeeping.index'));
 
     $response->assertInertia(fn ($page) => $page
         ->where('rooms', fn ($rooms) => count($rooms) === 1
-            && $rooms[0]['id'] === $cleaningRoom->id));
+            && $rooms[0]['id'] === $cleaningRoom->id
+            && $rooms[0]['notes'] === 'AC unit noisy, part on order.'));
 });
 
 test('housekeeping can mark a cleaning room as available', function () {

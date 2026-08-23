@@ -24,7 +24,7 @@ class PaymentController extends Controller
         ]);
 
         $payments = Payment::query()
-            ->with(['guest', 'invoice.reservation.room'])
+            ->with(['guest', 'invoice.reservation.room', 'invoice.payments'])
             ->when($filters['search'] ?? null, fn ($query, string $search) => $query->whereHas(
                 'guest',
                 fn ($guest) => $guest->where('full_name', 'like', "%{$search}%")
@@ -35,6 +35,15 @@ class PaymentController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        $staleQuery = fn ($query) => $query->where('status', 'pending')->where('created_at', '<', now()->subDays(2));
+
+        $statusCounts = [
+            'all' => Payment::count(),
+            'pending' => Payment::where('status', 'pending')->count(),
+            'confirmed' => Payment::where('status', 'confirmed')->count(),
+            'stale' => $staleQuery(Payment::query())->count(),
+        ];
+
         return Inertia::render('staff/payments/index', [
             'payments' => $payments->through(fn (Payment $payment) => [
                 'id' => $payment->id,
@@ -43,6 +52,9 @@ class PaymentController extends Controller
                 'status' => $payment->status,
                 'has_proof' => $payment->proof_image !== null,
                 'created_at' => $payment->created_at?->toDateString(),
+                'is_stale' => $payment->status === 'pending'
+                    && $payment->created_at !== null
+                    && $payment->created_at->lt(now()->subDays(2)),
                 'guest' => [
                     'full_name' => $payment->guest->full_name,
                     'email' => $payment->guest->email,
@@ -50,11 +62,17 @@ class PaymentController extends Controller
                 'room' => [
                     'room_number' => $payment->invoice->reservation->room->room_number,
                 ],
+                'invoice' => [
+                    'total_amount' => $payment->invoice->total_amount,
+                    'outstanding_balance' => $payment->invoice->outstandingBalance(),
+                ],
+                'settles_invoice' => (float) $payment->amount >= $payment->invoice->outstandingBalance(),
             ]),
             'filters' => [
                 'search' => $filters['search'] ?? null,
                 'status' => $filters['status'] ?? null,
             ],
+            'statusCounts' => $statusCounts,
         ]);
     }
 

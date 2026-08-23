@@ -1,11 +1,15 @@
 export const staff = {
     housekeeping: {
         pageTitle: 'Room status',
+        subtitle: 'Rooms that need cleaning before they can go back on sale.',
         heading: 'Rooms awaiting cleaning',
         table: {
             floor: 'Floor',
+            hasNotes: 'Has internal notes',
         },
         empty: 'No rooms currently need cleaning.',
+        emptyDescription:
+            "You're all caught up — every room is clean and ready.",
         markClean: 'Mark clean',
     },
     maintenance: {
@@ -26,12 +30,21 @@ export const staff = {
         resolve: 'Resolve',
     },
     payments: {
+        pageTitle: 'Payments',
+        subtitle: 'Review and confirm guest payment submissions.',
         searchPlaceholder: 'Search by guest...',
         anyStatus: 'Any status',
+        stats: {
+            total: 'Total payments',
+        },
+        stale: 'Stale',
+        settlesInvoice: 'Confirming this settles the invoice in full',
         table: {
             amount: 'Amount',
+            outstanding: 'Outstanding',
             method: 'Method',
             proof: 'Proof',
+            submitted: 'Submitted',
         },
         method: {
             cash: 'Cash',
@@ -39,6 +52,9 @@ export const staff = {
             qr: 'QR',
         },
         empty: 'No payments match your filters.',
+        emptyDescription:
+            'Try adjusting your search or filters to find what you’re looking for.',
+        showingCount: 'Showing {{shown}} of {{total}} payments',
         viewProof: 'View',
         reject: 'Reject',
     },

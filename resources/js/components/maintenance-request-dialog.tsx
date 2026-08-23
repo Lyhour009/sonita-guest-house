@@ -1,5 +1,6 @@
 import { Form } from '@inertiajs/react';
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import MaintenanceRequestController from '@/actions/App/Http/Controllers/MaintenanceRequestController';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -27,9 +28,11 @@ import type { MaintenanceRoomSummary } from '@/types';
 
 type Props = {
     rooms: MaintenanceRoomSummary[];
+    /** Custom trigger element (e.g. a compact icon button for a table row). Falls back to the default full-size button. */
+    trigger?: ReactNode;
 };
 
-export default function MaintenanceRequestDialog({ rooms }: Props) {
+export default function MaintenanceRequestDialog({ rooms, trigger }: Props) {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const [roomId, setRoomId] = useState(rooms[0]?.id ?? '');
@@ -37,9 +40,11 @@ export default function MaintenanceRequestDialog({ rooms }: Props) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button disabled={rooms.length === 0}>
-                    {t('maintenance.requestDialog.trigger')}
-                </Button>
+                {trigger ?? (
+                    <Button disabled={rooms.length === 0}>
+                        {t('maintenance.requestDialog.trigger')}
+                    </Button>
+                )}
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>

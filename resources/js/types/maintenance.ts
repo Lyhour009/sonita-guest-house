@@ -32,4 +32,5 @@ export type CleaningRoom = {
     room_number: string;
     room_type: string;
     floor: number | null;
+    notes: string | null;
 };

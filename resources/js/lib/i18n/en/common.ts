@@ -55,6 +55,7 @@ export const common = {
         unpaid: 'Unpaid',
         partial: 'Partially paid',
         paid: 'Paid',
+        overdue: 'Overdue',
     },
     paymentStatus: {
         pending: 'Pending',

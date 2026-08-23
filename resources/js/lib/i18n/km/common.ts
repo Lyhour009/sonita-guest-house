@@ -57,6 +57,7 @@ export const common: Dictionary['common'] = {
         unpaid: 'មិនទាន់បង់ប្រាក់',
         partial: 'បង់ខ្លះ',
         paid: 'បានបង់រួច',
+        overdue: 'ហួសកំណត់បង់ប្រាក់',
     },
     paymentStatus: {
         pending: 'កំពុងរង់ចាំ',

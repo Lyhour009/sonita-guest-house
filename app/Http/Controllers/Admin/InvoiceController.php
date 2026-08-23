@@ -22,15 +22,34 @@ class InvoiceController extends Controller
     public function index(Request $request): Response
     {
         $filters = $request->validate([
-            'status' => ['nullable', 'string', 'in:unpaid,partial,paid'],
+            'search' => ['nullable', 'string', 'max:255'],
+            'status' => ['nullable', 'string', 'in:unpaid,partial,paid,overdue'],
         ]);
 
+        $overdueQuery = fn ($query) => $query->where('status', '!=', 'paid')
+            ->whereNotNull('due_date')
+            ->where('due_date', '<', now()->toDateString());
+
         $invoices = Invoice::query()
-            ->with('reservation.room', 'reservation.guest')
-            ->when($filters['status'] ?? null, fn ($query, string $status) => $query->where('status', $status))
+            ->with('reservation.room', 'reservation.guest', 'payments')
+            ->when($filters['search'] ?? null, fn ($query, string $search) => $query->whereHas(
+                'reservation',
+                fn ($query) => $query->whereHas('guest', fn ($query) => $query->where('full_name', 'like', "%{$search}%"))
+                    ->orWhereHas('room', fn ($query) => $query->where('room_number', 'like', "%{$search}%")),
+            ))
+            ->when($filters['status'] ?? null, fn ($query, string $status) => $status === 'overdue'
+                ? $overdueQuery($query)
+                : $query->where('status', $status))
             ->latest()
             ->paginate(10)
             ->withQueryString();
+
+        $statusCounts = [
+            'all' => Invoice::count(),
+            'unpaid' => Invoice::where('status', 'unpaid')->count(),
+            'partial' => Invoice::where('status', 'partial')->count(),
+            'overdue' => $overdueQuery(Invoice::query())->count(),
+        ];
 
         return Inertia::render('admin/invoices/index', [
             'invoices' => $invoices->through(fn (Invoice $invoice) => [
@@ -38,8 +57,12 @@ class InvoiceController extends Controller
                 'invoice_type' => $invoice->invoice_type,
                 'billing_period' => $invoice->billing_period?->toDateString(),
                 'total_amount' => $invoice->total_amount,
+                'outstanding_balance' => $invoice->outstandingBalance(),
                 'status' => $invoice->status,
                 'due_date' => $invoice->due_date?->toDateString(),
+                'is_overdue' => $invoice->due_date !== null
+                    && $invoice->due_date->isPast()
+                    && $invoice->status !== 'paid',
                 'guest' => [
                     'full_name' => $invoice->reservation->guest->full_name,
                 ],
@@ -48,8 +71,10 @@ class InvoiceController extends Controller
                 ],
             ]),
             'filters' => [
+                'search' => $filters['search'] ?? null,
                 'status' => $filters['status'] ?? null,
             ],
+            'statusCounts' => $statusCounts,
             'activeLongStayReservations' => Reservation::query()
                 ->where('reservation_type', 'long_stay')
                 ->where('status', 'active')

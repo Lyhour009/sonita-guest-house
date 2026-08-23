@@ -2,14 +2,22 @@ import type { Dictionary } from '../translate';
 
 export const adminInvoices: Dictionary['adminInvoices'] = {
     title: 'វិក្កយបត្រ',
+    subtitle: 'តាមដានការគិតប្រាក់ ការទូទាត់ និងសមតុល្យហួសកំណត់នៃការកក់ទាំងអស់។',
+    searchPlaceholder: 'ស្វែងរកតាមភ្ញៀវ ឬបន្ទប់...',
+    stats: {
+        total: 'វិក្កយបត្រសរុប',
+    },
     statusFilter: {
         placeholder: 'ស្ថានភាព',
         any: 'គ្រប់ស្ថានភាព',
     },
     table: {
         billingPeriod: 'រយៈពេលគិតប្រាក់',
+        outstanding: 'នៅជំពាក់',
     },
     empty: 'គ្មានវិក្កយបត្រណាត្រូវនឹងតម្រងរបស់អ្នកទេ។',
+    emptyDescription: 'សាកល្បងកែតម្រូវការស្វែងរក ឬតម្រងរបស់អ្នក។',
+    showingCount: 'កំពុងបង្ហាញ {{shown}} នៃ {{total}} វិក្កយបត្រ',
     generateInvoice: 'បង្កើតវិក្កយបត្រ',
     dialog: {
         title: 'បង្កើតវិក្កយបត្រសម្រាប់ស្នាក់នៅរយៈពេលវែង',

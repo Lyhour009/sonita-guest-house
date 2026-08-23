@@ -243,7 +243,7 @@ export default function AdminRoomsIndex({
                                     )}
                                 />
                             </SelectTrigger>
-                            <SelectContent portaled={false}>
+                            <SelectContent>
                                 <SelectItem value="any">
                                     {t('adminRooms.filters.anyRentalMode')}
                                 </SelectItem>
@@ -271,7 +271,7 @@ export default function AdminRoomsIndex({
                                     placeholder={t('common.labels.status')}
                                 />
                             </SelectTrigger>
-                            <SelectContent portaled={false}>
+                            <SelectContent>
                                 <SelectItem value="any">
                                     {t('adminRooms.filters.anyStatus')}
                                 </SelectItem>
@@ -395,7 +395,6 @@ export default function AdminRoomsIndex({
                                             <DropdownMenuContent
                                                 align="end"
                                                 className="w-48 rounded-xl font-sans"
-                                                portaled={false}
                                             >
                                                 <DropdownMenuItem
                                                     onClick={() =>

@@ -28,8 +28,10 @@ export type AdminInvoice = {
     invoice_type: InvoiceType;
     billing_period: string | null;
     total_amount: string;
+    outstanding_balance: number;
     status: InvoiceStatus;
     due_date: string | null;
+    is_overdue: boolean;
     guest: { full_name: string };
     room: InvoiceRoomSummary;
 };
@@ -47,6 +49,9 @@ export type Payment = {
 
 export type StaffPayment = Payment & {
     guest: { full_name: string; email: string };
+    invoice: { total_amount: string; outstanding_balance: number };
+    is_stale: boolean;
+    settles_invoice: boolean;
 };
 
 export type ActiveLongStayReservationOption = {

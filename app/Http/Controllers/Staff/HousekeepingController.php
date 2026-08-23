@@ -19,7 +19,7 @@ class HousekeepingController extends Controller
         $rooms = Room::query()
             ->where('status', 'cleaning')
             ->orderBy('room_number')
-            ->get(['id', 'room_number', 'room_type', 'floor']);
+            ->get(['id', 'room_number', 'room_type', 'floor', 'notes']);
 
         return Inertia::render('staff/housekeeping/index', [
             'rooms' => $rooms,

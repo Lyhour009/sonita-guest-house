@@ -2,12 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Status
+## Project
 
-This repository is currently the unmodified **Laravel React Starter Kit** (Inertia v3 + React 19 + Fortify).
-No "Sonita Guest House" domain code (bookings, rooms, guests, etc.) has been built yet — `app/Models` only
-contains `User`, and the only routes are the starter kit's welcome page, dashboard, and account settings.
-Expect to scaffold new domain modules from scratch following the conventions below.
+Sonita Guest House is a Laravel + Inertia.js + React guest house management system: public room
+browsing/booking, short-stay and long-stay reservations, billing and payments, maintenance and
+housekeeping, in-app notifications, and role-based dashboards for **admin**, **receptionist**,
+**housekeeping**, and **guest** users. It was built out from the Laravel React Starter Kit (Inertia v3 +
+React 19 + Fortify) — see `README.md` for setup/demo-login details and `docs/FEATURES_AND_ROLES.md` for a
+full feature-by-role breakdown (the original spec is `docs/BUILD_SPEC_Sonita_Guest_House.md`; the ERD is
+`docs/ERD.md`).
 
 ## Commands
 
@@ -17,7 +20,13 @@ Expect to scaffold new domain modules from scratch following the conventions bel
 - `composer types:check` — PHPStan (Larastan) via `phpstan analyse`, configured at **level 7** (`phpstan.neon`), scanning `app/`, `bootstrap/app.php`, `config/`, `database/`, `routes/`.
 - `composer test` — clears config cache, then runs lint:check, types:check, and `php artisan test`. This is what CI-equivalent checks run locally.
 - `composer ci:check` — the fuller CI gate: JS lint:check, JS format:check, JS types:check, then `@test`.
-- Single test: `php artisan test --compact --filter=testName` (see Pest skill / boost guidelines for details).
+- Single test: `php artisan test --compact --filter=testName`.
+- `php artisan migrate --seed` (or `migrate:fresh --seed` to reset) — the seeders drive the app's own
+  Action classes (confirm/check-in/check-out, invoice generation, payment confirmation, maintenance
+  assignment) rather than inserting rows directly, so demo data is internally consistent. Demo accounts
+  (all password `password`): `admin@example.com`, `receptionist@example.com`, `housekeeping@example.com`,
+  `guest@example.com`.
+- `php artisan storage:link` — needed once for room images to be served.
 
 ### JS / Frontend
 - `npm run dev` — Vite dev server only (use `composer dev` instead if you also need the PHP server + queue worker).
@@ -35,41 +44,109 @@ Frontend routes/controllers are consumed via generated Wayfinder TypeScript in `
 **Stack:** Laravel 13 (PHP 8.3) + Inertia.js v3 + React 19, using Fortify as a headless auth backend, Wayfinder for
 typed frontend route/action bindings, Tailwind v4, and shadcn/Radix-based UI primitives.
 
-### Backend
-- `routes/web.php` is minimal and `require`s `routes/settings.php` for the account-settings group. There is no
-  `routes/api.php` in active use yet — this is an Inertia-rendered app, not a separate API.
-- Fortify is fully headless: `app/Providers/FortifyServiceProvider.php` wires custom actions
-  (`app/Actions/Fortify/CreateNewUser.php`, `ResetUserPassword.php`) and overrides every Fortify view to return
-  `Inertia::render()` calls into `resources/js/pages/auth/*` instead of Blade. Fortify also defines rate limiters
-  here for `login`, `two-factor`, and `passkeys`.
-  - Passkey support is provided by `laravel/... passkeys` JS package + `resources/js/components/manage-passkeys.tsx`,
-    `passkey-item.tsx`, `passkey-register.tsx`, `passkey-verify.tsx`, and a `.well-known/passkey-endpoints` route.
-  - Validation rules shared across Fortify actions and Settings requests live in `app/Concerns/`
-    (`PasswordValidationRules`, `ProfileValidationRules`) as traits, not duplicated per-request.
-- `app/Http/Controllers/Settings/` (Profile, Security) are the only real controllers today; they follow the
-  thin-controller convention (validate via Form Request in `app/Http/Requests/Settings/`, then act).
-- `HandleInertiaRequests` middleware (`app/Http/Middleware/`) shares props to every Inertia page; `HandleAppearance`
-  persists the light/dark/system appearance cookie/prop.
+### Routing & roles
+- `routes/web.php` — public room browsing (`/`, `rooms/{room}`), a generic `auth`-only group
+  (role-agnostic: dashboard, notifications, maintenance report/submit — any authenticated user can hit
+  these), and a `role:guest` group (guest's own reservations/invoices/payments).
+- `routes/staff.php` — two separate `role:` groups under the `staff.` name prefix: one for
+  `receptionist,admin` (reservations, reservation services, payments), one for `housekeeping,admin`
+  (housekeeping board, maintenance list/assign/status).
+- `routes/admin.php` — `role:admin` only (dashboard, room/service/staff-account CRUD resources, invoices,
+  settings).
+- `routes/settings.php` — shared account settings (profile, security), required from `web.php`.
+- **Roles are a plain `users.role` enum** (`admin`, `receptionist`, `housekeeping`, `guest`), *not*
+  Spatie permissions — enforced by `App\Http\Middleware\EnsureUserHasRole` (registered as the `role:`
+  middleware alias, e.g. `role:receptionist,admin`). Follow this existing convention; don't introduce a
+  permissions package.
+- A user's dashboard content differs by role from the *same* `dashboard` route
+  (`App\Http\Controllers\DashboardController::index`) via a `match ($user->role)` branch — admins get
+  redirected to `admin.dashboard.index` instead.
+
+### Domain layer — Actions
+Business logic lives in `app/Actions/{Domain}/` (`Reservations/`, `Invoices/`, `Payments/`, `Maintenance/`,
+`Housekeeping/`, `Notifications/`, `Staff/`) — one class per operation, each with a single `handle()`
+method, invoked from thin controllers. Multi-step operations wrap in `DB::transaction()`. Notably, the
+**demo seeders drive these same Action classes** (`database/seeders/RealisticReservationSeeder.php`) rather
+than inserting rows directly, so seeded data goes through the same status transitions/side effects as real
+usage.
+
+Validation rules that are shared between a "store" and "update" Form Request (or between a guest-facing and
+staff-facing request for the same resource) live in `app/Concerns/*ValidationRules` traits — check for an
+existing trait before duplicating a `rules()` array.
+
+### Key state machines
+- **Reservation** (`status`): `pending` → `confirmed` → `checked_in` → `checked_out` (short-stay), or
+  `pending` → `active` → `expired` (long-stay), with `cancelled`/`terminated` as exits. Each transition is
+  its own Action (`ConfirmReservation`, `CheckInReservation`, `CheckOutReservation`, `CancelReservation`)
+  and pushes the related **Room** to a matching status.
+- **Room** (`status`): `available` ↔ `reserved`/`occupied` (driven by reservation transitions) →
+  `cleaning` (on checkout) → `available` (via `Housekeeping\MarkRoomCleaned`), or → `maintenance` (a
+  resolved maintenance request on that room returns it to `available`).
+- Availability checks (`Room::scopeAvailableBetween`, `Actions/Reservations/ReservationAvailability`) treat
+  short-stay (`check_in_date`/`check_out_date`) and long-stay (`start_date`/`end_date`, open-ended if null)
+  reservations differently — don't assume one date-pair shape fits both `reservation_type`s.
+
+### Models & conventions
+- Models: `User` (has `role`), `Room`, `RoomImage`, `Reservation`, `ReservationService` (pivot, with
+  `quantity`/`unit_price` snapshotted at attach time), `Service`, `Invoice`, `Payment`,
+  `MaintenanceRequest`, `Notification`, `Setting`.
+- **Primary keys are UUIDs** (`HasUuids`), not auto-increment or ULIDs.
+- **Fillable attributes use the PHP 8 `#[Fillable([...])]` attribute**, not a `protected $fillable = []`
+  property — match this style on new models.
+- Money columns are `decimal:2` casts; cast to `(float)` when shaping API/Resource output.
+- `App\Http\Resources\*Resource` classes shape data returned to Inertia pages — reuse an existing one
+  before hand-rolling an array shape for the same model.
 
 ### Frontend (`resources/js/`)
-- `pages/` — Inertia page components, mapped 1:1 to `Inertia::render('path/name')` calls (e.g. `auth/login.tsx`,
-  `settings/profile.tsx`, `dashboard.tsx`).
-- `layouts/` — composable layouts: `app/` (sidebar/header shell for authenticated pages), `auth/` (card/simple/split
-  variants for auth pages), `settings/layout.tsx` (settings sub-nav). Pages pick a layout explicitly.
-- `components/ui/` — shadcn-style Radix primitives (button, dialog, dropdown, select, etc.) per `components.json`;
-  reuse these before adding new UI primitives. `components/` (non-`ui/`) holds app-specific composed components.
-- `actions/` and `routes/` — Wayfinder-generated typed wrappers around controllers/routes; import from `@/actions/...`
-  or `@/routes/...` rather than hardcoding URLs.
-- `hooks/`, `lib/`, `types/` — shared React hooks, utilities (e.g. `cn()` class merger), and TS types. Page prop
-  types should be kept in sync with what each controller actually sends (see the frontend-contract rule in the
-  global backend standards this repo also follows).
+- `pages/` — Inertia page components, mirroring the controller/route structure 1:1 with
+  `Inertia::render('path/name')` calls (e.g. `staff/reservations/index.tsx`, `admin/rooms/index.tsx`,
+  `rooms/show.tsx` for the public room detail page).
+- `layouts/` — composable layouts: `app/` (sidebar/header shell for authenticated pages, role-aware nav via
+  `components/app-sidebar.tsx`), `auth/` (card/simple/split variants for auth pages), `settings/layout.tsx`.
+- `components/ui/` — shadcn-style Radix primitives (button, dialog, dropdown, select, table, etc.); reuse
+  these before adding new UI primitives. `components/` (non-`ui/`) holds app-specific composed components,
+  several of which are domain dialogs reused across pages (e.g. `maintenance-request-dialog.tsx` is used
+  from both the guest maintenance page and the staff housekeeping/maintenance pages).
+- `actions/` and `routes/` — Wayfinder-generated typed wrappers around controllers/routes; import from
+  `@/actions/...` or `@/routes/...` rather than hardcoding URLs.
+- `hooks/`, `lib/`, `types/` — shared React hooks, utilities (e.g. `cn()` class merger), and TS types. Page
+  prop types should be kept in sync with what each controller actually sends.
+
+### i18n (English/Khmer)
+- Dictionaries live in `resources/js/lib/i18n/{en,km}/*.ts`, one file per domain (`staff.ts`,
+  `adminRooms.ts`, `reservations.ts`, `toasts.ts`, etc.), aggregated by `en/index.ts` / `km/index.ts`. The
+  `Dictionary` type (`lib/i18n/translate.ts`) is inferred as `typeof en`, so the `km` files are type-checked
+  against whatever keys `en` defines — add a key to `en` first, then mirror it in `km` (never leave a `km`
+  file out of sync, or `tsc` will fail).
+- `useTranslation()` (`hooks/use-translation.tsx`) exposes `t(key, params?)`; keys are dot-paths
+  (`'staff.reservations.pageTitle'`) and support `{{param}}` interpolation. Never hardcode user-facing
+  English/Khmer strings in a component.
+- **Toast flash messages carry an i18n key, not translated text.** Controllers flash
+  `Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.domain.action'])`; the frontend resolves
+  the key via `hooks/use-flash-toast.ts` against `lib/i18n/*/toasts.ts`. Backend validation error messages
+  are similarly re-mapped client-side by `lib/i18n/validation-translator.ts` rather than trusting raw
+  Laravel validation strings.
+
+### Shared Inertia props
+`HandleInertiaRequests` (`app/Http/Middleware/`) shares `auth.user`, `flash` (including the `toast` key
+above and a one-off `checkoutInvoice` payload flashed after a reservation checkout), `sidebarOpen`
+(persisted via a cookie), and `unreadNotificationsCount` on every request. `HandleAppearance` persists the
+light/dark/system appearance cookie/prop separately.
+
+### Auth (Fortify)
+Fortify is fully headless: `app/Providers/FortifyServiceProvider.php` wires custom actions
+(`app/Actions/Fortify/CreateNewUser.php`, `ResetUserPassword.php`) and overrides every Fortify view to
+return `Inertia::render()` calls into `resources/js/pages/auth/*` instead of Blade. Fortify also defines
+rate limiters here for `login`, `two-factor`, and `passkeys`. Passkey (WebAuthn) support is provided by
+`@laravel/passkeys` + `resources/js/components/{manage-passkeys,passkey-item,passkey-register,passkey-verify}.tsx`
+and a `.well-known/passkey-endpoints` route.
 
 ### Testing
-- Pest is the test framework (`tests/Feature`, `tests/Unit`); in-memory SQLite is used for the `testing` environment
-  (`phpunit.xml`), with `QUEUE_CONNECTION=sync`, `CACHE_STORE=array`, `SESSION_DRIVER=array`.
-- Existing feature tests cover the full Fortify surface: `tests/Feature/Auth/` (authentication, registration,
-  email verification, password reset/confirmation, two-factor challenge) and `tests/Feature/Settings/` (profile
-  update, security). Use these as the pattern for new auth-adjacent tests.
+- Pest is the test framework (`tests/Feature`, `tests/Unit`); in-memory SQLite is used for the `testing`
+  environment (`phpunit.xml`), with `QUEUE_CONNECTION=sync`, `CACHE_STORE=array`, `SESSION_DRIVER=array`.
+- Feature tests are organized by role/domain (`tests/Feature/Auth/`, `Settings/`, `Staff/`, `Admin/`, plus
+  top-level domain tests like `ReservationTest.php`, `DashboardTest.php`) — put a new test alongside its
+  closest existing sibling rather than inventing a new grouping.
 
 <laravel-boost-guidelines>
 === foundation rules ===
