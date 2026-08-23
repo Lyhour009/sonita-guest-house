@@ -20,6 +20,8 @@ export const toasts: typeof toastsEn = {
     staffAccounts: {
         created: 'គណនីបុគ្គលិកត្រូវបានបង្កើត។',
         updated: 'គណនីបុគ្គលិកត្រូវបានកែប្រែ។',
+        deleted: 'គណនីបុគ្គលិកត្រូវបានលុប។',
+        inUse: 'មិនអាចលុបបានទេ — គណនីនេះមានប្រវត្តិការងារជួសជុល។',
     },
     invoices: {
         generated: 'វិក្កយបត្រត្រូវបានបង្កើត។',

@@ -26,5 +26,5 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::resource('services', ServiceController::class)->except(['show', 'create', 'edit']);
 
-    Route::resource('staff', StaffAccountController::class)->except(['show', 'create', 'edit', 'destroy']);
+    Route::resource('staff', StaffAccountController::class)->except(['show', 'create', 'edit']);
 });

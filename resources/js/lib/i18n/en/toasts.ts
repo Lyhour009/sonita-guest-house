@@ -18,6 +18,8 @@ export const toasts = {
     staffAccounts: {
         created: 'Staff account created.',
         updated: 'Staff account updated.',
+        deleted: 'Staff account deleted.',
+        inUse: 'Cannot delete — this staff account has maintenance history.',
     },
     invoices: {
         generated: 'Invoice generated.',

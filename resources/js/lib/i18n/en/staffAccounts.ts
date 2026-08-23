@@ -1,5 +1,6 @@
 export const staffAccounts = {
     title: 'Staff',
+    subtitle: 'Manage receptionist and housekeeping accounts.',
     searchPlaceholder: 'Search by name or email...',
     filters: {
         role: 'Role',
@@ -9,15 +10,32 @@ export const staffAccounts = {
         receptionist: 'Receptionist',
         housekeeping: 'Housekeeping',
     },
+    stats: {
+        total: 'Total staff',
+        receptionists: 'Receptionists',
+        housekeeping: 'Housekeeping',
+        openAssignments: 'Open assignments',
+    },
     table: {
         name: 'Name',
         email: 'Email',
         phone: 'Phone',
+        workload: 'Workload',
     },
+    workloadOpen: '{{count}} open',
+    workloadNone: '—',
+    overdue: 'Overdue',
     empty: 'No staff accounts match your filters.',
+    emptyDescription:
+        'Add a receptionist or housekeeping account to get started.',
+    showingCount: 'Showing {{shown}} of {{total}} staff',
     addAccount: 'Add staff account',
     createAccount: 'Create account',
     editAccount: 'Edit {{name}}',
+    deleteAccount: {
+        title: 'Delete {{name}}?',
+        description: 'This cannot be undone.',
+    },
     form: {
         fullName: 'Full name',
         email: 'Email',

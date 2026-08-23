@@ -7,6 +7,7 @@ use App\Actions\Staff\UpdateStaffAccount;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StaffAccountStoreRequest;
 use App\Http\Requests\Admin\StaffAccountUpdateRequest;
+use App\Models\MaintenanceRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -36,6 +37,15 @@ class StaffAccountController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        $stats = [
+            'total' => User::whereIn('role', ['receptionist', 'housekeeping'])->count(),
+            'receptionists' => User::where('role', 'receptionist')->count(),
+            'housekeeping' => User::where('role', 'housekeeping')->count(),
+            'openAssignments' => MaintenanceRequest::whereIn('status', ['pending', 'in_progress'])
+                ->whereNotNull('assigned_to')
+                ->count(),
+        ];
+
         return Inertia::render('admin/staff/index', [
             'staff' => $staff->through(fn (User $user) => [
                 'id' => $user->id,
@@ -43,11 +53,22 @@ class StaffAccountController extends Controller
                 'email' => $user->email,
                 'phone_number' => $user->phone_number,
                 'role' => $user->role,
+                'assigned_open_count' => $user->role === 'housekeeping'
+                    ? $user->assignedMaintenanceRequests()->whereIn('status', ['pending', 'in_progress'])->count()
+                    : null,
+                'assigned_overdue_count' => $user->role === 'housekeeping'
+                    ? $user->assignedMaintenanceRequests()
+                        ->whereIn('status', ['pending', 'in_progress'])
+                        ->where(fn ($q) => $q->where(fn ($q) => $q->where('priority', 'high')->where('created_at', '<', now()->subDay()))
+                            ->orWhere(fn ($q) => $q->where('priority', '!=', 'high')->where('created_at', '<', now()->subDays(3))))
+                        ->count()
+                    : null,
             ]),
             'filters' => [
                 'search' => $filters['search'] ?? null,
                 'role' => $filters['role'] ?? null,
             ],
+            'stats' => $stats,
         ]);
     }
 
@@ -83,6 +104,26 @@ class StaffAccountController extends Controller
         ]);
 
         Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.staffAccounts.updated']);
+
+        return to_route('admin.staff.index');
+    }
+
+    /**
+     * Delete a staff account, unless it has maintenance-request history attached.
+     */
+    public function destroy(User $staff): RedirectResponse
+    {
+        abort_unless(in_array($staff->role, ['receptionist', 'housekeeping'], true), 404);
+
+        if ($staff->maintenanceRequests()->exists() || $staff->assignedMaintenanceRequests()->exists()) {
+            Inertia::flash('toast', ['type' => 'error', 'key' => 'toasts.staffAccounts.inUse']);
+
+            return to_route('admin.staff.index');
+        }
+
+        $staff->delete();
+
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.staffAccounts.deleted']);
 
         return to_route('admin.staff.index');
     }
