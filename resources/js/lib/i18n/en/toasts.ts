@@ -10,6 +10,7 @@ export const toasts = {
         created: 'Service created.',
         updated: 'Service updated.',
         deleted: 'Service deleted.',
+        inUse: 'Cannot delete — this service is used in bookings.',
     },
     settings: {
         updated: 'Settings updated.',

@@ -109,3 +109,58 @@ test('a closed request cannot be reassigned or transitioned again', function () 
     ]);
     $statusResponse->assertSessionHasErrors('status');
 });
+
+test('assigning a request notifies the assignee', function () {
+    $admin = User::factory()->admin()->create();
+    $housekeeper = User::factory()->housekeeping()->create();
+    $request = MaintenanceRequest::factory()->create();
+
+    $this->actingAs($admin)->patch(route('staff.maintenance.assign', $request), [
+        'assigned_to' => $housekeeper->id,
+    ])->assertSessionHasNoErrors();
+
+    $this->assertDatabaseHas('notifications', [
+        'user_id' => $housekeeper->id,
+        'type' => 'maintenance_assigned',
+    ]);
+});
+
+test('stats report totals, open, unassigned, and overdue counts', function () {
+    $admin = User::factory()->admin()->create();
+
+    // Overdue: high priority, open, created more than a day ago.
+    $this->travelTo(now()->subHours(30));
+    $overdueHigh = MaintenanceRequest::factory()->highPriority()->create(['status' => 'pending']);
+    $this->travelBack();
+
+    // Not overdue: high priority, open, created recently.
+    MaintenanceRequest::factory()->highPriority()->create(['status' => 'pending']);
+
+    // Overdue: medium priority, open, created more than 3 days ago.
+    $this->travelTo(now()->subDays(4));
+    MaintenanceRequest::factory()->create(['status' => 'in_progress']);
+    $this->travelBack();
+
+    // Not overdue: medium priority, open, created 1 day ago (under the 3-day threshold).
+    $this->travelTo(now()->subDay());
+    MaintenanceRequest::factory()->create(['status' => 'pending', 'assigned_to' => null]);
+    $this->travelBack();
+
+    // Closed request — never counted as open/overdue regardless of age.
+    $this->travelTo(now()->subDays(10));
+    MaintenanceRequest::factory()->resolved()->create();
+    $this->travelBack();
+
+    $response = $this->actingAs($admin)->get(route('staff.maintenance.index'));
+
+    $response->assertInertia(fn ($page) => $page
+        ->where('stats.total', 5)
+        ->where('stats.open', 4)
+        ->where('stats.unassigned', 4)
+        ->where('stats.overdue', 2)
+        ->where('requests.data', function ($requests) use ($overdueHigh) {
+            $row = collect($requests)->firstWhere('id', $overdueHigh->id);
+
+            return $row['is_overdue'] === true;
+        }));
+});

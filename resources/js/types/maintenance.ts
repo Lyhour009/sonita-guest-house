@@ -20,6 +20,14 @@ export type MaintenanceRequest = {
 export type StaffMaintenanceRequest = MaintenanceRequest & {
     reporter: { full_name: string };
     assignee: { id: string; full_name: string } | null;
+    is_overdue: boolean;
+};
+
+export type MaintenanceStats = {
+    total: number;
+    open: number;
+    unassigned: number;
+    overdue: number;
 };
 
 export type HousekeepingStaffOption = {

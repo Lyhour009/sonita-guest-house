@@ -44,6 +44,17 @@ class MaintenanceRequestController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        $overdueQuery = fn ($query) => $query->whereIn('status', ['pending', 'in_progress'])
+            ->where(fn ($q) => $q->where(fn ($q) => $q->where('priority', 'high')->where('created_at', '<', now()->subDay()))
+                ->orWhere(fn ($q) => $q->where('priority', '!=', 'high')->where('created_at', '<', now()->subDays(3))));
+
+        $stats = [
+            'total' => MaintenanceRequest::count(),
+            'open' => MaintenanceRequest::whereIn('status', ['pending', 'in_progress'])->count(),
+            'unassigned' => MaintenanceRequest::whereIn('status', ['pending', 'in_progress'])->whereNull('assigned_to')->count(),
+            'overdue' => $overdueQuery(MaintenanceRequest::query())->count(),
+        ];
+
         return Inertia::render('staff/maintenance/index', [
             'requests' => $requests->through(fn (MaintenanceRequest $maintenanceRequest) => [
                 'id' => $maintenanceRequest->id,
@@ -52,6 +63,11 @@ class MaintenanceRequestController extends Controller
                 'priority' => $maintenanceRequest->priority,
                 'status' => $maintenanceRequest->status,
                 'created_at' => $maintenanceRequest->created_at?->toDateString(),
+                'is_overdue' => in_array($maintenanceRequest->status, ['pending', 'in_progress'], true)
+                    && $maintenanceRequest->created_at !== null
+                    && $maintenanceRequest->created_at->lt(
+                        $maintenanceRequest->priority === 'high' ? now()->subDay() : now()->subDays(3),
+                    ),
                 'room' => [
                     'id' => $maintenanceRequest->room->id,
                     'room_number' => $maintenanceRequest->room->room_number,
@@ -74,6 +90,7 @@ class MaintenanceRequestController extends Controller
                 ? User::query()->where('role', 'housekeeping')->orderBy('full_name')->get(['id', 'full_name'])
                 : [],
             'rooms' => Room::query()->orderBy('room_number')->get(['id', 'room_number']),
+            'stats' => $stats,
         ]);
     }
 

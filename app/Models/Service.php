@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -16,6 +17,7 @@ use Illuminate\Support\Carbon;
  * @property float $price
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read int $usage_count
  */
 #[Fillable(['name', 'price'])]
 class Service extends Model
@@ -44,5 +46,13 @@ class Service extends Model
             ->using(ReservationService::class)
             ->withPivot('id', 'quantity', 'unit_price')
             ->withTimestamps();
+    }
+
+    /**
+     * @return HasMany<ReservationService, $this>
+     */
+    public function reservationServices(): HasMany
+    {
+        return $this->hasMany(ReservationService::class);
     }
 }

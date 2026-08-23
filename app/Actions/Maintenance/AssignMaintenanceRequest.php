@@ -2,12 +2,18 @@
 
 namespace App\Actions\Maintenance;
 
+use App\Actions\Notifications\NotifyUser;
 use App\Models\MaintenanceRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class AssignMaintenanceRequest
 {
+    public function __construct(
+        private readonly NotifyUser $notifyUser,
+    ) {}
+
     public function handle(MaintenanceRequest $maintenanceRequest, User $assignee): MaintenanceRequest
     {
         if (in_array($maintenanceRequest->status, ['resolved', 'cancelled'], strict: true)) {
@@ -22,8 +28,17 @@ class AssignMaintenanceRequest
             ]);
         }
 
-        $maintenanceRequest->update(['assigned_to' => $assignee->id]);
+        return DB::transaction(function () use ($maintenanceRequest, $assignee) {
+            $maintenanceRequest->update(['assigned_to' => $assignee->id]);
 
-        return $maintenanceRequest;
+            $this->notifyUser->handle(
+                $assignee,
+                'maintenance_assigned',
+                "You've been assigned to the maintenance request \"{$maintenanceRequest->title}\" (Room {$maintenanceRequest->room->room_number}).",
+                route('staff.maintenance.index'),
+            );
+
+            return $maintenanceRequest;
+        });
     }
 }
