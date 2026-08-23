@@ -39,145 +39,226 @@ import { index as staffHousekeepingIndex } from '@/routes/staff/housekeeping';
 import { index as staffMaintenanceIndex } from '@/routes/staff/maintenance';
 import { index as staffPaymentsIndex } from '@/routes/staff/payments';
 import { index as staffReservationsIndex } from '@/routes/staff/reservations';
-import type { NavItem } from '@/types';
+import type { NavItem, User } from '@/types';
+
+type Role = User['role'];
+
+type Translate = (
+    key: string,
+    params?: Record<string, string | number>,
+) => string;
+
+type NavSection = {
+    id: string;
+    label: string;
+    items: NavItem[];
+};
+
+/**
+ * The nav below the Dashboard link, for one role only.
+ *
+ * Each role returns its own sections so a guest never builds — or resolves the
+ * routes for — the admin nav. Roles are mutually exclusive, so a switch keeps
+ * the permitted surface for each one readable in a single place.
+ */
+function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
+    switch (role) {
+        case 'admin':
+            return [
+                {
+                    id: 'operations',
+                    label: t('nav.groups.operations'),
+                    items: [
+                        {
+                            title: t('nav.staff.reservations'),
+                            href: staffReservationsIndex(),
+                            icon: CalendarCheck,
+                        },
+                        {
+                            title: t('nav.admin.rooms'),
+                            href: adminRoomsIndex(),
+                            icon: BedDouble,
+                        },
+                        {
+                            title: t('nav.staff.roomStatus'),
+                            href: staffHousekeepingIndex(),
+                            icon: ClipboardList,
+                        },
+                    ],
+                },
+                {
+                    id: 'finance',
+                    label: t('nav.groups.finance'),
+                    items: [
+                        {
+                            title: t('nav.admin.invoices'),
+                            href: adminInvoicesIndex(),
+                            icon: FileText,
+                        },
+                        {
+                            title: t('nav.staff.payments'),
+                            href: staffPaymentsIndex(),
+                            icon: CreditCard,
+                        },
+                        {
+                            title: t('nav.admin.services'),
+                            href: adminServicesIndex(),
+                            icon: ConciergeBell,
+                        },
+                    ],
+                },
+                {
+                    id: 'maintenance',
+                    label: t('nav.groups.maintenance'),
+                    items: [
+                        {
+                            title: t('nav.staff.maintenance'),
+                            href: staffMaintenanceIndex(),
+                            icon: Wrench,
+                        },
+                    ],
+                },
+                {
+                    id: 'management',
+                    label: t('nav.groups.management'),
+                    items: [
+                        {
+                            title: t('nav.admin.staffAccounts'),
+                            href: adminStaffIndex(),
+                            icon: Users,
+                        },
+                        {
+                            title: t('nav.admin.settings'),
+                            href: adminSettingsEdit(),
+                            icon: Settings,
+                        },
+                    ],
+                },
+            ];
+
+        case 'receptionist':
+            return [
+                {
+                    id: 'operations',
+                    label: t('nav.groups.operations'),
+                    items: [
+                        {
+                            title: t('nav.staff.reservations'),
+                            href: staffReservationsIndex(),
+                            icon: CalendarCheck,
+                        },
+                        {
+                            title: t('nav.staff.roomStatus'),
+                            href: staffHousekeepingIndex(),
+                            icon: ClipboardList,
+                        },
+                    ],
+                },
+                {
+                    id: 'finance',
+                    label: t('nav.groups.finance'),
+                    items: [
+                        {
+                            title: t('nav.staff.payments'),
+                            href: staffPaymentsIndex(),
+                            icon: CreditCard,
+                        },
+                    ],
+                },
+            ];
+
+        case 'housekeeping':
+            return [
+                {
+                    id: 'operations',
+                    label: t('nav.groups.operations'),
+                    items: [
+                        {
+                            title: t('nav.staff.roomStatus'),
+                            href: staffHousekeepingIndex(),
+                            icon: ClipboardList,
+                        },
+                    ],
+                },
+                {
+                    id: 'maintenance',
+                    label: t('nav.groups.maintenance'),
+                    items: [
+                        {
+                            title: t('nav.staff.maintenance'),
+                            href: staffMaintenanceIndex(),
+                            icon: Wrench,
+                        },
+                    ],
+                },
+            ];
+
+        default:
+            return [
+                {
+                    id: 'reservations',
+                    label: t('nav.groups.reservations'),
+                    items: [
+                        {
+                            title: t('nav.guest.myReservations'),
+                            href: reservationsIndex(),
+                            icon: CalendarCheck,
+                        },
+                        {
+                            title: t('nav.guest.myInvoices'),
+                            href: invoicesIndex(),
+                            icon: FileText,
+                        },
+                        {
+                            title: t('nav.guest.myPayments'),
+                            href: paymentsIndex(),
+                            icon: CreditCard,
+                        },
+                        {
+                            title: t('nav.guest.maintenance'),
+                            href: maintenanceIndex(),
+                            icon: Wrench,
+                        },
+                    ],
+                },
+            ];
+    }
+}
+
+function initialsOf(name: string): string {
+    return name
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0]?.toUpperCase() ?? '')
+        .join('');
+}
 
 export function AppSidebar() {
     const { auth } = usePage().props;
     const { t } = useTranslation();
-    const role = auth.user?.role;
+
+    const user = auth.user;
+    const role = user?.role;
     const dashboardHref =
         role === 'admin' ? adminDashboardIndex() : dashboard();
-
-    // 1. Overview
-    const mainNavItems: NavItem[] = [
-        {
-            title: t('nav.dashboard'),
-            href: dashboardHref,
-            icon: LayoutGrid,
-        },
-    ];
-
-    // Guest Navigation
-    const guestNavItems: NavItem[] = [
-        {
-            title: t('nav.guest.myReservations'),
-            href: reservationsIndex(),
-            icon: CalendarCheck,
-        },
-        {
-            title: t('nav.guest.myInvoices'),
-            href: invoicesIndex(),
-            icon: FileText,
-        },
-        {
-            title: t('nav.guest.myPayments'),
-            href: paymentsIndex(),
-            icon: CreditCard,
-        },
-        {
-            title: t('nav.guest.maintenance'),
-            href: maintenanceIndex(),
-            icon: Wrench,
-        },
-    ];
-
-    // Admin & Staff Operations (Front Desk & Rooms)
-    const adminOperationsNavItems: NavItem[] = [
-        {
-            title: t('nav.staff.reservations'),
-            href: staffReservationsIndex(),
-            icon: CalendarCheck,
-        },
-        {
-            title: t('nav.admin.rooms'),
-            href: adminRoomsIndex(),
-            icon: BedDouble,
-        },
-        {
-            title: t('nav.staff.roomStatus'),
-            href: staffHousekeepingIndex(),
-            icon: ClipboardList,
-        },
-    ];
-
-    const receptionistOperationsNavItems: NavItem[] = [
-        {
-            title: t('nav.staff.reservations'),
-            href: staffReservationsIndex(),
-            icon: CalendarCheck,
-        },
-        {
-            title: t('nav.staff.roomStatus'),
-            href: staffHousekeepingIndex(),
-            icon: ClipboardList,
-        },
-    ];
-
-    const housekeepingOperationsNavItems: NavItem[] = [
-        {
-            title: t('nav.staff.roomStatus'),
-            href: staffHousekeepingIndex(),
-            icon: ClipboardList,
-        },
-    ];
-
-    // Admin & Staff Finance (Billing & Payments)
-    const adminFinanceNavItems: NavItem[] = [
-        {
-            title: t('nav.admin.invoices'),
-            href: adminInvoicesIndex(),
-            icon: FileText,
-        },
-        {
-            title: t('nav.staff.payments'),
-            href: staffPaymentsIndex(),
-            icon: CreditCard,
-        },
-        {
-            title: t('nav.admin.services'),
-            href: adminServicesIndex(),
-            icon: ConciergeBell,
-        },
-    ];
-
-    const receptionistFinanceNavItems: NavItem[] = [
-        {
-            title: t('nav.staff.payments'),
-            href: staffPaymentsIndex(),
-            icon: CreditCard,
-        },
-    ];
-
-    // Maintenance
-    const maintenanceNavItems: NavItem[] = [
-        {
-            title: t('nav.staff.maintenance'),
-            href: staffMaintenanceIndex(),
-            icon: Wrench,
-        },
-    ];
-
-    // Admin System Management
-    const adminManagementNavItems: NavItem[] = [
-        {
-            title: t('nav.admin.staffAccounts'),
-            href: adminStaffIndex(),
-            icon: Users,
-        },
-        {
-            title: t('nav.admin.settings'),
-            href: adminSettingsEdit(),
-            icon: Settings,
-        },
-    ];
+    const sections = navSectionsFor(role, t);
 
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader className="border-b border-sidebar-border/50 p-3">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild className="h-auto p-1.5 hover:bg-sidebar-accent/50 rounded-xl transition-all">
-                            <Link href={dashboardHref} prefetch className="group/logo">
+                        <SidebarMenuButton
+                            size="lg"
+                            asChild
+                            className="h-auto rounded-xl p-1.5 transition-all hover:bg-sidebar-accent/50"
+                        >
+                            <Link
+                                href={dashboardHref}
+                                prefetch
+                                className="group/logo"
+                            >
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -186,69 +267,46 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent className="gap-1 py-3">
-                {/* 1. Main Dashboard */}
-                <NavMain items={mainNavItems} />
+                <NavMain
+                    items={[
+                        {
+                            title: t('nav.dashboard'),
+                            href: dashboardHref,
+                            icon: LayoutGrid,
+                        },
+                    ]}
+                />
 
-                {/* Guest Navigation */}
-                {role === 'guest' && (
+                {sections.map((section) => (
                     <NavMain
-                        items={guestNavItems}
-                        label={t('nav.groups.reservations')}
+                        key={section.id}
+                        items={section.items}
+                        label={section.label}
                     />
-                )}
-
-                {/* 2. Operations Group */}
-                {role === 'admin' && (
-                    <NavMain
-                        items={adminOperationsNavItems}
-                        label={t('nav.groups.operations')}
-                    />
-                )}
-                {role === 'receptionist' && (
-                    <NavMain
-                        items={receptionistOperationsNavItems}
-                        label={t('nav.groups.operations')}
-                    />
-                )}
-                {role === 'housekeeping' && (
-                    <NavMain
-                        items={housekeepingOperationsNavItems}
-                        label={t('nav.groups.operations')}
-                    />
-                )}
-
-                {/* 3. Finance Group */}
-                {role === 'admin' && (
-                    <NavMain
-                        items={adminFinanceNavItems}
-                        label={t('nav.groups.finance')}
-                    />
-                )}
-                {role === 'receptionist' && (
-                    <NavMain
-                        items={receptionistFinanceNavItems}
-                        label={t('nav.groups.finance')}
-                    />
-                )}
-
-                {/* 4. Maintenance Group */}
-                {(role === 'admin' || role === 'housekeeping') && (
-                    <NavMain
-                        items={maintenanceNavItems}
-                        label={t('nav.groups.maintenance')}
-                    />
-                )}
-
-                {/* 5. Management Group */}
-                {role === 'admin' && (
-                    <NavMain
-                        items={adminManagementNavItems}
-                        label={t('nav.groups.management')}
-                    />
-                )}
+                ))}
             </SidebarContent>
 
-            <SidebarFooter className="border-t border-sidebar-border/50 p-3">
+            <SidebarFooter className="gap-2 border-t border-sidebar-border/50 p-3">
+                {user && (
+                    <div className="flex items-center gap-2.5 px-1 group-data-[collapsible=icon]:hidden">
+                        <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-secondary text-[12px] font-semibold text-secondary-foreground">
+                            {initialsOf(user.full_name)}
+                        </span>
+                        {/*
+                         * leading-normal, not leading-tight: a Khmer full_name stacks
+                         * subscript consonants below the baseline and clips at 1.25.
+                         */}
+                        <span className="grid min-w-0 flex-1 text-left leading-normal">
+                            <span className="truncate text-[13px] font-semibold">
+                                {user.full_name}
+                            </span>
+                            <span className="truncate text-[11px] text-muted-foreground">
+                                {user.email}
+                            </span>
+                        </span>
+                    </div>
+                )}
+
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
