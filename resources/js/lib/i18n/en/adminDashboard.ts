@@ -16,6 +16,13 @@ export const adminDashboard = {
         todayCheckOuts: 'Today Departures',
         stayOvers: 'Active Stays',
         roomMatrix: 'Live Room Matrix',
+        roomMatrixSubtitle:
+            'Real-time floor status, occupancy, and room inventory rack',
+        noRoomsMatch: 'No rooms match the selected status filter.',
+        allRoomsFilter: 'All',
+        roomsUnit: 'rooms',
+        dirtyUnit: 'dirty',
+        pendingUnit: 'pending',
         allFloors: 'All Rooms',
         floor: 'Floor {{floor}}',
         groundFloor: 'Ground Floor',
@@ -23,13 +30,17 @@ export const adminDashboard = {
     stats: {
         revenueThisMonth: 'Revenue This Month',
         revenueSubtitle: 'Total confirmed earnings',
+        activeLabel: 'Active',
         outstandingInvoices: 'Unpaid Invoices',
         invoicesSubtitle: 'Requires follow-up',
+        invoicesBadge: 'Pending',
         openMaintenanceRequests: 'Open Maintenance',
         maintenanceSubtitle: 'Pending & in progress',
         totalRooms: 'Total Rooms',
         occupancyRate: 'Occupancy Rate',
         roomsSubtitle: 'Total guest house capacity',
+        availableBadge: 'Ready',
+        availableSubtitle: 'Clean and ready for walk-ins',
     },
     revenueChart: {
         title: 'Revenue Trend (Last 14 Days)',
@@ -53,6 +64,7 @@ export const adminDashboard = {
     },
     recentBookings: {
         title: 'Recent Bookings',
+        subtitle: 'Latest reservation activity',
         viewAll: 'View all reservations',
         noBookings: 'No recent reservations',
         room: 'Room',
@@ -63,6 +75,7 @@ export const adminDashboard = {
     },
     recentPayments: {
         title: 'Recent Payments',
+        subtitle: 'Confirmed revenue receipts',
         viewAll: 'View all payments',
         noPayments: 'No recent payments',
         guest: 'Guest',

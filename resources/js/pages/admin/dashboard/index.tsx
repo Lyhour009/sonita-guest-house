@@ -2,27 +2,21 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import {
     ArrowUpRight,
     BedDouble,
-    Calendar,
-    CalendarCheck,
     CheckCircle2,
-    Clock,
     CreditCard,
     DollarSign,
     FileText,
-    Home,
     Hotel,
     LogIn,
     LogOut,
     Plus,
     Sparkles,
-    Users,
     Wrench,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import RevenueTrendChart from '@/components/charts/revenue-trend-chart';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/hooks/use-translation';
 import { index as adminDashboardIndex } from '@/routes/admin/dashboard';
 import { index as adminInvoicesIndex } from '@/routes/admin/invoices';
@@ -56,16 +50,21 @@ export default function AdminDashboard({
 }: Props) {
     const { auth } = usePage().props;
     const { t } = useTranslation();
-    const [selectedRoomStatusFilter, setSelectedRoomStatusFilter] = useState<string>('all');
+    const [selectedRoomStatusFilter, setSelectedRoomStatusFilter] =
+        useState<string>('all');
 
     const totalRooms = occupancy?.total_rooms ?? 0;
-    const occupiedCount = (occupancy?.short_stay ?? 0) + (occupancy?.long_stay ?? 0);
-    const occupancyRate = totalRooms > 0 ? Math.round((occupiedCount / totalRooms) * 100) : 0;
+    const occupiedCount =
+        (occupancy?.short_stay ?? 0) + (occupancy?.long_stay ?? 0);
+    const occupancyRate =
+        totalRooms > 0 ? Math.round((occupiedCount / totalRooms) * 100) : 0;
 
     // Filtered rooms in the Live Room Grid
     const filteredRooms = useMemo(() => {
         if (selectedRoomStatusFilter === 'all') return roomsList;
-        return roomsList.filter((room) => room.status === selectedRoomStatusFilter);
+        return roomsList.filter(
+            (room) => room.status === selectedRoomStatusFilter,
+        );
     }, [roomsList, selectedRoomStatusFilter]);
 
     const formatCurrency = (amount: number) => {
@@ -125,24 +124,58 @@ export default function AdminDashboard({
     };
 
     const getReservationStatusBadge = (status: string) => {
+        const label = t(`common.reservationStatus.${status}`);
+
         switch (status) {
             case 'confirmed':
-                return <Badge variant="outline" className="border-primary/40 bg-primary/10 text-primary font-sans text-xs font-semibold">Confirmed</Badge>;
+                return (
+                    <Badge
+                        variant="outline"
+                        className="border-primary/40 bg-primary/10 font-sans text-xs font-semibold text-primary"
+                    >
+                        {label}
+                    </Badge>
+                );
             case 'checked_in':
             case 'active':
                 return (
-                    <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-sans text-xs font-semibold gap-1">
-                        <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        Checked In
+                    <Badge
+                        variant="outline"
+                        className="gap-1 border-emerald-500/40 bg-emerald-500/10 font-sans text-xs font-semibold text-emerald-700 dark:text-emerald-300"
+                    >
+                        <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
+                        {label}
                     </Badge>
                 );
             case 'checked_out':
-            case 'completed':
-                return <Badge variant="outline" className="border-border bg-muted/50 text-muted-foreground font-sans text-xs">Checked Out</Badge>;
+            case 'expired':
+                return (
+                    <Badge
+                        variant="outline"
+                        className="border-border bg-muted/50 font-sans text-xs text-muted-foreground"
+                    >
+                        {label}
+                    </Badge>
+                );
             case 'cancelled':
-                return <Badge variant="outline" className="border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-sans text-xs">Cancelled</Badge>;
+            case 'terminated':
+                return (
+                    <Badge
+                        variant="outline"
+                        className="border-rose-500/40 bg-rose-500/10 font-sans text-xs text-rose-600 dark:text-rose-400"
+                    >
+                        {label}
+                    </Badge>
+                );
             default:
-                return <Badge variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-700 font-sans text-xs">{status}</Badge>;
+                return (
+                    <Badge
+                        variant="outline"
+                        className="border-amber-500/40 bg-amber-500/10 font-sans text-xs text-amber-700"
+                    >
+                        {label}
+                    </Badge>
+                );
         }
     };
 
@@ -150,34 +183,48 @@ export default function AdminDashboard({
         <>
             <Head title={t('adminDashboard.title')} />
 
-            <div className="w-full flex-1 space-y-5 p-4 md:p-6 bg-background">
+            <div className="w-full flex-1 space-y-5 bg-background p-4 md:p-6">
                 {/* 1. Glassmorphic Header */}
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-card/50 p-6 rounded-3xl border border-border/50 shadow-sm backdrop-blur-sm">
+                <div className="flex flex-col gap-4 rounded-3xl border border-border/50 bg-card/50 p-6 shadow-sm backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground font-sans">
+                        <h1 className="font-sans text-2xl font-bold tracking-tight text-foreground md:text-3xl">
                             {t('adminDashboard.greeting', {
                                 name: String(auth?.user?.name || 'Admin'),
                             })}
                         </h1>
-                        <p className="text-sm text-muted-foreground font-sans mt-0.5">
+                        <p className="mt-0.5 font-sans text-sm text-muted-foreground">
                             {t('adminDashboard.subtitle')}
                         </p>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2.5">
-                        <Button asChild size="sm" className="gap-2 rounded-xl shadow-2xs font-sans text-sm font-semibold h-10 px-4">
+                        <Button
+                            asChild
+                            size="sm"
+                            className="h-10 gap-2 rounded-xl px-4 font-sans text-sm font-semibold shadow-2xs"
+                        >
                             <Link href={staffReservationsIndex()}>
                                 <Plus className="size-4" />
                                 {t('adminDashboard.quickActions.reservations')}
                             </Link>
                         </Button>
-                        <Button asChild variant="outline" size="sm" className="gap-2 rounded-xl border-border bg-card hover:bg-accent font-sans text-sm h-10 px-3.5 shadow-2xs">
+                        <Button
+                            asChild
+                            variant="outline"
+                            size="sm"
+                            className="h-10 gap-2 rounded-xl border-border bg-card px-3.5 font-sans text-sm shadow-2xs hover:bg-accent"
+                        >
                             <Link href={adminRoomsIndex()}>
                                 <BedDouble className="size-4 text-muted-foreground" />
                                 {t('adminDashboard.quickActions.manageRooms')}
                             </Link>
                         </Button>
-                        <Button asChild variant="outline" size="sm" className="gap-2 rounded-xl border-border bg-card hover:bg-accent font-sans text-sm h-10 px-3.5 shadow-2xs">
+                        <Button
+                            asChild
+                            variant="outline"
+                            size="sm"
+                            className="h-10 gap-2 rounded-xl border-border bg-card px-3.5 font-sans text-sm shadow-2xs hover:bg-accent"
+                        >
                             <Link href={adminInvoicesIndex()}>
                                 <FileText className="size-4 text-muted-foreground" />
                                 {t('adminDashboard.quickActions.invoices')}
@@ -188,64 +235,84 @@ export default function AdminDashboard({
 
                 {/* 2. Today's Front-Desk Operational Pulse */}
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4">
-                    <div className="flex items-center gap-3.5 rounded-3xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <Link
+                        href={staffReservationsIndex()}
+                        className="flex items-center gap-3.5 rounded-3xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl"
+                    >
                         <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                             <LogIn className="size-5" />
                         </div>
                         <div className="min-w-0">
-                            <p className="truncate text-xs font-medium text-muted-foreground font-sans">
+                            <p className="truncate font-sans text-xs font-medium text-muted-foreground">
                                 {t('adminDashboard.operations.todayCheckIns')}
                             </p>
-                            <p className="text-xl font-bold tracking-tight text-foreground font-sans">
-                                {todayCheckIns} <span className="text-xs font-normal text-muted-foreground">rooms</span>
+                            <p className="font-sans text-xl font-bold tracking-tight text-foreground">
+                                {todayCheckIns}{' '}
+                                <span className="text-xs font-normal text-muted-foreground">
+                                    {t('adminDashboard.operations.roomsUnit')}
+                                </span>
                             </p>
                         </div>
-                    </div>
+                    </Link>
 
-                    <div className="flex items-center gap-3.5 rounded-3xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <Link
+                        href={staffReservationsIndex()}
+                        className="flex items-center gap-3.5 rounded-3xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-purple-500/40 hover:shadow-xl"
+                    >
                         <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
                             <LogOut className="size-5" />
                         </div>
                         <div className="min-w-0">
-                            <p className="truncate text-xs font-medium text-muted-foreground font-sans">
+                            <p className="truncate font-sans text-xs font-medium text-muted-foreground">
                                 {t('adminDashboard.operations.todayCheckOuts')}
                             </p>
-                            <p className="text-xl font-bold tracking-tight text-foreground font-sans">
-                                {todayCheckOuts} <span className="text-xs font-normal text-muted-foreground">rooms</span>
+                            <p className="font-sans text-xl font-bold tracking-tight text-foreground">
+                                {todayCheckOuts}{' '}
+                                <span className="text-xs font-normal text-muted-foreground">
+                                    {t('adminDashboard.operations.roomsUnit')}
+                                </span>
                             </p>
                         </div>
-                    </div>
+                    </Link>
 
                     <Link
                         href={staffHousekeepingIndex()}
-                        className="flex items-center gap-3.5 rounded-3xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-amber-500/40"
+                        className="flex items-center gap-3.5 rounded-3xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-xl"
                     >
                         <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
                             <Sparkles className="size-5" />
                         </div>
                         <div className="min-w-0">
-                            <p className="truncate text-xs font-medium text-muted-foreground font-sans">
+                            <p className="truncate font-sans text-xs font-medium text-muted-foreground">
                                 {t('adminDashboard.roomStatus.cleaning')}
                             </p>
-                            <p className="text-xl font-bold tracking-tight text-foreground font-sans">
-                                {roomStatusCounts.cleaning} <span className="text-xs font-normal text-muted-foreground">dirty</span>
+                            <p className="font-sans text-xl font-bold tracking-tight text-foreground">
+                                {roomStatusCounts.cleaning}{' '}
+                                <span className="text-xs font-normal text-muted-foreground">
+                                    {t('adminDashboard.operations.dirtyUnit')}
+                                </span>
                             </p>
                         </div>
                     </Link>
 
                     <Link
                         href={staffMaintenanceIndex()}
-                        className="flex items-center gap-3.5 rounded-3xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-rose-500/40"
+                        className="flex items-center gap-3.5 rounded-3xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-rose-500/40 hover:shadow-xl"
                     >
                         <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
                             <Wrench className="size-5" />
                         </div>
                         <div className="min-w-0">
-                            <p className="truncate text-xs font-medium text-muted-foreground font-sans">
-                                {t('adminDashboard.stats.openMaintenanceRequests')}
+                            <p className="truncate font-sans text-xs font-medium text-muted-foreground">
+                                {t(
+                                    'adminDashboard.stats.openMaintenanceRequests',
+                                )}
                             </p>
-                            <p className="text-xl font-bold tracking-tight text-foreground font-sans">
-                                {openMaintenanceCount} <span className="text-xs font-normal text-muted-foreground">pending</span>
+                            <p className="font-sans text-xl font-bold tracking-tight text-foreground">
+                                {openMaintenanceCount}{' '}
+                                <span className="text-xs font-normal text-muted-foreground">
+                                    {t('adminDashboard.operations.pendingUnit')}
+                                </span>
                             </p>
                         </div>
                     </Link>
@@ -254,9 +321,12 @@ export default function AdminDashboard({
                 {/* 3. Core Financial & Performance Metric Cards */}
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {/* Revenue Card */}
-                    <div className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <Link
+                        href={staffPaymentsIndex()}
+                        className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-xl"
+                    >
                         <div className="flex items-center justify-between pb-2">
-                            <span className="text-sm font-medium text-muted-foreground font-sans">
+                            <span className="font-sans text-sm font-medium text-muted-foreground">
                                 {t('adminDashboard.stats.revenueThisMonth')}
                             </span>
                             <div className="flex size-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
@@ -264,22 +334,25 @@ export default function AdminDashboard({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <div className="text-2xl md:text-3xl font-bold tracking-tight text-foreground font-sans">
+                            <div className="font-sans text-2xl font-bold tracking-tight text-foreground md:text-3xl">
                                 {formatCurrency(revenueThisMonth)}
                             </div>
-                            <p className="text-xs text-muted-foreground font-sans flex items-center gap-1.5 pt-1">
-                                <span className="inline-flex items-center text-emerald-600 dark:text-emerald-400 font-semibold">
-                                    ● Active
+                            <p className="flex items-center gap-1.5 pt-1 font-sans text-xs text-muted-foreground">
+                                <span className="inline-flex items-center font-semibold text-emerald-600 dark:text-emerald-400">
+                                    ● {t('adminDashboard.stats.activeLabel')}
                                 </span>
                                 {t('adminDashboard.stats.revenueSubtitle')}
                             </p>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* Occupancy Card */}
-                    <div className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <Link
+                        href={adminRoomsIndex()}
+                        className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl"
+                    >
                         <div className="flex items-center justify-between pb-2">
-                            <span className="text-sm font-medium text-muted-foreground font-sans">
+                            <span className="font-sans text-sm font-medium text-muted-foreground">
                                 {t('adminDashboard.stats.occupancyRate')}
                             </span>
                             <div className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
@@ -288,15 +361,16 @@ export default function AdminDashboard({
                         </div>
                         <div className="space-y-1">
                             <div className="flex items-baseline gap-2">
-                                <span className="text-2xl md:text-3xl font-bold tracking-tight text-foreground font-sans">
+                                <span className="font-sans text-2xl font-bold tracking-tight text-foreground md:text-3xl">
                                     {occupancyRate}%
                                 </span>
-                                <span className="text-xs font-semibold text-muted-foreground font-sans">
-                                    ({occupiedCount} / {totalRooms} rooms)
+                                <span className="font-sans text-xs font-semibold text-muted-foreground">
+                                    ({occupiedCount} / {totalRooms}{' '}
+                                    {t('adminDashboard.operations.roomsUnit')})
                                 </span>
                             </div>
                             <div className="flex items-center gap-2 pt-1.5">
-                                <div className="h-1.5 flex-1 rounded-full bg-muted overflow-hidden">
+                                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
                                     <div
                                         className="h-full rounded-full bg-primary transition-all duration-500"
                                         style={{ width: `${occupancyRate}%` }}
@@ -304,12 +378,15 @@ export default function AdminDashboard({
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* Unpaid Invoices */}
-                    <div className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <Link
+                        href={adminInvoicesIndex()}
+                        className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-xl"
+                    >
                         <div className="flex items-center justify-between pb-2">
-                            <span className="text-sm font-medium text-muted-foreground font-sans">
+                            <span className="font-sans text-sm font-medium text-muted-foreground">
                                 {t('adminDashboard.stats.outstandingInvoices')}
                             </span>
                             <div className="flex size-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
@@ -318,25 +395,35 @@ export default function AdminDashboard({
                         </div>
                         <div className="space-y-1">
                             <div className="flex items-baseline gap-2">
-                                <span className="text-2xl md:text-3xl font-bold tracking-tight text-foreground font-sans">
+                                <span className="font-sans text-2xl font-bold tracking-tight text-foreground md:text-3xl">
                                     {outstandingInvoicesCount}
                                 </span>
                                 {outstandingInvoicesCount > 0 && (
-                                    <Badge variant="outline" className="border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-sans text-xs">
-                                        Pending
+                                    <Badge
+                                        variant="outline"
+                                        className="border-amber-500/30 bg-amber-500/10 font-sans text-xs text-amber-700 dark:text-amber-300"
+                                    >
+                                        {t(
+                                            'adminDashboard.stats.invoicesBadge',
+                                        )}
                                     </Badge>
                                 )}
                             </div>
-                            <p className="text-xs text-muted-foreground font-sans pt-1">
+                            <p className="pt-1 font-sans text-xs text-muted-foreground">
                                 {t('adminDashboard.stats.invoicesSubtitle')}
                             </p>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* Available Inventory */}
-                    <div className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <Link
+                        href={adminRoomsIndex({
+                            query: { status: 'available' },
+                        })}
+                        className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-xl"
+                    >
                         <div className="flex items-center justify-between pb-2">
-                            <span className="text-sm font-medium text-muted-foreground font-sans">
+                            <span className="font-sans text-sm font-medium text-muted-foreground">
                                 {t('adminDashboard.roomStatus.available')}
                             </span>
                             <div className="flex size-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
@@ -344,45 +431,67 @@ export default function AdminDashboard({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <div className="text-2xl md:text-3xl font-bold tracking-tight text-foreground font-sans">
-                                {roomStatusCounts.available} <span className="text-sm font-normal text-muted-foreground font-sans">Ready</span>
+                            <div className="font-sans text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+                                {roomStatusCounts.available}{' '}
+                                <span className="font-sans text-sm font-normal text-muted-foreground">
+                                    {t('adminDashboard.stats.availableBadge')}
+                                </span>
                             </div>
-                            <p className="text-xs text-muted-foreground font-sans pt-1">
-                                Clean and ready for walk-ins
+                            <p className="pt-1 font-sans text-xs text-muted-foreground">
+                                {t('adminDashboard.stats.availableSubtitle')}
                             </p>
                         </div>
-                    </div>
+                    </Link>
                 </div>
 
                 {/* 4. Live Room Matrix Rack (The Heartbeat of the Guest House) */}
-                <div className="rounded-3xl border border-border/50 bg-card shadow-sm overflow-hidden">
-                    <div className="flex flex-col gap-3 p-4 sm:p-5 pb-4 sm:flex-row sm:items-center sm:justify-between border-b border-border/60">
+                <div className="overflow-hidden rounded-3xl border border-border/50 bg-card shadow-sm">
+                    <div className="flex flex-col gap-3 border-b border-border/60 p-4 pb-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
                         <div>
                             <div className="flex items-center gap-2">
                                 <Hotel className="size-5 text-primary" />
-                                <h2 className="text-base font-bold font-sans text-foreground">
+                                <h2 className="font-sans text-base font-bold text-foreground">
                                     {t('adminDashboard.operations.roomMatrix')}
                                 </h2>
                             </div>
-                            <p className="font-sans text-xs text-muted-foreground pt-0.5">
-                                Real-time floor status, occupancy, and room inventory rack
+                            <p className="pt-0.5 font-sans text-xs text-muted-foreground">
+                                {t(
+                                    'adminDashboard.operations.roomMatrixSubtitle',
+                                )}
                             </p>
                         </div>
 
                         {/* Filter tabs */}
                         <div className="flex flex-wrap items-center gap-1.5">
                             {[
-                                { id: 'all', label: `All (${roomsList.length})` },
-                                { id: 'available', label: `${t('adminDashboard.roomStatus.available')} (${roomStatusCounts.available})` },
-                                { id: 'occupied', label: `${t('adminDashboard.roomStatus.occupied')} (${roomStatusCounts.occupied})` },
-                                { id: 'cleaning', label: `${t('adminDashboard.roomStatus.cleaning')} (${roomStatusCounts.cleaning})` },
-                                { id: 'maintenance', label: `${t('adminDashboard.roomStatus.maintenance')} (${roomStatusCounts.maintenance})` },
+                                {
+                                    id: 'all',
+                                    label: `${t('adminDashboard.operations.allRoomsFilter')} (${roomsList.length})`,
+                                },
+                                {
+                                    id: 'available',
+                                    label: `${t('adminDashboard.roomStatus.available')} (${roomStatusCounts.available})`,
+                                },
+                                {
+                                    id: 'occupied',
+                                    label: `${t('adminDashboard.roomStatus.occupied')} (${roomStatusCounts.occupied})`,
+                                },
+                                {
+                                    id: 'cleaning',
+                                    label: `${t('adminDashboard.roomStatus.cleaning')} (${roomStatusCounts.cleaning})`,
+                                },
+                                {
+                                    id: 'maintenance',
+                                    label: `${t('adminDashboard.roomStatus.maintenance')} (${roomStatusCounts.maintenance})`,
+                                },
                             ].map((tab) => (
                                 <button
                                     key={tab.id}
                                     type="button"
-                                    onClick={() => setSelectedRoomStatusFilter(tab.id)}
-                                    className={`rounded-xl px-3 py-1.5 text-xs font-semibold font-sans transition-all cursor-pointer ${
+                                    onClick={() =>
+                                        setSelectedRoomStatusFilter(tab.id)
+                                    }
+                                    className={`cursor-pointer rounded-xl px-3 py-1.5 font-sans text-xs font-semibold transition-all ${
                                         selectedRoomStatusFilter === tab.id
                                             ? 'bg-primary text-primary-foreground shadow-2xs'
                                             : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -396,39 +505,49 @@ export default function AdminDashboard({
 
                     <div className="p-4 sm:p-5">
                         {filteredRooms.length === 0 ? (
-                            <div className="py-8 text-center text-sm text-muted-foreground font-sans">
-                                No rooms match the selected status filter.
+                            <div className="py-8 text-center font-sans text-sm text-muted-foreground">
+                                {t('adminDashboard.operations.noRoomsMatch')}
                             </div>
                         ) : (
                             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
                                 {filteredRooms.map((room) => {
-                                    const statusInfo = getRoomStatusColor(room.status);
+                                    const statusInfo = getRoomStatusColor(
+                                        room.status,
+                                    );
 
                                     return (
                                         <Link
                                             key={room.id}
                                             href={adminRoomsIndex()}
-                                            className="group relative flex flex-col justify-between rounded-2xl border border-border/50 bg-background p-4 transition-all hover:shadow-md hover:-translate-y-0.5"
+                                            className="group relative flex flex-col justify-between rounded-2xl border border-border/50 bg-background p-4 transition-all hover:-translate-y-0.5 hover:shadow-md"
                                         >
                                             <div className="flex items-center justify-between">
-                                                <span className="text-base font-bold tracking-tight text-foreground group-hover:text-primary font-sans">
+                                                <span className="font-sans text-base font-bold tracking-tight text-foreground group-hover:text-primary">
                                                     #{room.room_number}
                                                 </span>
-                                                <span className={`size-2 rounded-full ${statusInfo.dot}`} />
+                                                <span
+                                                    className={`size-2 rounded-full ${statusInfo.dot}`}
+                                                />
                                             </div>
 
                                             <div className="mt-2 space-y-1.5">
-                                                <div className="truncate text-xs font-medium text-muted-foreground capitalize font-sans">
+                                                <div className="truncate font-sans text-xs font-medium text-muted-foreground capitalize">
                                                     {room.room_type}
                                                 </div>
-                                                <div className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-semibold border ${statusInfo.bg} font-sans`}>
+                                                <div
+                                                    className={`inline-flex items-center rounded-md border px-1.5 py-0.5 text-[11px] font-semibold ${statusInfo.bg} font-sans`}
+                                                >
                                                     {statusInfo.label}
                                                 </div>
                                             </div>
 
-                                            <div className="mt-2.5 pt-2 border-t border-border/40 text-[11.5px] font-semibold text-foreground flex items-center justify-between font-sans">
-                                                <span>${room.price_per_night}</span>
-                                                <span className="text-[10px] font-normal text-muted-foreground">/ night</span>
+                                            <div className="mt-2.5 flex items-center justify-between border-t border-border/40 pt-2 font-sans text-[11.5px] font-semibold text-foreground">
+                                                <span>
+                                                    ${room.price_per_night}
+                                                </span>
+                                                <span className="text-[10px] font-normal text-muted-foreground">
+                                                    / night
+                                                </span>
                                             </div>
                                         </Link>
                                     );
@@ -448,27 +567,38 @@ export default function AdminDashboard({
                     {/* Operational Feed: Recent Bookings & Payments (5 cols) */}
                     <div className="space-y-5 lg:col-span-5">
                         {/* Recent Bookings Feed */}
-                        <div className="rounded-3xl border border-border/50 bg-card shadow-sm overflow-hidden">
-                            <div className="flex items-center justify-between p-4 pb-3 border-b border-border/50">
+                        <div className="overflow-hidden rounded-3xl border border-border/50 bg-card shadow-sm">
+                            <div className="flex items-center justify-between border-b border-border/50 p-4 pb-3">
                                 <div>
-                                    <h3 className="text-base font-bold font-sans text-foreground">
-                                        {t('adminDashboard.recentBookings.title')}
+                                    <h3 className="font-sans text-base font-bold text-foreground">
+                                        {t(
+                                            'adminDashboard.recentBookings.title',
+                                        )}
                                     </h3>
-                                    <p className="text-xs text-muted-foreground font-sans">
-                                        Latest reservation activity
+                                    <p className="font-sans text-xs text-muted-foreground">
+                                        {t(
+                                            'adminDashboard.recentBookings.subtitle',
+                                        )}
                                     </p>
                                 </div>
-                                <Button asChild variant="ghost" size="sm" className="h-8 gap-1 text-xs text-primary hover:text-primary font-sans">
+                                <Button
+                                    asChild
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 gap-1 font-sans text-xs text-primary hover:text-primary"
+                                >
                                     <Link href={staffReservationsIndex()}>
-                                        View All
+                                        {t('common.actions.viewAll')}
                                         <ArrowUpRight className="size-3.5" />
                                     </Link>
                                 </Button>
                             </div>
                             <div className="divide-y divide-border/50">
                                 {recentReservations.length === 0 ? (
-                                    <div className="p-6 text-center text-sm text-muted-foreground font-sans">
-                                        {t('adminDashboard.recentBookings.noBookings')}
+                                    <div className="p-6 text-center font-sans text-sm text-muted-foreground">
+                                        {t(
+                                            'adminDashboard.recentBookings.noBookings',
+                                        )}
                                     </div>
                                 ) : (
                                     recentReservations.map((booking) => (
@@ -476,23 +606,34 @@ export default function AdminDashboard({
                                             key={booking.id}
                                             className="flex items-center justify-between p-3.5 transition-colors hover:bg-muted/30"
                                         >
-                                            <div className="flex items-center gap-3 min-w-0">
-                                                <div className="flex size-9.5 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold text-xs font-sans">
-                                                    {getInitials(booking.guest_name)}
+                                            <div className="flex min-w-0 items-center gap-3">
+                                                <div className="flex size-9.5 shrink-0 items-center justify-center rounded-xl bg-primary/10 font-sans text-xs font-bold text-primary">
+                                                    {getInitials(
+                                                        booking.guest_name,
+                                                    )}
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className="truncate text-sm font-bold text-foreground font-sans">
+                                                    <p className="truncate font-sans text-sm font-bold text-foreground">
                                                         {booking.guest_name}
                                                     </p>
-                                                    <p className="truncate text-xs text-muted-foreground font-sans flex items-center gap-1.5">
-                                                        <span className="font-semibold text-foreground">#{booking.room_number}</span>
+                                                    <p className="flex items-center gap-1.5 truncate font-sans text-xs text-muted-foreground">
+                                                        <span className="font-semibold text-foreground">
+                                                            #
+                                                            {
+                                                                booking.room_number
+                                                            }
+                                                        </span>
                                                         <span>·</span>
-                                                        <span>{booking.room_type}</span>
+                                                        <span>
+                                                            {booking.room_type}
+                                                        </span>
                                                     </p>
                                                 </div>
                                             </div>
                                             <div className="shrink-0 pl-2">
-                                                {getReservationStatusBadge(booking.status)}
+                                                {getReservationStatusBadge(
+                                                    booking.status,
+                                                )}
                                             </div>
                                         </div>
                                     ))
@@ -501,27 +642,38 @@ export default function AdminDashboard({
                         </div>
 
                         {/* Recent Payments Feed */}
-                        <div className="rounded-3xl border border-border/50 bg-card shadow-sm overflow-hidden">
-                            <div className="flex items-center justify-between p-4 pb-3 border-b border-border/50">
+                        <div className="overflow-hidden rounded-3xl border border-border/50 bg-card shadow-sm">
+                            <div className="flex items-center justify-between border-b border-border/50 p-4 pb-3">
                                 <div>
-                                    <h3 className="text-base font-bold font-sans text-foreground">
-                                        {t('adminDashboard.recentPayments.title')}
+                                    <h3 className="font-sans text-base font-bold text-foreground">
+                                        {t(
+                                            'adminDashboard.recentPayments.title',
+                                        )}
                                     </h3>
-                                    <p className="text-xs text-muted-foreground font-sans">
-                                        Confirmed revenue receipts
+                                    <p className="font-sans text-xs text-muted-foreground">
+                                        {t(
+                                            'adminDashboard.recentPayments.subtitle',
+                                        )}
                                     </p>
                                 </div>
-                                <Button asChild variant="ghost" size="sm" className="h-8 gap-1 text-xs text-primary hover:text-primary font-sans">
+                                <Button
+                                    asChild
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 gap-1 font-sans text-xs text-primary hover:text-primary"
+                                >
                                     <Link href={staffPaymentsIndex()}>
-                                        View All
+                                        {t('common.actions.viewAll')}
                                         <ArrowUpRight className="size-3.5" />
                                     </Link>
                                 </Button>
                             </div>
                             <div className="divide-y divide-border/50">
                                 {recentPayments.length === 0 ? (
-                                    <div className="p-6 text-center text-sm text-muted-foreground font-sans">
-                                        {t('adminDashboard.recentPayments.noPayments')}
+                                    <div className="p-6 text-center font-sans text-sm text-muted-foreground">
+                                        {t(
+                                            'adminDashboard.recentPayments.noPayments',
+                                        )}
                                     </div>
                                 ) : (
                                     recentPayments.map((payment) => (
@@ -529,22 +681,26 @@ export default function AdminDashboard({
                                             key={payment.id}
                                             className="flex items-center justify-between p-3.5 transition-colors hover:bg-muted/30"
                                         >
-                                            <div className="flex items-center gap-3 min-w-0">
+                                            <div className="flex min-w-0 items-center gap-3">
                                                 <div className="flex size-9.5 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                                                     <CreditCard className="size-4.5" />
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className="truncate text-sm font-bold text-foreground font-sans">
+                                                    <p className="truncate font-sans text-sm font-bold text-foreground">
                                                         {payment.guest_name}
                                                     </p>
-                                                    <p className="truncate text-xs text-muted-foreground font-sans capitalize">
-                                                        {payment.method} · {payment.paid_at}
+                                                    <p className="truncate font-sans text-xs text-muted-foreground capitalize">
+                                                        {payment.method} ·{' '}
+                                                        {payment.paid_at}
                                                     </p>
                                                 </div>
                                             </div>
                                             <div className="shrink-0 text-right">
-                                                <span className="font-sans font-bold text-sm text-emerald-600 dark:text-emerald-400">
-                                                    +{formatCurrency(payment.amount)}
+                                                <span className="font-sans text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                                                    +
+                                                    {formatCurrency(
+                                                        payment.amount,
+                                                    )}
                                                 </span>
                                             </div>
                                         </div>

@@ -18,6 +18,13 @@ export const adminDashboard: Dictionary['adminDashboard'] = {
         todayCheckOuts: 'ភ្ញៀវចេញថ្ងៃនេះ',
         stayOvers: 'កំពុងស្នាក់នៅ',
         roomMatrix: 'ប្លង់បន្ទប់ផ្ទាល់ជាក់ស្តែង',
+        roomMatrixSubtitle:
+            'ស្ថានភាពជាន់ជាក់ស្តែង ការកាន់កាប់ និងសន្និធិបន្ទប់',
+        noRoomsMatch: 'គ្មានបន្ទប់ណាត្រូវនឹងតម្រងស្ថានភាពដែលបានជ្រើសរើសទេ។',
+        allRoomsFilter: 'ទាំងអស់',
+        roomsUnit: 'បន្ទប់',
+        dirtyUnit: 'កខ្វក់',
+        pendingUnit: 'រង់ចាំ',
         allFloors: 'បន្ទប់ទាំងអស់',
         floor: 'ជាន់ទី {{floor}}',
         groundFloor: 'ជាន់ផ្ទាល់ដី',
@@ -25,13 +32,17 @@ export const adminDashboard: Dictionary['adminDashboard'] = {
     stats: {
         revenueThisMonth: 'ចំណូលខែនេះ',
         revenueSubtitle: 'ចំណូលសរុបដែលបានទទួល',
+        activeLabel: 'សកម្ម',
         outstandingInvoices: 'វិក្កយបត្រមិនទាន់បង់',
         invoicesSubtitle: 'រង់ចាំការទូទាត់',
+        invoicesBadge: 'រង់ចាំ',
         openMaintenanceRequests: 'សំណើជួសជុលកំពុងដំណើរការ',
         maintenanceSubtitle: 'កំពុងរង់ចាំ និងកំពុងជួសជុល',
         totalRooms: 'ចំនួនបន្ទប់សរុប',
         occupancyRate: 'អត្រាប្រើប្រាស់បន្ទប់',
         roomsSubtitle: 'សមត្ថភាពបន្ទប់ទាំងអស់',
+        availableBadge: 'ត្រៀមរួចរាល់',
+        availableSubtitle: 'សម្អាតរួច និងត្រៀមសម្រាប់ភ្ញៀវចូលភ្លាមៗ',
     },
     revenueChart: {
         title: 'និន្នាការចំណូល (១៤ថ្ងៃចុងក្រោយ)',
@@ -55,6 +66,7 @@ export const adminDashboard: Dictionary['adminDashboard'] = {
     },
     recentBookings: {
         title: 'ការកក់ថ្មីៗ',
+        subtitle: 'សកម្មភាពការកក់ថ្មីៗបំផុត',
         viewAll: 'មើលការកក់ទាំងអស់',
         noBookings: 'មិនទាន់មានការកក់នៅឡើយទេ',
         room: 'បន្ទប់',
@@ -65,6 +77,7 @@ export const adminDashboard: Dictionary['adminDashboard'] = {
     },
     recentPayments: {
         title: 'ការទូទាត់ថ្មីៗ',
+        subtitle: 'បង្កាន់ដៃចំណូលដែលបានបញ្ជាក់',
         viewAll: 'មើលការទូទាត់ទាំងអស់',
         noPayments: 'មិនទាន់មានការទូទាត់នៅឡើយទេ',
         guest: 'ភ្ញៀវ',
