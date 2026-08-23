@@ -31,6 +31,8 @@ class ReservationIndexData
             ],
             'statusCounts' => $statusCounts,
             'timelineRooms' => $timelineRooms,
+            'todaysArrivals' => ReservationResource::collection($this->todaysArrivals())->toArray(request()),
+            'todaysDepartures' => ReservationResource::collection($this->todaysDepartures())->toArray(request()),
             'guests' => User::query()
                 ->where('role', 'guest')
                 ->orderBy('full_name')
@@ -85,6 +87,52 @@ class ReservationIndexData
             'checked_out' => (int) $counts->get('checked_out', 0),
             'cancelled' => (int) $counts->get('cancelled', 0),
         ];
+    }
+
+    /**
+     * Reservations due to check in today (front-desk "arrivals" view).
+     *
+     * @return Collection<int, Reservation>
+     */
+    private function todaysArrivals(): Collection
+    {
+        $today = now()->toDateString();
+
+        return Reservation::query()
+            ->with([
+                'guest:id,full_name,email,phone_number',
+                'room:id,room_number,room_type,price_per_night,price_per_month',
+                'invoices' => fn ($q) => $q->latest(),
+            ])
+            ->where('status', 'confirmed')
+            ->where(fn ($query) => $query
+                ->where(fn ($q) => $q->where('reservation_type', 'short_stay')->whereDate('check_in_date', $today))
+                ->orWhere(fn ($q) => $q->where('reservation_type', 'long_stay')->whereDate('start_date', $today)))
+            ->orderByRaw('COALESCE(check_in_date, start_date)')
+            ->get();
+    }
+
+    /**
+     * Reservations due to check out today (front-desk "departures" view).
+     *
+     * @return Collection<int, Reservation>
+     */
+    private function todaysDepartures(): Collection
+    {
+        $today = now()->toDateString();
+
+        return Reservation::query()
+            ->with([
+                'guest:id,full_name,email,phone_number',
+                'room:id,room_number,room_type,price_per_night,price_per_month',
+                'invoices' => fn ($q) => $q->latest(),
+            ])
+            ->whereIn('status', ['checked_in', 'active'])
+            ->where(fn ($query) => $query
+                ->where(fn ($q) => $q->where('reservation_type', 'short_stay')->whereDate('check_out_date', $today))
+                ->orWhere(fn ($q) => $q->where('reservation_type', 'long_stay')->whereDate('end_date', $today)))
+            ->orderByRaw('COALESCE(check_out_date, end_date)')
+            ->get();
     }
 
     /**
@@ -146,5 +194,4 @@ class ReservationIndexData
             ];
         });
     }
-
 }

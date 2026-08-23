@@ -10,3 +10,17 @@ export function cn(...inputs: ClassValue[]) {
 export function toUrl(url: NonNullable<InertiaLinkProps['href']>): string {
     return typeof url === 'string' ? url : url.url;
 }
+
+export function getInitials(name: string): string {
+    if (!name) {
+        return 'G';
+    }
+
+    const parts = name.trim().split(' ');
+
+    if (parts.length === 1) {
+        return parts[0].substring(0, 2).toUpperCase();
+    }
+
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}

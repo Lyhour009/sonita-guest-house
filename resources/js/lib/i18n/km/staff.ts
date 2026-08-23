@@ -46,7 +46,8 @@ export const staff: Dictionary['staff'] = {
     },
     reservations: {
         pageTitle: 'ការកក់បន្ទប់',
-        subtitle: 'គ្រប់គ្រងការមកដល់របស់ភ្ញៀវ ការចុះឈ្មោះចូលស្នាក់នៅ និងការកក់បន្ទប់។',
+        subtitle:
+            'គ្រប់គ្រងការមកដល់របស់ភ្ញៀវ ការចុះឈ្មោះចូលស្នាក់នៅ និងការកក់បន្ទប់។',
         searchPlaceholder: 'ស្វែងរកតាមភ្ញៀវ ឬបន្ទប់...',
         anyStatus: 'គ្រប់ស្ថានភាព',
         showingCount: 'កំពុងបង្ហាញ {{shown}} នៃ {{total}} ការកក់',
@@ -57,6 +58,13 @@ export const staff: Dictionary['staff'] = {
         table: {
             dates: 'កាលបរិច្ឆេទ',
             payment: 'ការទូទាត់',
+            hasNotes: 'មានកំណត់ចំណាំបុគ្គលិក',
+        },
+        today: {
+            arrivalsTitle: 'ភ្ញៀវមកដល់ថ្ងៃនេះ',
+            departuresTitle: 'ភ្ញៀវចេញថ្ងៃនេះ',
+            noArrivals: 'មិនមានភ្ញៀវមកដល់សម្រាប់ថ្ងៃនេះទេ។',
+            noDepartures: 'មិនមានភ្ញៀវចេញសម្រាប់ថ្ងៃនេះទេ។',
         },
         paymentStatus: {
             paid: 'បានបង់ប្រាក់',
@@ -101,10 +109,17 @@ export const staff: Dictionary['staff'] = {
             stayDuration: 'រយៈពេលស្នាក់នៅ',
             createdOn: 'កាលបរិច្ឆេទកក់',
             close: 'បិទ',
+            notes: {
+                title: 'កំណត់ចំណាំបុគ្គលិក',
+                placeholder:
+                    'បន្ថែមកំណត់ចំណាំសម្រាប់បុគ្គលិកផ្សេងទៀត (ឧ. មកដល់យឺត, ត្រូវការគ្រែបន្ថែម)...',
+                save: 'រក្សាទុកកំណត់ចំណាំ',
+            },
         },
         checkInDialog: {
             title: 'បញ្ជាក់ការចូលស្នាក់នៅ (Check-In)',
-            description: 'ផ្ទៀងផ្ទាត់ព័ត៌មានភ្ញៀវ និងប្រគល់កាត/សោរបន្ទប់ មុនពេលបញ្ចប់ការ Check-in។',
+            description:
+                'ផ្ទៀងផ្ទាត់ព័ត៌មានភ្ញៀវ និងប្រគល់កាត/សោរបន្ទប់ មុនពេលបញ្ចប់ការ Check-in។',
             guest: 'ភ្ញៀវ',
             room: 'បន្ទប់ដែលបានចាត់តាំង',
             dates: 'កាលបរិច្ឆេទស្នាក់នៅ',
@@ -155,7 +170,8 @@ export const staff: Dictionary['staff'] = {
     walkinDialog: {
         newBooking: 'ការកក់ថ្មី',
         title: 'ការកក់ភ្ញៀវមកដល់ផ្ទាល់ថ្មី',
-        subtitle: 'បង្កើតការកក់បន្ទប់សម្រាប់ភ្ញៀវមកដល់ផ្ទាល់ និងចាត់តាំងបន្ទប់។',
+        subtitle:
+            'បង្កើតការកក់បន្ទប់សម្រាប់ភ្ញៀវមកដល់ផ្ទាល់ និងចាត់តាំងបន្ទប់។',
         roomLabel: 'បន្ទប់',
         stayTypeLabel: 'ប្រភេទស្នាក់នៅ',
         shortStayOption: 'ស្នាក់នៅរយៈពេលខ្លី (គិតជាយប់)',

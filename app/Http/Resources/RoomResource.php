@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class RoomResource extends JsonResource
 {
@@ -26,12 +27,13 @@ class RoomResource extends JsonResource
             'max_occupants' => $this->max_occupants,
             'amenities' => $this->whenNotNull($this->amenities),
             'description' => $this->whenNotNull($this->description),
+            'notes' => $this->whenNotNull($this->notes),
             'images' => $this->whenLoaded('roomImages', fn () => $this->roomImages->map(fn ($image) => [
                 'id' => $image->id,
-                'url' => \Illuminate\Support\Facades\Storage::disk('public')->url($image->image_path),
+                'url' => Storage::disk('public')->url($image->image_path),
             ])),
             'thumbnail' => $this->whenLoaded('roomImages', fn () => $this->roomImages->first()
-                ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->roomImages->first()->image_path)
+                ? Storage::disk('public')->url($this->roomImages->first()->image_path)
                 : null
             ),
         ];

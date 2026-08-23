@@ -25,7 +25,7 @@ export function RevenueTrendChart({
     }));
 
     return (
-        <Card className="rounded-2xl border border-border/80 bg-card shadow-2xs">
+        <Card className="rounded-3xl border border-border/50 bg-card shadow-sm">
             <CardHeader className="flex flex-row items-start justify-between pb-3 border-b border-border/50">
                 <div>
                     <CardTitle className="text-base font-bold tracking-tight font-sans">

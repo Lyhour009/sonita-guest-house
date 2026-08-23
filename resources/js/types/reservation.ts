@@ -52,6 +52,7 @@ export type Reservation = {
     start_date: string | null;
     end_date: string | null;
     status: ReservationStatus;
+    notes: string | null;
     deposit_amount?: number | null;
     monthly_due_day?: number | null;
     num_guests?: number | null;

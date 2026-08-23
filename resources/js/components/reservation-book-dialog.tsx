@@ -49,11 +49,11 @@ export default function ReservationBookDialog({ room }: Props) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="w-full">
+                <Button className="w-full h-14 text-base rounded-2xl font-bold bg-primary hover:bg-primary/90 transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98]">
                     {t('reservations.bookDialog.trigger')}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[85vh] sm:max-w-xl">
+            <DialogContent className="max-h-[85vh] sm:max-w-xl rounded-[2rem] p-8 border border-border/10 shadow-2xl">
                 <DialogHeader>
                     <DialogTitle>
                         {t('reservations.bookDialog.title', {
@@ -137,7 +137,7 @@ export default function ReservationBookDialog({ room }: Props) {
                             <InputError message={errors.room_id} />
 
                             <DialogFooter>
-                                <Button type="submit" disabled={processing}>
+                                <Button type="submit" disabled={processing} className="rounded-xl h-12 font-bold px-8 transition-all hover:scale-105 active:scale-95">
                                     {processing && <Spinner className="mr-2" />}
                                     {t('reservations.bookDialog.submit')}
                                 </Button>

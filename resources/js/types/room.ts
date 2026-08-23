@@ -36,6 +36,7 @@ export type RoomDetail = {
     max_occupants: number;
     amenities: string | null;
     description: string | null;
+    notes: string | null;
     images: RoomImage[];
 };
 

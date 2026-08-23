@@ -36,7 +36,7 @@ test('the room listing is paginated at 10 per page', function () {
 
     $response->assertInertia(fn ($page) => $page
         ->where('rooms.data', fn ($rooms) => count($rooms) === 10)
-        ->where('rooms.last_page', 2));
+        ->where('rooms.meta.last_page', 2));
 });
 
 test('the room listing can be searched by room number or type', function () {
@@ -148,6 +148,63 @@ test('admin can upload images for a room', function () {
 
     $response->assertSessionHasNoErrors();
     expect($room->roomImages()->count())->toBe(1);
+});
+
+test('admin can set internal notes when creating a room', function () {
+    $admin = User::factory()->admin()->create();
+
+    $response = $this->actingAs($admin)->post(route('admin.rooms.store'), [
+        'room_number' => '202',
+        'room_type' => 'Standard',
+        'rental_mode' => 'both',
+        'price_per_night' => 25,
+        'price_per_month' => 400,
+        'status' => 'available',
+        'max_occupants' => 2,
+        'notes' => 'AC unit noisy, part on order.',
+    ]);
+
+    $response->assertSessionHasNoErrors();
+    $this->assertDatabaseHas('rooms', [
+        'room_number' => '202',
+        'notes' => 'AC unit noisy, part on order.',
+    ]);
+});
+
+test('admin can update a room\'s internal notes', function () {
+    $admin = User::factory()->admin()->create();
+    $room = Room::factory()->create(['notes' => null]);
+
+    $response = $this->actingAs($admin)->put(route('admin.rooms.update', $room), [
+        'room_number' => $room->room_number,
+        'room_type' => $room->room_type,
+        'rental_mode' => $room->rental_mode,
+        'price_per_night' => $room->price_per_night,
+        'price_per_month' => $room->price_per_month,
+        'status' => $room->status,
+        'max_occupants' => $room->max_occupants,
+        'notes' => 'Missing 1 pillow since last inventory.',
+    ]);
+
+    $response->assertSessionHasNoErrors();
+    expect($room->fresh()->notes)->toBe('Missing 1 pillow since last inventory.');
+});
+
+test('room notes cannot exceed the maximum length', function () {
+    $admin = User::factory()->admin()->create();
+
+    $response = $this->actingAs($admin)->post(route('admin.rooms.store'), [
+        'room_number' => '303',
+        'room_type' => 'Standard',
+        'rental_mode' => 'both',
+        'price_per_night' => 25,
+        'price_per_month' => 400,
+        'status' => 'available',
+        'max_occupants' => 2,
+        'notes' => str_repeat('a', 2001),
+    ]);
+
+    $response->assertSessionHasErrors('notes');
 });
 
 test('admin can delete a room image', function () {

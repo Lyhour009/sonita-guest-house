@@ -151,8 +151,8 @@ export default function AdminDashboard({
             <Head title={t('adminDashboard.title')} />
 
             <div className="w-full flex-1 space-y-5 p-4 md:p-6 bg-background">
-                {/* 1. Clean Unboxed Header (Stand-alone Title, Subtitle, & Quick Actions on Right) */}
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-1">
+                {/* 1. Glassmorphic Header */}
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-card/50 p-6 rounded-3xl border border-border/50 shadow-sm backdrop-blur-sm">
                     <div>
                         <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground font-sans">
                             {t('adminDashboard.greeting', {
@@ -188,8 +188,8 @@ export default function AdminDashboard({
 
                 {/* 2. Today's Front-Desk Operational Pulse */}
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4">
-                    <div className="flex items-center gap-3.5 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
-                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <div className="flex items-center gap-3.5 rounded-3xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                        <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                             <LogIn className="size-5" />
                         </div>
                         <div className="min-w-0">
@@ -202,8 +202,8 @@ export default function AdminDashboard({
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3.5 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
-                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                    <div className="flex items-center gap-3.5 rounded-3xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                        <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
                             <LogOut className="size-5" />
                         </div>
                         <div className="min-w-0">
@@ -218,9 +218,9 @@ export default function AdminDashboard({
 
                     <Link
                         href={staffHousekeepingIndex()}
-                        className="flex items-center gap-3.5 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs transition-colors hover:border-amber-500/40"
+                        className="flex items-center gap-3.5 rounded-3xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-amber-500/40"
                     >
-                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                        <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
                             <Sparkles className="size-5" />
                         </div>
                         <div className="min-w-0">
@@ -235,9 +235,9 @@ export default function AdminDashboard({
 
                     <Link
                         href={staffMaintenanceIndex()}
-                        className="flex items-center gap-3.5 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs transition-colors hover:border-rose-500/40"
+                        className="flex items-center gap-3.5 rounded-3xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-rose-500/40"
                     >
-                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                        <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
                             <Wrench className="size-5" />
                         </div>
                         <div className="min-w-0">
@@ -254,12 +254,12 @@ export default function AdminDashboard({
                 {/* 3. Core Financial & Performance Metric Cards */}
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {/* Revenue Card */}
-                    <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-2xs">
+                    <div className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                         <div className="flex items-center justify-between pb-2">
                             <span className="text-sm font-medium text-muted-foreground font-sans">
                                 {t('adminDashboard.stats.revenueThisMonth')}
                             </span>
-                            <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            <div className="flex size-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                                 <DollarSign className="size-4.5" />
                             </div>
                         </div>
@@ -277,12 +277,12 @@ export default function AdminDashboard({
                     </div>
 
                     {/* Occupancy Card */}
-                    <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-2xs">
+                    <div className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                         <div className="flex items-center justify-between pb-2">
                             <span className="text-sm font-medium text-muted-foreground font-sans">
                                 {t('adminDashboard.stats.occupancyRate')}
                             </span>
-                            <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                            <div className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                                 <BedDouble className="size-4.5" />
                             </div>
                         </div>
@@ -307,12 +307,12 @@ export default function AdminDashboard({
                     </div>
 
                     {/* Unpaid Invoices */}
-                    <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-2xs">
+                    <div className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                         <div className="flex items-center justify-between pb-2">
                             <span className="text-sm font-medium text-muted-foreground font-sans">
                                 {t('adminDashboard.stats.outstandingInvoices')}
                             </span>
-                            <div className="flex size-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                            <div className="flex size-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
                                 <FileText className="size-4.5" />
                             </div>
                         </div>
@@ -334,12 +334,12 @@ export default function AdminDashboard({
                     </div>
 
                     {/* Available Inventory */}
-                    <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-2xs">
+                    <div className="rounded-3xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                         <div className="flex items-center justify-between pb-2">
                             <span className="text-sm font-medium text-muted-foreground font-sans">
                                 {t('adminDashboard.roomStatus.available')}
                             </span>
-                            <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            <div className="flex size-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                                 <CheckCircle2 className="size-4.5" />
                             </div>
                         </div>
@@ -355,7 +355,7 @@ export default function AdminDashboard({
                 </div>
 
                 {/* 4. Live Room Matrix Rack (The Heartbeat of the Guest House) */}
-                <div className="rounded-2xl border border-border/80 bg-card shadow-2xs overflow-hidden">
+                <div className="rounded-3xl border border-border/50 bg-card shadow-sm overflow-hidden">
                     <div className="flex flex-col gap-3 p-4 sm:p-5 pb-4 sm:flex-row sm:items-center sm:justify-between border-b border-border/60">
                         <div>
                             <div className="flex items-center gap-2">
@@ -408,7 +408,7 @@ export default function AdminDashboard({
                                         <Link
                                             key={room.id}
                                             href={adminRoomsIndex()}
-                                            className="group relative flex flex-col justify-between rounded-xl border border-border/80 bg-background p-3 transition-all hover:border-primary hover:shadow-xs"
+                                            className="group relative flex flex-col justify-between rounded-2xl border border-border/50 bg-background p-4 transition-all hover:shadow-md hover:-translate-y-0.5"
                                         >
                                             <div className="flex items-center justify-between">
                                                 <span className="text-base font-bold tracking-tight text-foreground group-hover:text-primary font-sans">
@@ -448,7 +448,7 @@ export default function AdminDashboard({
                     {/* Operational Feed: Recent Bookings & Payments (5 cols) */}
                     <div className="space-y-5 lg:col-span-5">
                         {/* Recent Bookings Feed */}
-                        <div className="rounded-2xl border border-border/80 bg-card shadow-2xs overflow-hidden">
+                        <div className="rounded-3xl border border-border/50 bg-card shadow-sm overflow-hidden">
                             <div className="flex items-center justify-between p-4 pb-3 border-b border-border/50">
                                 <div>
                                     <h3 className="text-base font-bold font-sans text-foreground">
@@ -501,7 +501,7 @@ export default function AdminDashboard({
                         </div>
 
                         {/* Recent Payments Feed */}
-                        <div className="rounded-2xl border border-border/80 bg-card shadow-2xs overflow-hidden">
+                        <div className="rounded-3xl border border-border/50 bg-card shadow-sm overflow-hidden">
                             <div className="flex items-center justify-between p-4 pb-3 border-b border-border/50">
                                 <div>
                                     <h3 className="text-base font-bold font-sans text-foreground">

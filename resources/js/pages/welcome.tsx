@@ -85,7 +85,7 @@ export default function Welcome({ rooms, filters }: Props) {
 
             <div className="min-h-screen bg-background">
                 {/* ---------- Hero ---------- */}
-                <div className="relative h-[46vh] min-h-[380px] w-full bg-cover bg-center bg-no-repeat lg:h-[52vh]">
+                <div className="relative h-[55vh] min-h-[450px] w-full bg-cover bg-center bg-no-repeat lg:h-[65vh] rounded-b-[3rem] overflow-hidden">
                     <img
                         src="/images/hero.jpg"
                         alt=""
@@ -135,7 +135,7 @@ export default function Welcome({ rooms, filters }: Props) {
 
                 {/* ---------- The fork: nightly vs monthly ---------- */}
                 <div className="relative z-30 mx-auto max-w-6xl px-6 lg:px-10">
-                    <div className="-mt-14 grid gap-5 md:grid-cols-2">
+                    <div className="-mt-24 grid gap-6 md:grid-cols-2">
                         <StayPanel
                             active={isShort}
                             icon={<Moon className="size-5" />}
@@ -324,10 +324,10 @@ function StayPanel({
     return (
         <div
             className={cn(
-                'flex flex-col gap-4 rounded-2xl bg-card p-5 transition-all',
+                'flex flex-col gap-4 rounded-3xl bg-card/95 backdrop-blur-xl p-6 md:p-8 transition-all duration-300',
                 active
-                    ? 'border-2 border-primary shadow-xl'
-                    : 'border border-border shadow-sm',
+                    ? 'border-2 border-primary shadow-2xl scale-[1.02] z-10'
+                    : 'border border-border/50 shadow-lg hover:shadow-xl opacity-90 hover:opacity-100',
             )}
         >
             <button
@@ -339,9 +339,9 @@ function StayPanel({
                 <span className="flex items-center gap-3">
                     <span
                         className={cn(
-                            'flex size-10 shrink-0 items-center justify-center rounded-lg',
+                            'flex size-12 shrink-0 items-center justify-center rounded-2xl',
                             active
-                                ? 'bg-primary text-primary-foreground'
+                                ? 'bg-primary text-primary-foreground shadow-md'
                                 : 'bg-secondary text-secondary-foreground',
                         )}
                     >
@@ -408,8 +408,8 @@ function RoomCard({
     }
 
     return (
-        <div className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-            <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+        <div className="group flex flex-col overflow-hidden rounded-3xl border border-border/50 bg-card shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
                 {room.thumbnail ? (
                     <img
                         src={room.thumbnail}
@@ -468,7 +468,7 @@ function RoomCard({
                         </span>
                     </div>
 
-                    <Button asChild className="rounded-lg font-medium">
+                    <Button asChild className="rounded-xl font-bold shadow-sm transition-all hover:scale-105">
                         <Link href={show(room.id)}>
                             {t('welcome.card.viewRoom')}
                         </Link>

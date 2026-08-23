@@ -38,6 +38,13 @@ class RoomController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        $statusCounts = [
+            'all' => Room::count(),
+            'available' => Room::where('status', 'available')->count(),
+            'occupied' => Room::where('status', 'occupied')->count(),
+            'maintenance' => Room::where('status', 'maintenance')->count(),
+        ];
+
         return Inertia::render('admin/rooms/index', [
             'rooms' => RoomResource::collection($rooms),
             'filters' => [
@@ -45,6 +52,7 @@ class RoomController extends Controller
                 'rental_mode' => $filters['rental_mode'] ?? null,
                 'status' => $filters['status'] ?? null,
             ],
+            'statusCounts' => $statusCounts,
         ]);
     }
 
@@ -101,5 +109,4 @@ class RoomController extends Controller
 
         return to_route('admin.rooms.index');
     }
-
 }

@@ -28,6 +28,7 @@ class ReservationResource extends JsonResource
             'num_guests' => $this->num_guests ?? 1,
             'created_at' => $this->created_at?->format('M d, Y H:i'),
             'status' => $this->status,
+            'notes' => $this->notes,
             'total_amount' => (float) $this->total_amount,
             'guest' => $this->whenLoaded('guest', fn () => [
                 'id' => $this->guest?->id,

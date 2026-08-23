@@ -245,7 +245,7 @@ export function AppSidebar() {
     const sections = navSectionsFor(role, t);
 
     return (
-        <Sidebar collapsible="icon" variant="inset">
+        <Sidebar collapsible="icon">
             <SidebarHeader className="border-b border-sidebar-border/50 p-3">
                 <SidebarMenu>
                     <SidebarMenuItem>

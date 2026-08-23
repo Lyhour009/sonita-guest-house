@@ -23,12 +23,13 @@ use Illuminate\Support\Carbon;
  * @property int $max_occupants
  * @property string|null $amenities
  * @property string|null $description
+ * @property string|null $notes
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
 #[Fillable([
     'room_number', 'room_type', 'rental_mode', 'price_per_night', 'price_per_month',
-    'status', 'floor', 'max_occupants', 'amenities', 'description',
+    'status', 'floor', 'max_occupants', 'amenities', 'description', 'notes',
 ])]
 class Room extends Model
 {

@@ -8,7 +8,9 @@ use App\Actions\Reservations\CheckOutReservation;
 use App\Actions\Reservations\ConfirmReservation;
 use App\Actions\Reservations\CreateWalkInReservation;
 use App\Actions\Reservations\ReservationIndexData;
+use App\Actions\Reservations\UpdateReservationNotes;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Staff\ReservationNotesUpdateRequest;
 use App\Http\Requests\Staff\ReservationStoreRequest;
 use App\Models\Reservation;
 use Illuminate\Http\RedirectResponse;
@@ -103,6 +105,18 @@ class ReservationController extends Controller
         $action->handle($reservation);
 
         Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.reservations.cancelled']);
+
+        return back();
+    }
+
+    /**
+     * Update the staff-facing notes on a reservation.
+     */
+    public function updateNotes(ReservationNotesUpdateRequest $request, Reservation $reservation, UpdateReservationNotes $action): RedirectResponse
+    {
+        $action->handle($reservation, $request->validated()['notes'] ?? null);
+
+        Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.reservations.notesUpdated']);
 
         return back();
     }

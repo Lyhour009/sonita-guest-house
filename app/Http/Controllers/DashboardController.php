@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ReservationResource;
 use App\Models\Invoice;
 use App\Models\MaintenanceRequest;
-use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
 use App\Models\Room;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -17,7 +18,7 @@ class DashboardController extends Controller
     /**
      * Display the role-appropriate dashboard.
      */
-    public function index(Request $request): \Inertia\Response|\Illuminate\Http\RedirectResponse
+    public function index(Request $request): Response|RedirectResponse
     {
         $user = $request->user();
 
@@ -40,7 +41,7 @@ class DashboardController extends Controller
         $reservations = Reservation::query()
             ->where('guest_id', $guest->id)
             ->whereIn('status', ['pending', 'confirmed', 'checked_in', 'active'])
-            ->with('room')
+            ->with(['room', 'invoices' => fn ($q) => $q->latest()])
             ->latest()
             ->get();
 

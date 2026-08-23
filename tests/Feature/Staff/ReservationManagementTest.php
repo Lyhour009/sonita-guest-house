@@ -149,3 +149,90 @@ test('staff can cancel any reservation', function () {
     expect($reservation->fresh()->status)->toBe('cancelled');
     expect($room->fresh()->status)->toBe('available');
 });
+
+test('receptionist can update the staff notes on a reservation', function () {
+    $receptionist = User::factory()->receptionist()->create();
+    $reservation = Reservation::factory()->create(['notes' => null]);
+
+    $response = $this->actingAs($receptionist)->patch(route('staff.reservations.notes.update', $reservation), [
+        'notes' => 'Guest requested extra pillows.',
+    ]);
+
+    $response->assertSessionHasNoErrors();
+    expect($reservation->fresh()->notes)->toBe('Guest requested extra pillows.');
+});
+
+test('reservation notes cannot exceed the maximum length', function () {
+    $receptionist = User::factory()->receptionist()->create();
+    $reservation = Reservation::factory()->create();
+
+    $response = $this->actingAs($receptionist)->patch(route('staff.reservations.notes.update', $reservation), [
+        'notes' => str_repeat('a', 2001),
+    ]);
+
+    $response->assertSessionHasErrors('notes');
+});
+
+test('guests are forbidden from updating reservation notes', function () {
+    $guest = User::factory()->create();
+    $reservation = Reservation::factory()->create();
+
+    $response = $this->actingAs($guest)->patch(route('staff.reservations.notes.update', $reservation), [
+        'notes' => 'Should not be allowed.',
+    ]);
+
+    $response->assertForbidden();
+});
+
+test('a confirmed reservation checking in today appears in todays arrivals', function () {
+    $receptionist = User::factory()->receptionist()->create();
+    $arrivingToday = Reservation::factory()->create([
+        'reservation_type' => 'short_stay',
+        'status' => 'confirmed',
+        'check_in_date' => now()->toDateString(),
+        'check_out_date' => now()->addDays(2)->toDateString(),
+    ]);
+    $arrivingTomorrow = Reservation::factory()->create([
+        'reservation_type' => 'short_stay',
+        'status' => 'confirmed',
+        'check_in_date' => now()->addDay()->toDateString(),
+        'check_out_date' => now()->addDays(3)->toDateString(),
+    ]);
+    $pendingToday = Reservation::factory()->create([
+        'reservation_type' => 'short_stay',
+        'status' => 'pending',
+        'check_in_date' => now()->toDateString(),
+        'check_out_date' => now()->addDays(2)->toDateString(),
+    ]);
+
+    $response = $this->actingAs($receptionist)->get(route('staff.reservations.index'));
+
+    $response->assertInertia(fn ($page) => $page
+        ->where('todaysArrivals', fn ($arrivals) => count($arrivals) === 1
+            && $arrivals[0]['id'] === $arrivingToday->id
+            && ! collect($arrivals)->pluck('id')->contains($arrivingTomorrow->id)
+            && ! collect($arrivals)->pluck('id')->contains($pendingToday->id)));
+});
+
+test('a checked-in reservation checking out today appears in todays departures', function () {
+    $receptionist = User::factory()->receptionist()->create();
+    $departingToday = Reservation::factory()->create([
+        'reservation_type' => 'short_stay',
+        'status' => 'checked_in',
+        'check_in_date' => now()->subDay()->toDateString(),
+        'check_out_date' => now()->toDateString(),
+    ]);
+    $departingTomorrow = Reservation::factory()->create([
+        'reservation_type' => 'short_stay',
+        'status' => 'checked_in',
+        'check_in_date' => now()->subDay()->toDateString(),
+        'check_out_date' => now()->addDay()->toDateString(),
+    ]);
+
+    $response = $this->actingAs($receptionist)->get(route('staff.reservations.index'));
+
+    $response->assertInertia(fn ($page) => $page
+        ->where('todaysDepartures', fn ($departures) => count($departures) === 1
+            && $departures[0]['id'] === $departingToday->id
+            && ! collect($departures)->pluck('id')->contains($departingTomorrow->id)));
+});

@@ -26,12 +26,13 @@ use Illuminate\Support\Carbon;
  * @property int|null $monthly_due_day
  * @property int|null $num_guests
  * @property string $status
+ * @property string|null $notes
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
 #[Fillable([
     'guest_id', 'room_id', 'reservation_type', 'check_in_date', 'check_out_date',
-    'start_date', 'end_date', 'deposit_amount', 'monthly_due_day', 'num_guests', 'status',
+    'start_date', 'end_date', 'deposit_amount', 'monthly_due_day', 'num_guests', 'status', 'notes',
 ])]
 class Reservation extends Model
 {

@@ -44,7 +44,8 @@ export const staff = {
     },
     reservations: {
         pageTitle: 'Reservations',
-        subtitle: 'Manage guest arrivals, front-desk check-ins, room assignments, and reservations.',
+        subtitle:
+            'Manage guest arrivals, front-desk check-ins, room assignments, and reservations.',
         searchPlaceholder: 'Search by guest or room...',
         anyStatus: 'Any status',
         showingCount: 'Showing {{shown}} of {{total}} reservations',
@@ -55,6 +56,13 @@ export const staff = {
         table: {
             dates: 'Dates',
             payment: 'Payment',
+            hasNotes: 'Has staff notes',
+        },
+        today: {
+            arrivalsTitle: 'Arrivals Today',
+            departuresTitle: 'Departures Today',
+            noArrivals: 'No arrivals scheduled for today.',
+            noDepartures: 'No departures scheduled for today.',
         },
         paymentStatus: {
             paid: 'Paid',
@@ -99,10 +107,17 @@ export const staff = {
             stayDuration: 'Stay Duration',
             createdOn: 'Booked On',
             close: 'Close',
+            notes: {
+                title: 'Staff Notes',
+                placeholder:
+                    'Add a note for other staff (e.g. arriving late, extra bed requested)...',
+                save: 'Save note',
+            },
         },
         checkInDialog: {
             title: 'Confirm Guest Check-In',
-            description: 'Verify guest details and assign physical key card before completing check-in.',
+            description:
+                'Verify guest details and assign physical key card before completing check-in.',
             guest: 'Guest',
             room: 'Assigned Room',
             dates: 'Stay Dates',
@@ -153,7 +168,8 @@ export const staff = {
     walkinDialog: {
         newBooking: 'New booking',
         title: 'New walk-in booking',
-        subtitle: 'Create a front-desk walk-in reservation with room assignment and guest profile.',
+        subtitle:
+            'Create a front-desk walk-in reservation with room assignment and guest profile.',
         roomLabel: 'Room',
         stayTypeLabel: 'Stay type',
         shortStayOption: 'Short stay (nightly)',

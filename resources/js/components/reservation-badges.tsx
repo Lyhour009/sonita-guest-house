@@ -19,9 +19,9 @@ export function ReservationStatusBadge({ status }: { status: string }) {
             return (
                 <Badge
                     variant="outline"
-                    className="gap-1.5 border-emerald-500/40 bg-emerald-500/10 font-sans text-xs font-semibold text-emerald-700 dark:text-emerald-300"
+                    className="gap-1.5 border-success/40 bg-success/10 font-sans text-xs font-semibold text-emerald-700 dark:text-emerald-300"
                 >
-                    <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
+                    <span className="size-1.5 animate-pulse rounded-full bg-success" />
                     {t(`common.reservationStatus.${status}`)}
                 </Badge>
             );
@@ -38,7 +38,7 @@ export function ReservationStatusBadge({ status }: { status: string }) {
             return (
                 <Badge
                     variant="outline"
-                    className="border-rose-500/40 bg-rose-500/10 font-sans text-xs text-rose-600 dark:text-rose-400"
+                    className="border-danger/40 bg-danger/10 font-sans text-xs text-rose-600 dark:text-rose-400"
                 >
                     {t('common.reservationStatus.cancelled')}
                 </Badge>
@@ -47,7 +47,7 @@ export function ReservationStatusBadge({ status }: { status: string }) {
             return (
                 <Badge
                     variant="outline"
-                    className="border-amber-500/40 bg-amber-500/10 font-sans text-xs font-semibold text-amber-700 dark:text-amber-300"
+                    className="border-warning/40 bg-warning/10 font-sans text-xs font-semibold text-amber-700 dark:text-amber-300"
                 >
                     {t('common.reservationStatus.pending')}
                 </Badge>
@@ -63,9 +63,9 @@ export function PaymentStatusBadge({ status }: { status?: string }) {
             return (
                 <Badge
                     variant="outline"
-                    className="gap-1 border-emerald-500/40 bg-emerald-500/10 font-sans text-[11px] font-semibold text-emerald-700 dark:text-emerald-300"
+                    className="gap-1 border-success/40 bg-success/10 font-sans text-[11px] font-semibold text-emerald-700 dark:text-emerald-300"
                 >
-                    <span className="size-1 rounded-full bg-emerald-500" />
+                    <span className="size-1 rounded-full bg-success" />
                     {t('staff.reservations.paymentStatus.paid')}
                 </Badge>
             );
@@ -73,7 +73,7 @@ export function PaymentStatusBadge({ status }: { status?: string }) {
             return (
                 <Badge
                     variant="outline"
-                    className="border-amber-500/40 bg-amber-500/10 font-sans text-[11px] font-semibold text-amber-700 dark:text-amber-300"
+                    className="border-warning/40 bg-warning/10 font-sans text-[11px] font-semibold text-amber-700 dark:text-amber-300"
                 >
                     {t('staff.reservations.paymentStatus.pending')}
                 </Badge>
@@ -82,7 +82,7 @@ export function PaymentStatusBadge({ status }: { status?: string }) {
             return (
                 <Badge
                     variant="outline"
-                    className="border-rose-500/40 bg-rose-500/10 font-sans text-[11px] font-semibold text-rose-600 dark:text-rose-400"
+                    className="border-danger/40 bg-danger/10 font-sans text-[11px] font-semibold text-rose-600 dark:text-rose-400"
                 >
                     {t('staff.reservations.paymentStatus.unpaid')}
                 </Badge>

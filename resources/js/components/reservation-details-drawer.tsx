@@ -1,3 +1,4 @@
+import { useForm, router } from '@inertiajs/react';
 import {
     Calendar,
     Check,
@@ -16,10 +17,22 @@ import {
     X,
     ConciergeBell,
     Phone,
+    StickyNote,
 } from 'lucide-react';
-import { useForm, router } from '@inertiajs/react';
-import { ReservationStatusBadge, PaymentStatusBadge } from '@/components/reservation-badges';
+import { useEffect } from 'react';
+import {
+    ReservationStatusBadge,
+    PaymentStatusBadge,
+} from '@/components/reservation-badges';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import {
     Sheet,
     SheetContent,
@@ -27,11 +40,15 @@ import {
     SheetHeader,
     SheetTitle,
 } from '@/components/ui/sheet';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { store as storeService, destroy as destroyService } from '@/routes/staff/reservations/services';
 import { Spinner } from '@/components/ui/spinner';
+import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from '@/hooks/use-translation';
+import { getInitials } from '@/lib/utils';
+import { update as updateNotes } from '@/routes/staff/reservations/notes';
+import {
+    store as storeService,
+    destroy as destroyService,
+} from '@/routes/staff/reservations/services';
 import type { StaffReservation } from '@/types/reservation';
 
 type Props = {
@@ -66,14 +83,18 @@ export default function ReservationDetailsDrawer({
         quantity: 1,
     });
 
-    if (!reservation) return null;
+    const notesForm = useForm({
+        notes: reservation?.notes ?? '',
+    });
 
-    const getInitials = (name: string) => {
-        if (!name) return 'G';
-        const parts = name.trim().split(' ');
-        if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    };
+    useEffect(() => {
+        notesForm.setData('notes', reservation?.notes ?? '');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [reservation?.id]);
+
+    if (!reservation) {
+        return null;
+    }
 
     const dateRange =
         reservation.reservation_type === 'short_stay'
@@ -91,8 +112,12 @@ export default function ReservationDetailsDrawer({
                             #{reservation.id.substring(0, 8)}
                         </span>
                         <div className="flex items-center gap-2">
-                            <ReservationStatusBadge status={reservation.status} />
-                            <PaymentStatusBadge status={reservation.latest_invoice?.status} />
+                            <ReservationStatusBadge
+                                status={reservation.status}
+                            />
+                            <PaymentStatusBadge
+                                status={reservation.latest_invoice?.status}
+                            />
                         </div>
                     </div>
                     <SheetTitle className="font-sans text-xl font-bold text-foreground">
@@ -214,6 +239,51 @@ export default function ReservationDetailsDrawer({
                         </div>
                     </div>
 
+                    {/* Staff Notes */}
+                    <div className="space-y-3 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
+                        <h4 className="flex items-center gap-1.5 text-xs font-bold tracking-wider text-muted-foreground uppercase">
+                            <StickyNote className="size-3.5" />
+                            {t('staff.reservations.details.notes.title')}
+                        </h4>
+
+                        <form
+                            className="space-y-2"
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                notesForm.patch(
+                                    updateNotes(reservation.id).url,
+                                    {
+                                        preserveScroll: true,
+                                    },
+                                );
+                            }}
+                        >
+                            <Textarea
+                                value={notesForm.data.notes}
+                                onChange={(e) =>
+                                    notesForm.setData('notes', e.target.value)
+                                }
+                                placeholder={t(
+                                    'staff.reservations.details.notes.placeholder',
+                                )}
+                                className="min-h-20 text-xs"
+                            />
+                            <Button
+                                type="submit"
+                                size="sm"
+                                disabled={
+                                    !notesForm.isDirty || notesForm.processing
+                                }
+                                className="h-8 gap-1.5 rounded-lg bg-primary/10 font-sans text-xs font-semibold text-primary hover:bg-primary/20"
+                            >
+                                {notesForm.processing ? (
+                                    <Spinner className="size-3" />
+                                ) : null}
+                                {t('staff.reservations.details.notes.save')}
+                            </Button>
+                        </form>
+                    </div>
+
                     {/* 3. Financial & Billing Summary */}
                     <div className="space-y-3 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
                         <h4 className="flex items-center gap-1.5 text-xs font-bold tracking-wider text-muted-foreground uppercase">
@@ -228,7 +298,9 @@ export default function ReservationDetailsDrawer({
                                         'staff.reservations.details.paymentStatus',
                                     )}
                                 </span>
-                                <PaymentStatusBadge status={reservation.latest_invoice?.status} />
+                                <PaymentStatusBadge
+                                    status={reservation.latest_invoice?.status}
+                                />
                             </div>
 
                             {reservation.deposit_amount && (
@@ -250,33 +322,53 @@ export default function ReservationDetailsDrawer({
                             {reservation.latest_invoice ? (
                                 <>
                                     <div className="flex items-center justify-between border-t border-border/60 pt-2">
-                                        <span className="text-muted-foreground flex items-center gap-1">
+                                        <span className="flex items-center gap-1 text-muted-foreground">
                                             <DollarSign className="size-3" />
-                                            {t('staff.reservations.details.roomCharge')}
+                                            {t(
+                                                'staff.reservations.details.roomCharge',
+                                            )}
                                         </span>
                                         <span className="font-semibold text-foreground">
-                                            ${Number(reservation.latest_invoice.room_charge ?? 0).toFixed(2)}
+                                            $
+                                            {Number(
+                                                reservation.latest_invoice
+                                                    .room_charge ?? 0,
+                                            ).toFixed(2)}
                                         </span>
                                     </div>
 
-                                    {(reservation.latest_invoice.service_charge ?? 0) > 0 && (
+                                    {(reservation.latest_invoice
+                                        .service_charge ?? 0) > 0 && (
                                         <div className="flex items-center justify-between">
                                             <span className="text-muted-foreground">
-                                                {t('staff.reservations.details.serviceCharge')}
+                                                {t(
+                                                    'staff.reservations.details.serviceCharge',
+                                                )}
                                             </span>
                                             <span className="font-semibold text-foreground">
-                                                ${Number(reservation.latest_invoice.service_charge).toFixed(2)}
+                                                $
+                                                {Number(
+                                                    reservation.latest_invoice
+                                                        .service_charge,
+                                                ).toFixed(2)}
                                             </span>
                                         </div>
                                     )}
 
-                                    {(reservation.latest_invoice.tax_amount ?? 0) > 0 && (
+                                    {(reservation.latest_invoice.tax_amount ??
+                                        0) > 0 && (
                                         <div className="flex items-center justify-between">
                                             <span className="text-muted-foreground">
-                                                {t('staff.reservations.details.taxAmount')}
+                                                {t(
+                                                    'staff.reservations.details.taxAmount',
+                                                )}
                                             </span>
                                             <span className="font-semibold text-foreground">
-                                                ${Number(reservation.latest_invoice.tax_amount).toFixed(2)}
+                                                $
+                                                {Number(
+                                                    reservation.latest_invoice
+                                                        .tax_amount,
+                                                ).toFixed(2)}
                                             </span>
                                         </div>
                                     )}
@@ -288,14 +380,27 @@ export default function ReservationDetailsDrawer({
                                             )}
                                         </span>
                                         <span className="text-base font-bold text-emerald-600 dark:text-emerald-400">
-                                            ${Number(reservation.latest_invoice.total_amount).toFixed(2)}
+                                            $
+                                            {Number(
+                                                reservation.latest_invoice
+                                                    .total_amount,
+                                            ).toFixed(2)}
                                         </span>
                                     </div>
 
                                     {reservation.latest_invoice.due_date && (
                                         <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                            <span>{t('staff.reservations.details.dueDate')}</span>
-                                            <span>{reservation.latest_invoice.due_date}</span>
+                                            <span>
+                                                {t(
+                                                    'staff.reservations.details.dueDate',
+                                                )}
+                                            </span>
+                                            <span>
+                                                {
+                                                    reservation.latest_invoice
+                                                        .due_date
+                                                }
+                                            </span>
                                         </div>
                                     )}
                                 </>
@@ -315,97 +420,174 @@ export default function ReservationDetailsDrawer({
                     </div>
 
                     {/* Extra Services Section */}
-                    {reservation.status !== 'pending' && reservation.status !== 'cancelled' && (
-                        <div className="space-y-3 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
-                            <h4 className="flex items-center gap-1.5 text-xs font-bold tracking-wider text-muted-foreground uppercase">
-                                <ConciergeBell className="size-3.5" />
-                                {t('staff.reservations.details.extraServices') || 'Extra Services'}
-                            </h4>
+                    {reservation.status !== 'pending' &&
+                        reservation.status !== 'cancelled' && (
+                            <div className="space-y-3 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
+                                <h4 className="flex items-center gap-1.5 text-xs font-bold tracking-wider text-muted-foreground uppercase">
+                                    <ConciergeBell className="size-3.5" />
+                                    {t(
+                                        'staff.reservations.details.extraServices',
+                                    ) || 'Extra Services'}
+                                </h4>
 
-                            {reservation.services && reservation.services.length > 0 && (
-                                <div className="space-y-2">
-                                    {reservation.services.map((service, index) => (
-                                        <div key={service.pivot_id || index} className="flex items-center justify-between text-xs">
-                                            <div>
-                                                <span className="font-semibold text-foreground">{service.name}</span>
-                                                <span className="ml-1 text-muted-foreground">x{service.quantity}</span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                                                    ${(service.unit_price * service.quantity).toFixed(2)}
-                                                </span>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="size-6 bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive"
-                                                    onClick={() => {
-                                                        if (confirm('Are you sure you want to remove this service?')) {
-                                                            router.delete(destroyService({ reservation: reservation.id, service: service.id }).url, {
-                                                                preserveScroll: true
-                                                            });
+                                {reservation.services &&
+                                    reservation.services.length > 0 && (
+                                        <div className="space-y-2">
+                                            {reservation.services.map(
+                                                (service, index) => (
+                                                    <div
+                                                        key={
+                                                            service.pivot_id ||
+                                                            index
                                                         }
-                                                    }}
-                                                >
-                                                    <Trash2 className="size-3" />
-                                                </Button>
-                                            </div>
+                                                        className="flex items-center justify-between text-xs"
+                                                    >
+                                                        <div>
+                                                            <span className="font-semibold text-foreground">
+                                                                {service.name}
+                                                            </span>
+                                                            <span className="ml-1 text-muted-foreground">
+                                                                x
+                                                                {
+                                                                    service.quantity
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                                                                $
+                                                                {(
+                                                                    service.unit_price *
+                                                                    service.quantity
+                                                                ).toFixed(2)}
+                                                            </span>
+                                                            <Button
+                                                                type="button"
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="size-6 bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive"
+                                                                onClick={() => {
+                                                                    if (
+                                                                        confirm(
+                                                                            'Are you sure you want to remove this service?',
+                                                                        )
+                                                                    ) {
+                                                                        router.delete(
+                                                                            destroyService(
+                                                                                {
+                                                                                    reservation:
+                                                                                        reservation.id,
+                                                                                    service:
+                                                                                        service.id,
+                                                                                },
+                                                                            )
+                                                                                .url,
+                                                                            {
+                                                                                preserveScroll: true,
+                                                                            },
+                                                                        );
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <Trash2 className="size-3" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                ),
+                                            )}
                                         </div>
-                                    ))}
-                                </div>
-                            )}
+                                    )}
 
-                            {available_services.length > 0 && (
-                                <form
-                                    className="flex items-start gap-2 pt-2 border-t border-border/60"
-                                    onSubmit={(e) => {
-                                        e.preventDefault();
-                                        addServiceForm.post(storeService(reservation.id).url, {
-                                            preserveScroll: true,
-                                            onSuccess: () => {
-                                                addServiceForm.reset();
-                                            }
-                                        });
-                                    }}
-                                >
-                                    <div className="flex-1">
-                                        <Select
-                                            value={addServiceForm.data.service_id}
-                                            onValueChange={(val) => addServiceForm.setData('service_id', val)}
-                                        >
-                                            <SelectTrigger className="h-8 text-xs">
-                                                <SelectValue placeholder="Select service..." />
-                                            </SelectTrigger>
-                                            <SelectContent portaled={false}>
-                                                {available_services.map((s) => (
-                                                    <SelectItem key={s.id} value={s.id} className="text-xs">
-                                                        {s.name} (${Number(s.price).toFixed(2)})
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="w-16">
-                                        <Input
-                                            type="number"
-                                            min={1}
-                                            value={addServiceForm.data.quantity}
-                                            onChange={(e) => addServiceForm.setData('quantity', parseInt(e.target.value) || 1)}
-                                            className="h-8 text-xs"
-                                        />
-                                    </div>
-                                    <Button
-                                        type="submit"
-                                        size="sm"
-                                        disabled={!addServiceForm.data.service_id || addServiceForm.processing}
-                                        className="h-8 shrink-0 bg-primary/10 text-primary hover:bg-primary/20"
+                                {available_services.length > 0 && (
+                                    <form
+                                        className="flex items-start gap-2 border-t border-border/60 pt-2"
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            addServiceForm.post(
+                                                storeService(reservation.id)
+                                                    .url,
+                                                {
+                                                    preserveScroll: true,
+                                                    onSuccess: () => {
+                                                        addServiceForm.reset();
+                                                    },
+                                                },
+                                            );
+                                        }}
                                     >
-                                        {addServiceForm.processing ? <Spinner className="size-3" /> : <Plus className="size-3" />}
-                                    </Button>
-                                </form>
-                            )}
-                        </div>
-                    )}
+                                        <div className="flex-1">
+                                            <Select
+                                                value={
+                                                    addServiceForm.data
+                                                        .service_id
+                                                }
+                                                onValueChange={(val) =>
+                                                    addServiceForm.setData(
+                                                        'service_id',
+                                                        val,
+                                                    )
+                                                }
+                                            >
+                                                <SelectTrigger className="h-8 text-xs">
+                                                    <SelectValue placeholder="Select service..." />
+                                                </SelectTrigger>
+                                                <SelectContent portaled={false}>
+                                                    {available_services.map(
+                                                        (s) => (
+                                                            <SelectItem
+                                                                key={s.id}
+                                                                value={s.id}
+                                                                className="text-xs"
+                                                            >
+                                                                {s.name} ($
+                                                                {Number(
+                                                                    s.price,
+                                                                ).toFixed(2)}
+                                                                )
+                                                            </SelectItem>
+                                                        ),
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="w-16">
+                                            <Input
+                                                type="number"
+                                                min={1}
+                                                value={
+                                                    addServiceForm.data.quantity
+                                                }
+                                                onChange={(e) =>
+                                                    addServiceForm.setData(
+                                                        'quantity',
+                                                        parseInt(
+                                                            e.target.value,
+                                                        ) || 1,
+                                                    )
+                                                }
+                                                className="h-8 text-xs"
+                                            />
+                                        </div>
+                                        <Button
+                                            type="submit"
+                                            size="sm"
+                                            disabled={
+                                                !addServiceForm.data
+                                                    .service_id ||
+                                                addServiceForm.processing
+                                            }
+                                            className="h-8 shrink-0 bg-primary/10 text-primary hover:bg-primary/20"
+                                        >
+                                            {addServiceForm.processing ? (
+                                                <Spinner className="size-3" />
+                                            ) : (
+                                                <Plus className="size-3" />
+                                            )}
+                                        </Button>
+                                    </form>
+                                )}
+                            </div>
+                        )}
 
                     {/* 4. Action Buttons */}
                     <div className="flex flex-col gap-2 pt-2">

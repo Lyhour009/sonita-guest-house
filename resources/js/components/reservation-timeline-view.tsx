@@ -54,18 +54,18 @@ export default function ReservationTimelineView({
         switch (status) {
             case 'checked_in':
             case 'active':
-                return 'bg-emerald-500/90 text-white border-emerald-600';
+                return 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-emerald-600/50 shadow-md';
             case 'confirmed':
-                return 'bg-primary text-primary-foreground border-primary/80';
+                return 'bg-gradient-to-r from-primary to-blue-600 text-primary-foreground border-primary/50 shadow-md';
             default:
-                return 'bg-amber-500/90 text-white border-amber-600';
+                return 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-amber-600/50 shadow-md';
         }
     };
 
     return (
-        <div className="rounded-2xl border border-border/80 bg-card shadow-2xs overflow-hidden font-sans">
+        <div className="rounded-3xl border border-border/60 bg-card shadow-md overflow-hidden font-sans">
             {/* Timeline Header & Controls */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border-b border-border/70 gap-3 bg-muted/20">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border-b border-border/50 gap-3 bg-muted/30">
                 <div className="space-y-0.5">
                     <h3 className="text-base font-bold text-foreground">
                         {t('staff.reservations.timeline.title')}
@@ -174,10 +174,10 @@ export default function ReservationTimelineView({
                                                         if (fullRes) onSelectReservation(fullRes);
                                                     }}
                                                     title={`${booking.guest_name} (${booking.status})`}
-                                                    className={`w-full h-8 px-1.5 flex items-center gap-1 text-[11px] font-semibold truncate transition-transform hover:scale-[1.03] cursor-pointer shadow-2xs border ${
+                                                    className={`w-full h-8 px-1.5 flex items-center gap-1 text-[11px] font-semibold truncate transition-all duration-300 hover:scale-[1.03] hover:shadow-lg hover:-translate-y-0.5 cursor-pointer border ${
                                                         getBookingColor(booking.status)
-                                                    } ${isStartDay ? 'rounded-l-lg' : ''} ${
-                                                        isEndDay ? 'rounded-r-lg' : ''
+                                                    } ${isStartDay ? 'rounded-l-xl' : ''} ${
+                                                        isEndDay ? 'rounded-r-xl' : ''
                                                     } ${!isStartDay && !isEndDay ? 'rounded-none' : ''}`}
                                                 >
                                                     {isStartDay && (

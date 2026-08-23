@@ -4,6 +4,7 @@ use App\Http\Controllers\Staff\HousekeepingController;
 use App\Http\Controllers\Staff\MaintenanceRequestController;
 use App\Http\Controllers\Staff\PaymentController;
 use App\Http\Controllers\Staff\ReservationController;
+use App\Http\Controllers\Staff\ReservationServiceController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'role:receptionist,admin'])->prefix('staff')->name('staff.')->group(function () {
@@ -13,8 +14,9 @@ Route::middleware(['auth', 'role:receptionist,admin'])->prefix('staff')->name('s
     Route::patch('reservations/{reservation}/check-in', [ReservationController::class, 'checkIn'])->name('reservations.check-in');
     Route::patch('reservations/{reservation}/check-out', [ReservationController::class, 'checkOut'])->name('reservations.check-out');
     Route::patch('reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
-    Route::post('reservations/{reservation}/services', [\App\Http\Controllers\Staff\ReservationServiceController::class, 'store'])->name('reservations.services.store');
-    Route::delete('reservations/{reservation}/services/{service}', [\App\Http\Controllers\Staff\ReservationServiceController::class, 'destroy'])->name('reservations.services.destroy');
+    Route::patch('reservations/{reservation}/notes', [ReservationController::class, 'updateNotes'])->name('reservations.notes.update');
+    Route::post('reservations/{reservation}/services', [ReservationServiceController::class, 'store'])->name('reservations.services.store');
+    Route::delete('reservations/{reservation}/services/{service}', [ReservationServiceController::class, 'destroy'])->name('reservations.services.destroy');
 
     Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
     Route::patch('payments/{payment}/confirm', [PaymentController::class, 'confirm'])->name('payments.confirm');

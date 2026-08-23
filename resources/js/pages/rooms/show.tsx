@@ -59,7 +59,7 @@ export default function RoomShow({ room, bookedRanges }: Props) {
                     </div>
 
                     {/* Airbnb Style Photo Gallery */}
-                    <div className="grid h-[50vh] min-h-[400px] max-h-[600px] gap-2 grid-cols-4 grid-rows-2 rounded-3xl overflow-hidden shadow-sm">
+                    <div className="grid h-[55vh] min-h-[450px] max-h-[650px] gap-2 grid-cols-4 grid-rows-2 rounded-[2.5rem] overflow-hidden shadow-xl border border-border/10">
                         {room.images && room.images.length > 0 ? (
                             <>
                                 <div className="col-span-4 sm:col-span-2 row-span-2 relative group overflow-hidden bg-muted">
@@ -152,7 +152,7 @@ export default function RoomShow({ room, bookedRanges }: Props) {
 
                         {/* Right Sticky Sidebar (Booking Widget) */}
                         <div className="relative">
-                            <div className="sticky top-24 rounded-3xl border border-border/50 bg-card p-6 shadow-2xl shadow-primary/5">
+                            <div className="sticky top-28 rounded-[2rem] border border-border/40 bg-card/95 backdrop-blur-xl p-8 shadow-2xl shadow-black/10 transition-all">
                                 <div className="mb-6 flex items-end gap-1">
                                     <span className="text-3xl font-bold tracking-tight">${room.price_per_night}</span>
                                     <span className="text-sm text-muted-foreground mb-1">{t('rooms.detail.perNight')}</span>
@@ -173,13 +173,13 @@ export default function RoomShow({ room, bookedRanges }: Props) {
                                     {auth.user?.role === 'guest' ? (
                                         <ReservationBookDialog room={room} />
                                     ) : !auth.user ? (
-                                        <Button asChild className="w-full h-12 text-base rounded-xl font-bold bg-primary hover:bg-primary/90 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                                        <Button asChild className="w-full h-14 text-base rounded-2xl font-bold bg-primary hover:bg-primary/90 transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98]">
                                             <Link href={login()}>
                                                 {t('nav.logInToBook')}
                                             </Link>
                                         </Button>
                                     ) : (
-                                        <Button disabled className="w-full h-12 rounded-xl">
+                                        <Button disabled className="w-full h-14 rounded-2xl">
                                             Staff cannot book
                                         </Button>
                                     )}

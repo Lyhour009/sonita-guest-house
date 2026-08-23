@@ -38,6 +38,7 @@ export const toasts = {
         confirmed: 'Reservation confirmed.',
         checkedIn: 'Check-in completed successfully.',
         checkedOut: 'Check-out completed successfully.',
+        notesUpdated: 'Reservation notes updated.',
     },
     profile: {
         updated: 'Profile updated.',
