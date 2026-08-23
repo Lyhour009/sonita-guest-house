@@ -9,4 +9,22 @@ export const notifications = {
     bell: {
         srLabel: 'Notifications',
     },
+    types: {
+        maintenance_assigned: 'Maintenance assigned',
+        reservation_confirmed: 'Reservation confirmed',
+        payment_confirmed: 'Payment confirmed',
+        maintenance_status_changed: 'Maintenance update',
+        invoice_issued: 'Invoice issued',
+    },
+    messages: {
+        maintenance_assigned:
+            'You’ve been assigned to the maintenance request "{{title}}" (Room {{room}}).',
+        reservation_confirmed:
+            'Your reservation for Room {{room}} has been confirmed.',
+        payment_confirmed: 'Your payment of ${{amount}} has been confirmed.',
+        maintenance_status_changed:
+            'Your maintenance request "{{title}}" is now {{status}}.',
+        invoice_issued:
+            'A new invoice of ${{amount}} has been issued for Room {{room}}.',
+    },
 };

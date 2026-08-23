@@ -69,6 +69,7 @@ class DashboardController extends Controller
                 'id' => $notification->id,
                 'type' => $notification->type,
                 'message' => $notification->message,
+                'data' => $notification->data ?? [],
                 'link' => $notification->link,
                 'is_read' => $notification->is_read,
                 'created_at' => $notification->created_at?->toDateTimeString(),

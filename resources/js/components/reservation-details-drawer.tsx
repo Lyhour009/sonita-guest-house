@@ -11,6 +11,7 @@ import {
     Mail,
     Plus,
     Printer,
+    Save,
     Trash2,
     User,
     Users,
@@ -278,7 +279,9 @@ export default function ReservationDetailsDrawer({
                             >
                                 {notesForm.processing ? (
                                     <Spinner className="size-3" />
-                                ) : null}
+                                ) : (
+                                    <Save className="size-3" />
+                                )}
                                 {t('staff.reservations.details.notes.save')}
                             </Button>
                         </form>

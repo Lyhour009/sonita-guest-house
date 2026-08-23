@@ -104,6 +104,9 @@ test('confirming a payment notifies the guest', function () {
 
     Mail::assertQueued(UserNotificationMail::class, fn (UserNotificationMail $mail) => $mail->hasTo($guest->email)
         && $mail->type === 'payment_confirmed');
+
+    $notification = $guest->notifications()->where('type', 'payment_confirmed')->firstOrFail();
+    expect($notification->data)->toBe(['amount' => (string) $payment->amount]);
 });
 
 test('updating a maintenance request status notifies the reporter', function () {
@@ -113,6 +116,7 @@ test('updating a maintenance request status notifies the reporter', function () 
         'reporter_id' => $reporter->id,
         'assigned_to' => $housekeeper->id,
         'status' => 'in_progress',
+        'title' => 'Leaky faucet',
     ]);
 
     $this->actingAs($housekeeper)->patch(route('staff.maintenance.status', $request), [
@@ -123,6 +127,9 @@ test('updating a maintenance request status notifies the reporter', function () 
         'user_id' => $reporter->id,
         'type' => 'maintenance_status_changed',
     ]);
+
+    $notification = $reporter->notifications()->where('type', 'maintenance_status_changed')->firstOrFail();
+    expect($notification->data)->toBe(['title' => 'Leaky faucet', 'status' => 'resolved']);
 });
 
 test('a user only sees their own notifications', function () {

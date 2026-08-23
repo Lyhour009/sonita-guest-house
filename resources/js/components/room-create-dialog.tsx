@@ -37,13 +37,20 @@ export default function RoomCreateDialog() {
                     onSuccess={() => setOpen(false)}
                     className="space-y-6"
                 >
-                    {({ processing, errors }) => (
+                    {({ processing, errors, isDirty }) => (
                         <>
                             <RoomForm errors={errors} />
 
                             <DialogFooter>
-                                <Button type="submit" disabled={processing}>
-                                    {processing && <Spinner className="mr-2" />}
+                                <Button
+                                    type="submit"
+                                    disabled={processing || !isDirty}
+                                >
+                                    {processing ? (
+                                        <Spinner className="mr-2" />
+                                    ) : (
+                                        <Plus className="mr-2 size-4" />
+                                    )}
                                     {t('adminRooms.createRoom')}
                                 </Button>
                             </DialogFooter>

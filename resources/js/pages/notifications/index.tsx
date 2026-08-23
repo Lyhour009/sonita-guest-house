@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { usePendingAction } from '@/hooks/use-pending-action';
 import { useTranslation } from '@/hooks/use-translation';
+import { resolveNotificationMessage } from '@/lib/notification-message';
 import { cn } from '@/lib/utils';
 import { index as notificationsIndex } from '@/routes/notifications';
 import type { AppNotification, Paginated } from '@/types';
@@ -85,7 +86,9 @@ export default function NotificationsIndex({ notifications }: Props) {
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2">
                                     <Badge variant="secondary">
-                                        {notification.type.replaceAll('_', ' ')}
+                                        {t(
+                                            `notifications.types.${notification.type}`,
+                                        )}
                                     </Badge>
                                     {!notification.is_read && (
                                         <Badge variant="default">
@@ -98,11 +101,17 @@ export default function NotificationsIndex({ notifications }: Props) {
                                         href={notification.link}
                                         className="block text-sm underline"
                                     >
-                                        {notification.message}
+                                        {resolveNotificationMessage(
+                                            t,
+                                            notification,
+                                        )}
                                     </Link>
                                 ) : (
                                     <p className="text-sm">
-                                        {notification.message}
+                                        {resolveNotificationMessage(
+                                            t,
+                                            notification,
+                                        )}
                                     </p>
                                 )}
                                 <p className="text-xs text-muted-foreground">

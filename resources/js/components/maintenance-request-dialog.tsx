@@ -1,4 +1,5 @@
 import { Form } from '@inertiajs/react';
+import { Wrench } from 'lucide-react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import MaintenanceRequestController from '@/actions/App/Http/Controllers/MaintenanceRequestController';
@@ -42,6 +43,7 @@ export default function MaintenanceRequestDialog({ rooms, trigger }: Props) {
             <DialogTrigger asChild>
                 {trigger ?? (
                     <Button disabled={rooms.length === 0}>
+                        <Wrench className="mr-2 size-4" />
                         {t('maintenance.requestDialog.trigger')}
                     </Button>
                 )}
@@ -58,7 +60,7 @@ export default function MaintenanceRequestDialog({ rooms, trigger }: Props) {
                     onSuccess={() => setOpen(false)}
                     className="space-y-4"
                 >
-                    {({ processing, errors }) => (
+                    {({ processing, errors, isDirty }) => (
                         <>
                             <div className="grid gap-1.5">
                                 <Label htmlFor="room_id">
@@ -151,8 +153,15 @@ export default function MaintenanceRequestDialog({ rooms, trigger }: Props) {
                             </div>
 
                             <DialogFooter>
-                                <Button type="submit" disabled={processing}>
-                                    {processing && <Spinner className="mr-2" />}
+                                <Button
+                                    type="submit"
+                                    disabled={processing || !isDirty}
+                                >
+                                    {processing ? (
+                                        <Spinner className="mr-2" />
+                                    ) : (
+                                        <Wrench className="mr-2 size-4" />
+                                    )}
                                     {t('common.actions.submit')}
                                 </Button>
                             </DialogFooter>

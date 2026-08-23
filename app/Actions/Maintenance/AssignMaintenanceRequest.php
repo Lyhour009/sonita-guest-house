@@ -35,6 +35,7 @@ class AssignMaintenanceRequest
                 $assignee,
                 'maintenance_assigned',
                 "You've been assigned to the maintenance request \"{$maintenanceRequest->title}\" (Room {$maintenanceRequest->room->room_number}).",
+                ['title' => $maintenanceRequest->title, 'room' => $maintenanceRequest->room->room_number],
                 route('staff.maintenance.index'),
             );
 

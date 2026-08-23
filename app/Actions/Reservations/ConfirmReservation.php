@@ -36,6 +36,7 @@ class ConfirmReservation
                 $reservation->guest,
                 'reservation_confirmed',
                 "Your reservation for Room {$reservation->room->room_number} has been confirmed.",
+                ['room' => $reservation->room->room_number],
                 route('reservations.index'),
             );
 

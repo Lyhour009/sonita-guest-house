@@ -1,4 +1,5 @@
 import { Form } from '@inertiajs/react';
+import { Save } from 'lucide-react';
 import ServiceController from '@/actions/App/Http/Controllers/Admin/ServiceController';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -42,15 +43,20 @@ export default function ServiceEditDialog({ service, onOpenChange }: Props) {
                     >
                         {({ processing, errors, isDirty }) => (
                             <>
-                                <ServiceForm service={service} errors={errors} />
+                                <ServiceForm
+                                    service={service}
+                                    errors={errors}
+                                />
 
                                 <DialogFooter>
                                     <Button
                                         type="submit"
                                         disabled={processing || !isDirty}
                                     >
-                                        {processing && (
+                                        {processing ? (
                                             <Spinner className="mr-2" />
+                                        ) : (
+                                            <Save className="mr-2 size-4" />
                                         )}
                                         {t('common.actions.saveChanges')}
                                     </Button>

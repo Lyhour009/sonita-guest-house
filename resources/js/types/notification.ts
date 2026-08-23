@@ -2,6 +2,7 @@ export type AppNotification = {
     id: string;
     type: string;
     message: string;
+    data: Record<string, string | number> | null;
     link: string | null;
     is_read: boolean;
     created_at: string | null;

@@ -28,6 +28,7 @@ class ConfirmPayment
                 $payment->guest,
                 'payment_confirmed',
                 "Your payment of \${$payment->amount} has been confirmed.",
+                ['amount' => $payment->amount],
                 route('invoices.index'),
             );
 

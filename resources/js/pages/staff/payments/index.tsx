@@ -1,6 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import {
     AlertTriangle,
+    Check,
     CheckCircle2,
     Clock,
     Eye,
@@ -472,8 +473,10 @@ export default function StaffPaymentsIndex({
                                                         >
                                                             {isPending(
                                                                 payment.id,
-                                                            ) && (
+                                                            ) ? (
                                                                 <Spinner className="size-3.5" />
+                                                            ) : (
+                                                                <Check className="size-3.5" />
                                                             )}
                                                             {t(
                                                                 'common.actions.confirm',
@@ -497,8 +500,10 @@ export default function StaffPaymentsIndex({
                                                         >
                                                             {isPending(
                                                                 payment.id,
-                                                            ) && (
+                                                            ) ? (
                                                                 <Spinner className="size-3.5" />
+                                                            ) : (
+                                                                <X className="size-3.5" />
                                                             )}
                                                             {t(
                                                                 'staff.payments.reject',

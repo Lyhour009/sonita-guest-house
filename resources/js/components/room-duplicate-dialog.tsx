@@ -1,4 +1,5 @@
 import { Form } from '@inertiajs/react';
+import { Copy } from 'lucide-react';
 import RoomController from '@/actions/App/Http/Controllers/Admin/RoomController';
 import RoomForm from '@/components/room-form';
 import { Button } from '@/components/ui/button';
@@ -39,14 +40,19 @@ export default function RoomDuplicateDialog({ room, onOpenChange }: Props) {
                         onSuccess={() => onOpenChange(false)}
                         className="space-y-6"
                     >
-                        {({ processing, errors }) => (
+                        {({ processing, errors, isDirty }) => (
                             <>
                                 <RoomForm initialData={room} errors={errors} />
 
                                 <DialogFooter>
-                                    <Button type="submit" disabled={processing}>
-                                        {processing && (
+                                    <Button
+                                        type="submit"
+                                        disabled={processing || !isDirty}
+                                    >
+                                        {processing ? (
                                             <Spinner className="mr-2" />
+                                        ) : (
+                                            <Copy className="mr-2 size-4" />
                                         )}
                                         {t('adminRooms.createRoom')}
                                     </Button>

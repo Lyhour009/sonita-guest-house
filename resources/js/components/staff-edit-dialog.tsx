@@ -1,4 +1,5 @@
 import { Form } from '@inertiajs/react';
+import { Save } from 'lucide-react';
 import StaffAccountController from '@/actions/App/Http/Controllers/Admin/StaffAccountController';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -41,15 +42,21 @@ export default function StaffEditDialog({ staff, onOpenChange }: Props) {
                     >
                         {({ processing, errors, isDirty }) => (
                             <>
-                                <StaffForm staff={staff} errors={errors} isEdit />
+                                <StaffForm
+                                    staff={staff}
+                                    errors={errors}
+                                    isEdit
+                                />
 
                                 <DialogFooter>
                                     <Button
                                         type="submit"
                                         disabled={processing || !isDirty}
                                     >
-                                        {processing && (
+                                        {processing ? (
                                             <Spinner className="mr-2" />
+                                        ) : (
+                                            <Save className="mr-2 size-4" />
                                         )}
                                         {t('common.actions.saveChanges')}
                                     </Button>

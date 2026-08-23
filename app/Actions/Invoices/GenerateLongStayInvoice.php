@@ -60,6 +60,7 @@ class GenerateLongStayInvoice
                 $reservation->guest,
                 'invoice_issued',
                 "A new invoice of \${$invoice->total_amount} has been issued for Room {$reservation->room->room_number}.",
+                ['amount' => $invoice->total_amount, 'room' => $reservation->room->room_number],
                 route('invoices.index'),
             );
 

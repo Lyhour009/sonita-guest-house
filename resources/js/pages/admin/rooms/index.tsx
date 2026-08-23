@@ -10,6 +10,7 @@ import {
     Trash,
     Users,
     Wrench,
+    X,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import Pagination from '@/components/pagination';
@@ -450,6 +451,7 @@ export default function AdminRoomsIndex({
                                                         </AlertDialogHeader>
                                                         <AlertDialogFooter>
                                                             <AlertDialogCancel className="rounded-xl">
+                                                                <X className="mr-2 size-4" />
                                                                 {t(
                                                                     'common.actions.cancel',
                                                                 )}
@@ -468,8 +470,10 @@ export default function AdminRoomsIndex({
                                                             >
                                                                 {isPending(
                                                                     `delete-${room.id}`,
-                                                                ) && (
+                                                                ) ? (
                                                                     <Spinner className="mr-2" />
+                                                                ) : (
+                                                                    <Trash className="mr-2 size-4" />
                                                                 )}
                                                                 {t(
                                                                     'common.actions.delete',

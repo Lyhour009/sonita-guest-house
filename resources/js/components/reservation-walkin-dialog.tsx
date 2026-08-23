@@ -1,5 +1,5 @@
 import { Form } from '@inertiajs/react';
-import { BedDouble, CheckCircle2, Plus, User, UserPlus } from 'lucide-react';
+import { BedDouble, CheckCircle2, Plus, User, UserPlus, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import ReservationController from '@/actions/App/Http/Controllers/Staff/ReservationController';
 import InputError from '@/components/input-error';
@@ -187,7 +187,10 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                             >
                                                 <SelectValue placeholder="Select available room" />
                                             </SelectTrigger>
-                                            <SelectContent portaled={false} className="z-[100] rounded-xl border-border">
+                                            <SelectContent
+                                                portaled={false}
+                                                className="z-[100] rounded-xl border-border"
+                                            >
                                                 {rooms.map((room) => (
                                                     <SelectItem
                                                         key={room.id}
@@ -229,7 +232,10 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                             >
                                                 <SelectValue />
                                             </SelectTrigger>
-                                            <SelectContent portaled={false} className="z-[100] rounded-xl border-border">
+                                            <SelectContent
+                                                portaled={false}
+                                                className="z-[100] rounded-xl border-border"
+                                            >
                                                 {availableTypes.includes(
                                                     'short_stay',
                                                 ) && (
@@ -319,7 +325,11 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                 id="new_guest_full_name"
                                                 name="new_guest[full_name]"
                                                 value={newGuestName}
-                                                onChange={(e) => setNewGuestName(e.target.value)}
+                                                onChange={(e) =>
+                                                    setNewGuestName(
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 placeholder="e.g. John Smith"
                                                 className="h-10 rounded-xl border-border bg-background"
                                                 required
@@ -348,7 +358,11 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                 name="new_guest[email]"
                                                 type="email"
                                                 value={newGuestEmail}
-                                                onChange={(e) => setNewGuestEmail(e.target.value)}
+                                                onChange={(e) =>
+                                                    setNewGuestEmail(
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 placeholder="e.g. john@example.com"
                                                 className="h-10 rounded-xl border-border bg-background"
                                                 required
@@ -371,7 +385,11 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                             )}{' '}
                                             *
                                         </Label>
-                                        <Select name="guest_id" value={guestId} onValueChange={setGuestId}>
+                                        <Select
+                                            name="guest_id"
+                                            value={guestId}
+                                            onValueChange={setGuestId}
+                                        >
                                             <SelectTrigger
                                                 id="guest_id"
                                                 className="h-10 w-full rounded-xl border-border bg-background"
@@ -412,6 +430,7 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                     onClick={() => setOpen(false)}
                                     className="h-11 cursor-pointer rounded-xl border-border px-5 font-sans text-sm hover:bg-muted"
                                 >
+                                    <X className="mr-2 size-4" />
                                     {t('staff.walkinDialog.cancel')}
                                 </Button>
                                 <Button

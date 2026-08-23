@@ -1,4 +1,5 @@
 import { Form } from '@inertiajs/react';
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import ServiceController from '@/actions/App/Http/Controllers/Admin/ServiceController';
 import InputError from '@/components/input-error';
@@ -23,7 +24,10 @@ export default function ServiceCreateDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>{t('services.addService')}</Button>
+                <Button>
+                    <Plus className="mr-2 size-4" />
+                    {t('services.addService')}
+                </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -35,13 +39,20 @@ export default function ServiceCreateDialog() {
                     onSuccess={() => setOpen(false)}
                     className="space-y-4"
                 >
-                    {({ processing, errors }) => (
+                    {({ processing, errors, isDirty }) => (
                         <>
                             <ServiceForm errors={errors} />
 
                             <DialogFooter>
-                                <Button type="submit" disabled={processing}>
-                                    {processing && <Spinner className="mr-2" />}
+                                <Button
+                                    type="submit"
+                                    disabled={processing || !isDirty}
+                                >
+                                    {processing ? (
+                                        <Spinner className="mr-2" />
+                                    ) : (
+                                        <Plus className="mr-2 size-4" />
+                                    )}
                                     {t('services.createService')}
                                 </Button>
                             </DialogFooter>

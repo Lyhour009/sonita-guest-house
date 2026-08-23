@@ -9,6 +9,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { useTranslation } from '@/hooks/use-translation';
+import { resolveNotificationMessage } from '@/lib/notification-message';
 import { dashboard } from '@/routes';
 import { index as invoicesIndex } from '@/routes/invoices';
 import { index as notificationsIndex } from '@/routes/notifications';
@@ -137,7 +138,7 @@ function GuestDashboard({
                 <div className="space-y-2">
                     {notifications.map((notification) => (
                         <p key={notification.id} className="text-sm">
-                            {notification.message}
+                            {resolveNotificationMessage(t, notification)}
                         </p>
                     ))}
                 </div>

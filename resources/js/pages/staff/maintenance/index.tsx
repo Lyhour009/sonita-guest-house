@@ -1,5 +1,14 @@
 import { Head, router } from '@inertiajs/react';
-import { AlertTriangle, Clock, Search, UserX, Wrench, X } from 'lucide-react';
+import {
+    AlertTriangle,
+    CheckCircle2,
+    Clock,
+    Play,
+    Search,
+    UserX,
+    Wrench,
+    X,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import MaintenanceController from '@/actions/App/Http/Controllers/Staff/MaintenanceRequestController';
 import {
@@ -502,8 +511,10 @@ export default function StaffMaintenanceIndex({
                                                             >
                                                                 {isPending(
                                                                     request.id,
-                                                                ) && (
+                                                                ) ? (
                                                                     <Spinner className="size-3.5" />
+                                                                ) : (
+                                                                    <Play className="size-3.5" />
                                                                 )}
                                                                 {t(
                                                                     'staff.maintenance.start',
@@ -525,8 +536,10 @@ export default function StaffMaintenanceIndex({
                                                         >
                                                             {isPending(
                                                                 request.id,
-                                                            ) && (
+                                                            ) ? (
                                                                 <Spinner className="size-3.5" />
+                                                            ) : (
+                                                                <CheckCircle2 className="size-3.5" />
                                                             )}
                                                             {t(
                                                                 'staff.maintenance.resolve',
@@ -548,8 +561,10 @@ export default function StaffMaintenanceIndex({
                                                         >
                                                             {isPending(
                                                                 request.id,
-                                                            ) && (
+                                                            ) ? (
                                                                 <Spinner className="size-3.5" />
+                                                            ) : (
+                                                                <X className="size-3.5" />
                                                             )}
                                                             {t(
                                                                 'common.actions.cancel',

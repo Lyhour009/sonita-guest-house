@@ -34,20 +34,26 @@ export default function ReservationPrintSlip({
             ? `${reservation.check_in_date} → ${reservation.check_out_date}`
             : `${reservation.start_date} → ${reservation.end_date ?? t('staff.reservations.openEnded')}`;
 
-    const totalAmount = reservation.latest_invoice?.total_amount ?? reservation.total_amount ?? 0;
+    const totalAmount =
+        reservation.latest_invoice?.total_amount ??
+        reservation.total_amount ??
+        0;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 print:p-0 print:border-none print:shadow-none">
+            <DialogContent className="max-h-[90vh] overflow-y-auto rounded-2xl p-6 sm:max-w-2xl print:border-none print:p-0 print:shadow-none">
                 <DialogHeader className="print:hidden">
-                    <DialogTitle className="text-lg font-bold font-sans text-foreground flex items-center gap-2">
+                    <DialogTitle className="flex items-center gap-2 font-sans text-lg font-bold text-foreground">
                         <Printer className="size-5 text-primary" />
                         {t('staff.reservations.printSlip.title')}
                     </DialogTitle>
                 </DialogHeader>
 
                 {/* Printable Slip Container */}
-                <div id="printable-guest-slip" className="border border-border/80 rounded-xl p-6 bg-card text-foreground font-sans space-y-6 print:border-none print:p-8">
+                <div
+                    id="printable-guest-slip"
+                    className="space-y-6 rounded-xl border border-border/80 bg-card p-6 font-sans text-foreground print:border-none print:p-8"
+                >
                     {/* Header */}
                     <div className="flex items-start justify-between border-b border-border/80 pb-5">
                         <div className="space-y-1">
@@ -56,20 +62,25 @@ export default function ReservationPrintSlip({
                                     <Hotel className="size-4.5" />
                                 </div>
                                 <h2 className="text-lg font-bold tracking-tight">
-                                    {t('staff.reservations.printSlip.guestHouseName')}
+                                    {t(
+                                        'staff.reservations.printSlip.guestHouseName',
+                                    )}
                                 </h2>
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                {t('staff.reservations.printSlip.guestHouseAddress')}
+                                {t(
+                                    'staff.reservations.printSlip.guestHouseAddress',
+                                )}
                             </p>
                         </div>
 
-                        <div className="text-right space-y-1">
-                            <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs font-mono font-bold">
+                        <div className="space-y-1 text-right">
+                            <span className="inline-block rounded-md bg-muted px-2 py-0.5 font-mono text-xs font-bold">
                                 #{reservation.id.substring(0, 8).toUpperCase()}
                             </span>
                             <p className="text-[11px] text-muted-foreground">
-                                {t('staff.reservations.printSlip.dateIssued')}: {new Date().toLocaleDateString()}
+                                {t('staff.reservations.printSlip.dateIssued')}:{' '}
+                                {new Date().toLocaleDateString()}
                             </p>
                         </div>
                     </div>
@@ -78,15 +89,17 @@ export default function ReservationPrintSlip({
                     <div className="grid grid-cols-2 gap-4 text-xs">
                         <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3.5">
                             <div>
-                                <span className="text-muted-foreground block text-[11px] font-medium">
-                                    {t('staff.reservations.printSlip.guestName')}
+                                <span className="block text-[11px] font-medium text-muted-foreground">
+                                    {t(
+                                        'staff.reservations.printSlip.guestName',
+                                    )}
                                 </span>
                                 <span className="text-sm font-bold text-foreground">
                                     {reservation.guest.full_name}
                                 </span>
                             </div>
                             <div>
-                                <span className="text-muted-foreground block text-[11px] font-medium">
+                                <span className="block text-[11px] font-medium text-muted-foreground">
                                     {t('staff.reservations.details.email')}
                                 </span>
                                 <span className="font-semibold text-foreground">
@@ -95,7 +108,7 @@ export default function ReservationPrintSlip({
                             </div>
                             {reservation.guest.phone_number && (
                                 <div>
-                                    <span className="text-muted-foreground block text-[11px] font-medium">
+                                    <span className="block text-[11px] font-medium text-muted-foreground">
                                         {t('staff.reservations.details.phone')}
                                     </span>
                                     <span className="font-semibold text-foreground">
@@ -108,35 +121,42 @@ export default function ReservationPrintSlip({
                         <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3.5">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <span className="text-muted-foreground block text-[11px] font-medium">
-                                        {t('staff.reservations.printSlip.roomNumber')}
+                                    <span className="block text-[11px] font-medium text-muted-foreground">
+                                        {t(
+                                            'staff.reservations.printSlip.roomNumber',
+                                        )}
                                     </span>
                                     <span className="text-sm font-bold text-foreground">
                                         #{reservation.room.room_number}
                                     </span>
                                 </div>
                                 <div className="text-right">
-                                    <span className="text-muted-foreground block text-[11px] font-medium">
-                                        {t('staff.reservations.printSlip.roomType')}
+                                    <span className="block text-[11px] font-medium text-muted-foreground">
+                                        {t(
+                                            'staff.reservations.printSlip.roomType',
+                                        )}
                                     </span>
-                                    <span className="font-semibold capitalize text-foreground">
+                                    <span className="font-semibold text-foreground capitalize">
                                         {reservation.room.room_type}
                                     </span>
                                 </div>
                             </div>
 
                             <div>
-                                <span className="text-muted-foreground block text-[11px] font-medium">
-                                    {t('staff.reservations.printSlip.stayDates')}
+                                <span className="block text-[11px] font-medium text-muted-foreground">
+                                    {t(
+                                        'staff.reservations.printSlip.stayDates',
+                                    )}
                                 </span>
                                 <span className="font-semibold text-foreground">
                                     {dateRange}
                                 </span>
                             </div>
 
-                            <div className="flex items-center justify-between pt-1 border-t border-border/40">
-                                <span className="text-muted-foreground text-[11px] font-medium">
-                                    {t('staff.reservations.printSlip.totalDue')}:
+                            <div className="flex items-center justify-between border-t border-border/40 pt-1">
+                                <span className="text-[11px] font-medium text-muted-foreground">
+                                    {t('staff.reservations.printSlip.totalDue')}
+                                    :
                                 </span>
                                 <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
                                     ${Number(totalAmount).toFixed(2)}
@@ -147,7 +167,7 @@ export default function ReservationPrintSlip({
 
                     {/* Terms & Conditions */}
                     <div className="space-y-2 rounded-lg bg-muted/30 p-3.5 text-[11px] text-muted-foreground">
-                        <h4 className="font-bold text-foreground text-xs">
+                        <h4 className="text-xs font-bold text-foreground">
                             {t('staff.reservations.printSlip.termsTitle')}
                         </h4>
                         <p>{t('staff.reservations.printSlip.terms1')}</p>
@@ -158,15 +178,19 @@ export default function ReservationPrintSlip({
                     {/* Signatures */}
                     <div className="grid grid-cols-2 gap-8 pt-8 text-center text-xs">
                         <div className="space-y-12">
-                            <div className="border-b border-border/80 w-3/4 mx-auto" />
+                            <div className="mx-auto w-3/4 border-b border-border/80" />
                             <p className="font-bold text-foreground">
-                                {t('staff.reservations.printSlip.guestSignature')}
+                                {t(
+                                    'staff.reservations.printSlip.guestSignature',
+                                )}
                             </p>
                         </div>
                         <div className="space-y-12">
-                            <div className="border-b border-border/80 w-3/4 mx-auto" />
+                            <div className="mx-auto w-3/4 border-b border-border/80" />
                             <p className="font-bold text-foreground">
-                                {t('staff.reservations.printSlip.frontDeskSignature')}
+                                {t(
+                                    'staff.reservations.printSlip.frontDeskSignature',
+                                )}
                             </p>
                         </div>
                     </div>
@@ -177,14 +201,15 @@ export default function ReservationPrintSlip({
                         type="button"
                         variant="outline"
                         onClick={() => onOpenChange(false)}
-                        className="rounded-xl font-sans text-xs h-10 px-8"
+                        className="h-10 rounded-xl px-8 font-sans text-xs"
                     >
+                        <X className="mr-2 size-4" />
                         {t('staff.reservations.printSlip.closeButton')}
                     </Button>
                     <Button
                         type="button"
                         onClick={handlePrint}
-                        className="rounded-xl font-sans text-xs font-semibold h-10 gap-2 px-8 bg-primary text-primary-foreground shadow-2xs cursor-pointer"
+                        className="h-10 cursor-pointer gap-2 rounded-xl bg-primary px-8 font-sans text-xs font-semibold text-primary-foreground shadow-2xs"
                     >
                         <Printer className="size-4" />
                         {t('staff.reservations.printSlip.printButton')}

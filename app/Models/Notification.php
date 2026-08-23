@@ -15,12 +15,13 @@ use Illuminate\Support\Carbon;
  * @property string $user_id
  * @property string $type
  * @property string $message
+ * @property array<string, mixed>|null $data
  * @property string|null $link
  * @property bool $is_read
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['user_id', 'type', 'message', 'link', 'is_read'])]
+#[Fillable(['user_id', 'type', 'message', 'data', 'link', 'is_read'])]
 class Notification extends Model
 {
     /** @use HasFactory<NotificationFactory> */
@@ -34,6 +35,7 @@ class Notification extends Model
     protected function casts(): array
     {
         return [
+            'data' => 'array',
             'is_read' => 'boolean',
         ];
     }

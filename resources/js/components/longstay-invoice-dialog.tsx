@@ -1,4 +1,5 @@
 import { Form } from '@inertiajs/react';
+import { Receipt } from 'lucide-react';
 import { useState } from 'react';
 import InvoiceController from '@/actions/App/Http/Controllers/Admin/InvoiceController';
 import InputError from '@/components/input-error';
@@ -41,6 +42,7 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button disabled={reservations.length === 0}>
+                    <Receipt className="mr-2 size-4" />
                     {t('adminInvoices.generateInvoice')}
                 </Button>
             </DialogTrigger>
@@ -54,7 +56,7 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
                     onSuccess={() => setOpen(false)}
                     className="space-y-4"
                 >
-                    {({ processing, errors }) => (
+                    {({ processing, errors, isDirty }) => (
                         <>
                             <div className="grid gap-1.5">
                                 <Label htmlFor="reservation_id">
@@ -179,8 +181,15 @@ export default function LongStayInvoiceDialog({ reservations }: Props) {
                             </div>
 
                             <DialogFooter>
-                                <Button type="submit" disabled={processing}>
-                                    {processing && <Spinner className="mr-2" />}
+                                <Button
+                                    type="submit"
+                                    disabled={processing || !isDirty}
+                                >
+                                    {processing ? (
+                                        <Spinner className="mr-2" />
+                                    ) : (
+                                        <Receipt className="mr-2 size-4" />
+                                    )}
                                     {t('adminInvoices.dialog.submit')}
                                 </Button>
                             </DialogFooter>

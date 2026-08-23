@@ -1,5 +1,14 @@
 import { Head, router } from '@inertiajs/react';
-import { Search, Sparkles, UserCog, Users, Wrench, X } from 'lucide-react';
+import {
+    Pencil,
+    Search,
+    Sparkles,
+    Trash2,
+    UserCog,
+    Users,
+    Wrench,
+    X,
+} from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Pagination from '@/components/pagination';
 import { StaffRoleBadge } from '@/components/staff-badges';
@@ -376,6 +385,7 @@ export default function AdminStaffIndex({ staff, filters, stats }: Props) {
                                                             )
                                                         }
                                                     >
+                                                        <Pencil className="size-3.5" />
                                                         {t(
                                                             'common.actions.edit',
                                                         )}
@@ -389,6 +399,7 @@ export default function AdminStaffIndex({ staff, filters, stats }: Props) {
                                                                 size="sm"
                                                                 className="h-8 rounded-full font-sans text-xs font-semibold"
                                                             >
+                                                                <Trash2 className="size-3.5" />
                                                                 {t(
                                                                     'common.actions.delete',
                                                                 )}
@@ -412,6 +423,7 @@ export default function AdminStaffIndex({ staff, filters, stats }: Props) {
                                                             </AlertDialogHeader>
                                                             <AlertDialogFooter>
                                                                 <AlertDialogCancel>
+                                                                    <X className="mr-2 size-4" />
                                                                     {t(
                                                                         'common.actions.cancel',
                                                                     )}
@@ -429,8 +441,10 @@ export default function AdminStaffIndex({ staff, filters, stats }: Props) {
                                                                 >
                                                                     {isPending(
                                                                         `delete-${member.id}`,
-                                                                    ) && (
+                                                                    ) ? (
                                                                         <Spinner className="mr-2" />
+                                                                    ) : (
+                                                                        <Trash2 className="mr-2 size-4" />
                                                                     )}
                                                                     {t(
                                                                         'common.actions.delete',

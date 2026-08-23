@@ -39,6 +39,7 @@ class UpdateMaintenanceRequestStatus
                 $maintenanceRequest->reporter,
                 'maintenance_status_changed',
                 "Your maintenance request \"{$maintenanceRequest->title}\" is now {$status}.",
+                ['title' => $maintenanceRequest->title, 'status' => $status],
                 route('maintenance.index'),
             );
 

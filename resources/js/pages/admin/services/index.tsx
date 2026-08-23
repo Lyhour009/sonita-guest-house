@@ -3,8 +3,10 @@ import {
     AlertTriangle,
     DollarSign,
     Package,
+    Pencil,
     Repeat,
     Search,
+    Trash2,
     X,
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -373,6 +375,7 @@ export default function AdminServicesIndex({
                                                             )
                                                         }
                                                     >
+                                                        <Pencil className="size-3.5" />
                                                         {t(
                                                             'common.actions.edit',
                                                         )}
@@ -398,6 +401,7 @@ export default function AdminServicesIndex({
                                                                         : undefined
                                                                 }
                                                             >
+                                                                <Trash2 className="size-3.5" />
                                                                 {t(
                                                                     'common.actions.delete',
                                                                 )}
@@ -421,6 +425,7 @@ export default function AdminServicesIndex({
                                                             </AlertDialogHeader>
                                                             <AlertDialogFooter>
                                                                 <AlertDialogCancel>
+                                                                    <X className="mr-2 size-4" />
                                                                     {t(
                                                                         'common.actions.cancel',
                                                                     )}
@@ -438,8 +443,10 @@ export default function AdminServicesIndex({
                                                                 >
                                                                     {isPending(
                                                                         `delete-${service.id}`,
-                                                                    ) && (
+                                                                    ) ? (
                                                                         <Spinner className="mr-2" />
+                                                                    ) : (
+                                                                        <Trash2 className="mr-2 size-4" />
                                                                     )}
                                                                     {t(
                                                                         'common.actions.delete',

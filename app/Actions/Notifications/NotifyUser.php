@@ -9,11 +9,15 @@ use Illuminate\Support\Facades\Mail;
 
 class NotifyUser
 {
-    public function handle(User $user, string $type, string $message, ?string $link = null): Notification
+    /**
+     * @param  array<string, mixed>  $params
+     */
+    public function handle(User $user, string $type, string $message, array $params = [], ?string $link = null): Notification
     {
         $notification = $user->notifications()->create([
             'type' => $type,
             'message' => $message,
+            'data' => $params,
             'link' => $link,
             'is_read' => false,
         ]);

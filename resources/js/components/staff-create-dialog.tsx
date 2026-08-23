@@ -1,4 +1,5 @@
 import { Form } from '@inertiajs/react';
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import StaffAccountController from '@/actions/App/Http/Controllers/Admin/StaffAccountController';
 import InputError from '@/components/input-error';
@@ -22,7 +23,10 @@ export default function StaffCreateDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>{t('staffAccounts.addAccount')}</Button>
+                <Button>
+                    <Plus className="mr-2 size-4" />
+                    {t('staffAccounts.addAccount')}
+                </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -34,13 +38,20 @@ export default function StaffCreateDialog() {
                     onSuccess={() => setOpen(false)}
                     className="space-y-4"
                 >
-                    {({ processing, errors }) => (
+                    {({ processing, errors, isDirty }) => (
                         <>
                             <StaffForm errors={errors} />
 
                             <DialogFooter>
-                                <Button type="submit" disabled={processing}>
-                                    {processing && <Spinner className="mr-2" />}
+                                <Button
+                                    type="submit"
+                                    disabled={processing || !isDirty}
+                                >
+                                    {processing ? (
+                                        <Spinner className="mr-2" />
+                                    ) : (
+                                        <Plus className="mr-2 size-4" />
+                                    )}
                                     {t('staffAccounts.createAccount')}
                                 </Button>
                             </DialogFooter>

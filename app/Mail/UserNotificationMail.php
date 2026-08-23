@@ -19,6 +19,7 @@ class UserNotificationMail extends Mailable implements ShouldQueue
         'invoice_issued' => 'A new invoice has been issued',
         'payment_confirmed' => 'Your payment has been confirmed',
         'maintenance_status_changed' => 'Update on your maintenance request',
+        'maintenance_assigned' => 'You have a new maintenance assignment',
     ];
 
     public function __construct(

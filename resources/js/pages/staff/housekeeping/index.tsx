@@ -159,8 +159,10 @@ export default function StaffHousekeepingIndex({ rooms }: Props) {
                                                 >
                                                     {isPending(
                                                         `clean-${room.id}`,
-                                                    ) && (
+                                                    ) ? (
                                                         <Spinner className="size-3.5" />
+                                                    ) : (
+                                                        <CheckCircle2 className="size-3.5" />
                                                     )}
                                                     {t(
                                                         'staff.housekeeping.markClean',

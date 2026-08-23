@@ -1,4 +1,5 @@
 import { Form } from '@inertiajs/react';
+import { Save } from 'lucide-react';
 import RoomController from '@/actions/App/Http/Controllers/Admin/RoomController';
 import RoomForm from '@/components/room-form';
 import RoomImageManager from '@/components/room-image-manager';
@@ -25,7 +26,7 @@ export default function RoomEditDialog({ room, onOpenChange }: Props) {
 
     return (
         <Dialog open={room !== null} onOpenChange={onOpenChange}>
-            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl lg:max-w-5xl rounded-3xl p-8">
+            <DialogContent className="max-h-[90vh] overflow-y-auto rounded-3xl p-8 sm:max-w-xl lg:max-w-5xl">
                 <DialogHeader>
                     <DialogTitle>
                         {t('adminRooms.editRoom', {
@@ -44,7 +45,11 @@ export default function RoomEditDialog({ room, onOpenChange }: Props) {
                     >
                         {({ processing, errors, isDirty }) => (
                             <>
-                                <input type="hidden" name="_method" value="put" />
+                                <input
+                                    type="hidden"
+                                    name="_method"
+                                    value="put"
+                                />
                                 <RoomForm room={room} errors={errors} />
 
                                 <DialogFooter>
@@ -52,8 +57,10 @@ export default function RoomEditDialog({ room, onOpenChange }: Props) {
                                         type="submit"
                                         disabled={processing || !isDirty}
                                     >
-                                        {processing && (
+                                        {processing ? (
                                             <Spinner className="mr-2" />
+                                        ) : (
+                                            <Save className="mr-2 size-4" />
                                         )}
                                         {t('common.actions.saveChanges')}
                                     </Button>

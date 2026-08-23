@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react';
-import { Calendar, CheckCircle2, KeyRound, LogIn, User } from 'lucide-react';
+import { Calendar, CheckCircle2, KeyRound, LogIn, User, X } from 'lucide-react';
 import { useState } from 'react';
 import ReservationController from '@/actions/App/Http/Controllers/Staff/ReservationController';
 import { Button } from '@/components/ui/button';
@@ -137,15 +137,16 @@ export default function ReservationCheckinDialog({
                         type="button"
                         variant="outline"
                         onClick={() => onOpenChange(false)}
-                        className="h-10 rounded-xl font-sans text-xs px-6"
+                        className="h-10 rounded-xl px-6 font-sans text-xs"
                     >
+                        <X className="mr-2 size-4" />
                         {t('staff.reservations.checkInDialog.cancelButton')}
                     </Button>
                     <Button
                         type="button"
                         onClick={handleConfirmCheckin}
                         disabled={isSubmitting}
-                        className="h-10 cursor-pointer gap-1.5 rounded-xl bg-primary font-sans text-xs font-semibold text-primary-foreground shadow-2xs px-6"
+                        className="h-10 cursor-pointer gap-1.5 rounded-xl bg-primary px-6 font-sans text-xs font-semibold text-primary-foreground shadow-2xs"
                     >
                         {isSubmitting ? (
                             <Spinner className="size-4" />

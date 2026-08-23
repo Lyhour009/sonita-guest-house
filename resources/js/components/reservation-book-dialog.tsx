@@ -1,4 +1,5 @@
 import { Form } from '@inertiajs/react';
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import ReservationController from '@/actions/App/Http/Controllers/ReservationController';
 import InputError from '@/components/input-error';
@@ -49,11 +50,12 @@ export default function ReservationBookDialog({ room }: Props) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="w-full h-14 text-base rounded-2xl font-bold bg-primary hover:bg-primary/90 transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98]">
+                <Button className="h-14 w-full rounded-2xl bg-primary text-base font-bold shadow-md transition-all hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-xl active:scale-[0.98]">
+                    <Plus className="mr-2 size-4" />
                     {t('reservations.bookDialog.trigger')}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[85vh] sm:max-w-xl rounded-[2rem] p-8 border border-border/10 shadow-2xl">
+            <DialogContent className="max-h-[85vh] rounded-[2rem] border border-border/10 p-8 shadow-2xl sm:max-w-xl">
                 <DialogHeader>
                     <DialogTitle>
                         {t('reservations.bookDialog.title', {
@@ -67,7 +69,7 @@ export default function ReservationBookDialog({ room }: Props) {
                     onSuccess={() => setOpen(false)}
                     className="space-y-4"
                 >
-                    {({ processing, errors }) => (
+                    {({ processing, errors, isDirty }) => (
                         <>
                             <input
                                 type="hidden"
@@ -129,7 +131,9 @@ export default function ReservationBookDialog({ room }: Props) {
                                 setStartDate={setStartDate}
                                 endDate={endDate}
                                 setEndDate={setEndDate}
-                                setNumGuests={type === 'short_stay' ? () => {} : undefined} // Mock for book dialog to render input, not select
+                                setNumGuests={
+                                    type === 'short_stay' ? () => {} : undefined
+                                } // Mock for book dialog to render input, not select
                                 maxOccupants={room.max_occupants}
                                 errors={errors}
                             />
@@ -137,8 +141,16 @@ export default function ReservationBookDialog({ room }: Props) {
                             <InputError message={errors.room_id} />
 
                             <DialogFooter>
-                                <Button type="submit" disabled={processing} className="rounded-xl h-12 font-bold px-8 transition-all hover:scale-105 active:scale-95">
-                                    {processing && <Spinner className="mr-2" />}
+                                <Button
+                                    type="submit"
+                                    disabled={processing || !isDirty}
+                                    className="h-12 rounded-xl px-8 font-bold transition-all hover:scale-105 active:scale-95"
+                                >
+                                    {processing ? (
+                                        <Spinner className="mr-2" />
+                                    ) : (
+                                        <Plus className="mr-2 size-4" />
+                                    )}
                                     {t('reservations.bookDialog.submit')}
                                 </Button>
                             </DialogFooter>
