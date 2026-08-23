@@ -7,7 +7,6 @@ use App\Models\Reservation;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -56,13 +55,24 @@ class RoomController extends Controller
     /**
      * Display a single room's public detail page.
      */
-    public function show(Room $room): Response
+    public function show(Request $request, Room $room): Response
     {
+        $filters = $request->validate([
+            'stay_type' => ['nullable', 'string', 'in:short_stay,long_stay'],
+            'from' => ['nullable', 'date'],
+            'to' => ['nullable', 'date', 'after:from'],
+        ]);
+
         $room->load('roomImages');
 
         return Inertia::render('rooms/show', [
             'room' => (new RoomResource($room))->resolve(),
             'bookedRanges' => $this->bookedRanges($room),
+            'searchFilters' => [
+                'stay_type' => $filters['stay_type'] ?? null,
+                'from' => $filters['from'] ?? null,
+                'to' => $filters['to'] ?? null,
+            ],
         ]);
     }
 
@@ -101,5 +111,4 @@ class RoomController extends Controller
             })
             ->all();
     }
-
 }

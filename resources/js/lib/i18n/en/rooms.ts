@@ -23,10 +23,13 @@ export const rooms = {
         backToRooms: '← Back to rooms',
         heading: '{{type}} · Room {{number}}',
         floor: 'Floor {{floor}}',
+        groundFloor: 'Ground floor',
         perNight: 'Per night',
         perMonth: 'Per month',
+        monthlyRate: 'Monthly rate',
         description: 'Description',
         amenities: 'Amenities',
+        staffCannotBook: 'Staff accounts cannot make bookings',
     },
     availability: {
         heading: 'Availability',

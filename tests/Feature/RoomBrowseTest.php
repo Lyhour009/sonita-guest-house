@@ -17,6 +17,27 @@ test('public room detail page renders', function () {
     $response = $this->get(route('rooms.show', $room));
 
     $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->where('searchFilters.stay_type', null)
+        ->where('searchFilters.from', null)
+        ->where('searchFilters.to', null));
+});
+
+test('the room detail page carries the homepage search dates through as search filters', function () {
+    $room = Room::factory()->create(['rental_mode' => 'short_stay']);
+
+    $response = $this->get(route('rooms.show', [
+        'room' => $room,
+        'stay_type' => 'short_stay',
+        'from' => '2027-01-12',
+        'to' => '2027-01-14',
+    ]));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->where('searchFilters.stay_type', 'short_stay')
+        ->where('searchFilters.from', '2027-01-12')
+        ->where('searchFilters.to', '2027-01-14'));
 });
 
 test('filtering by stay type excludes incompatible rental modes', function () {

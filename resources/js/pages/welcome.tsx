@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { addDays, format, parseISO } from 'date-fns';
 import {
+    ArrowRight,
     BedDouble,
     Check,
     Home,
@@ -85,7 +86,7 @@ export default function Welcome({ rooms, filters }: Props) {
 
             <div className="min-h-screen bg-background">
                 {/* ---------- Hero ---------- */}
-                <div className="relative h-[55vh] min-h-[450px] w-full bg-cover bg-center bg-no-repeat lg:h-[65vh] rounded-b-[3rem] overflow-hidden">
+                <div className="relative h-[55vh] min-h-[450px] w-full overflow-hidden rounded-b-[3rem] bg-cover bg-center bg-no-repeat lg:h-[65vh]">
                     <img
                         src="/images/hero.jpg"
                         alt=""
@@ -238,6 +239,7 @@ export default function Welcome({ rooms, filters }: Props) {
                                 className="h-11 w-full rounded-xl font-semibold sm:w-auto sm:self-end"
                                 onClick={() => submit('long_stay')}
                             >
+                                <Search className="size-4" />
                                 {t('welcome.stay.long.action')}
                             </Button>
                         </StayPanel>
@@ -271,6 +273,8 @@ export default function Welcome({ rooms, filters }: Props) {
                                     key={room.id}
                                     room={room}
                                     stayType={stayType}
+                                    from={isShort ? shortFrom : longFrom}
+                                    to={isShort ? shortTo : longTo}
                                 />
                             ))}
                         </div>
@@ -324,10 +328,10 @@ function StayPanel({
     return (
         <div
             className={cn(
-                'flex flex-col gap-4 rounded-3xl bg-card/95 backdrop-blur-xl p-6 md:p-8 transition-all duration-300',
+                'flex flex-col gap-4 rounded-3xl bg-card/95 p-6 backdrop-blur-xl transition-all duration-300 md:p-8',
                 active
-                    ? 'border-2 border-primary shadow-2xl scale-[1.02] z-10'
-                    : 'border border-border/50 shadow-lg hover:shadow-xl opacity-90 hover:opacity-100',
+                    ? 'z-10 scale-[1.02] border-2 border-primary shadow-2xl'
+                    : 'border border-border/50 opacity-90 shadow-lg hover:opacity-100 hover:shadow-xl',
             )}
         >
             <button
@@ -371,9 +375,13 @@ function StayPanel({
 function RoomCard({
     room,
     stayType,
+    from,
+    to,
 }: {
     room: RoomSummary;
     stayType: StayMode;
+    from: string;
+    to: string;
 }) {
     const { t } = useTranslation();
 
@@ -468,9 +476,21 @@ function RoomCard({
                         </span>
                     </div>
 
-                    <Button asChild className="rounded-xl font-bold shadow-sm transition-all hover:scale-105">
-                        <Link href={show(room.id)}>
+                    <Button
+                        asChild
+                        className="rounded-xl font-bold shadow-sm transition-all hover:scale-105"
+                    >
+                        <Link
+                            href={show(room.id, {
+                                query: {
+                                    stay_type: stayType,
+                                    from: from || undefined,
+                                    to: to || undefined,
+                                },
+                            })}
+                        >
                             {t('welcome.card.viewRoom')}
+                            <ArrowRight className="size-4" />
                         </Link>
                     </Button>
                 </div>

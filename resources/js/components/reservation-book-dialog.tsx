@@ -28,24 +28,50 @@ import type { ReservationType, RoomDetail } from '@/types';
 
 type Props = {
     room: RoomDetail;
+    initialType?: ReservationType;
+    initialCheckInDate?: string;
+    initialCheckOutDate?: string;
+    initialStartDate?: string;
+    initialEndDate?: string;
 };
 
-export default function ReservationBookDialog({ room }: Props) {
+export default function ReservationBookDialog({
+    room,
+    initialType,
+    initialCheckInDate,
+    initialCheckOutDate,
+    initialStartDate,
+    initialEndDate,
+}: Props) {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
-    const [type, setType] = useState<ReservationType>(
-        room.rental_mode === 'long_stay' ? 'long_stay' : 'short_stay',
-    );
-    const [checkInDate, setCheckInDate] = useState('');
-    const [checkOutDate, setCheckOutDate] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const fallbackType: ReservationType =
+        room.rental_mode === 'long_stay' ? 'long_stay' : 'short_stay';
+    const safeInitialType =
+        initialType &&
+        (room.rental_mode === 'both' || room.rental_mode === initialType)
+            ? initialType
+            : fallbackType;
+    const [type, setType] = useState<ReservationType>(safeInitialType);
+    const [checkInDate, setCheckInDate] = useState(initialCheckInDate ?? '');
+    const [checkOutDate, setCheckOutDate] = useState(initialCheckOutDate ?? '');
+    const [startDate, setStartDate] = useState(initialStartDate ?? '');
+    const [endDate, setEndDate] = useState(initialEndDate ?? '');
     const todayString = new Date().toISOString().split('T')[0];
 
     const availableTypes: ReservationType[] =
         room.rental_mode === 'both'
             ? ['short_stay', 'long_stay']
             : [room.rental_mode as ReservationType];
+
+    // Dates carried over from a homepage search already satisfy the form, so
+    // the submit guard shouldn't force an extra touch before it enables.
+    const hasPrefilledDates = Boolean(
+        initialCheckInDate ||
+        initialCheckOutDate ||
+        initialStartDate ||
+        initialEndDate,
+    );
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -143,7 +169,10 @@ export default function ReservationBookDialog({ room }: Props) {
                             <DialogFooter>
                                 <Button
                                     type="submit"
-                                    disabled={processing || !isDirty}
+                                    disabled={
+                                        processing ||
+                                        (!isDirty && !hasPrefilledDates)
+                                    }
                                     className="h-12 rounded-xl px-8 font-bold transition-all hover:scale-105 active:scale-95"
                                 >
                                     {processing ? (
