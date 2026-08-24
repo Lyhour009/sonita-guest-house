@@ -53,8 +53,23 @@ class DashboardController extends Controller
 
         $notifications = $guest->notifications()->latest()->limit(5)->get();
 
+        $reviewableReservations = Reservation::query()
+            ->where('guest_id', $guest->id)
+            ->where('reservation_type', 'short_stay')
+            ->where('status', 'checked_out')
+            ->whereDoesntHave('review')
+            ->with('room')
+            ->latest()
+            ->limit(5)
+            ->get();
+
         return [
             'reservations' => ReservationResource::collection($reservations)->resolve(),
+            'reviewableReservations' => $reviewableReservations->map(fn (Reservation $reservation) => [
+                'id' => $reservation->id,
+                'room' => ['room_number' => $reservation->room->room_number, 'room_type' => $reservation->room->room_type],
+                'check_out_date' => $reservation->check_out_date?->toDateString(),
+            ]),
             'latestInvoice' => $latestInvoice ? [
                 'id' => $latestInvoice->id,
                 'invoice_type' => $latestInvoice->invoice_type,

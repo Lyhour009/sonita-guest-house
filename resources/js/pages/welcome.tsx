@@ -1,22 +1,28 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Form, Head, Link, router } from '@inertiajs/react';
 import { addDays, format, parseISO } from 'date-fns';
 import {
     ArrowRight,
     BedDouble,
+    BellRing,
     Check,
     Home,
     MapPin,
     Moon,
     Search,
+    Star,
     Users,
 } from 'lucide-react';
 import { useState } from 'react';
+import WaitlistController from '@/actions/App/Http/Controllers/WaitlistController';
+import InputError from '@/components/input-error';
 import Pagination from '@/components/pagination';
 import PublicHeader from '@/components/public-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 import { home } from '@/routes';
@@ -263,9 +269,16 @@ export default function Welcome({ rooms, filters }: Props) {
                     </div>
 
                     {rooms.data.length === 0 ? (
-                        <p className="py-16 text-center text-sm text-muted-foreground">
-                            {t('welcome.empty.noResults')}
-                        </p>
+                        <div className="py-16">
+                            <p className="mb-6 text-center text-sm text-muted-foreground">
+                                {t('welcome.empty.noResults')}
+                            </p>
+                            <WaitlistForm
+                                stayType={stayType}
+                                from={isShort ? shortFrom : longFrom}
+                                to={isShort ? shortTo : longTo}
+                            />
+                        </div>
                     ) : (
                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                             {rooms.data.map((room) => (
@@ -286,6 +299,116 @@ export default function Welcome({ rooms, filters }: Props) {
                 </div>
             </div>
         </>
+    );
+}
+
+function WaitlistForm({
+    stayType,
+    from,
+    to,
+}: {
+    stayType: StayMode;
+    from: string;
+    to: string;
+}) {
+    const { t } = useTranslation();
+
+    return (
+        <div className="mx-auto max-w-md space-y-4 rounded-3xl border border-border/50 bg-card p-6 text-center shadow-sm">
+            <div className="flex justify-center">
+                <span className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                    <BellRing className="size-5" />
+                </span>
+            </div>
+            <div>
+                <h3 className="text-base font-bold">
+                    {t('welcome.waitlist.title')}
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    {t('welcome.waitlist.description')}
+                </p>
+            </div>
+
+            <Form
+                {...WaitlistController.store.form()}
+                className="space-y-3 text-left"
+            >
+                {({ processing, errors, isDirty, wasSuccessful }) => (
+                    <>
+                        <input
+                            type="hidden"
+                            name="stay_type"
+                            value={stayType}
+                        />
+                        {from && (
+                            <input
+                                type="hidden"
+                                name="from_date"
+                                value={from}
+                            />
+                        )}
+                        {to && (
+                            <input type="hidden" name="to_date" value={to} />
+                        )}
+
+                        <div className="grid gap-1.5">
+                            <Label
+                                htmlFor="waitlist_email"
+                                className="text-[13px]"
+                            >
+                                {t('welcome.waitlist.emailLabel')}
+                            </Label>
+                            <Input
+                                id="waitlist_email"
+                                name="email"
+                                type="email"
+                                required
+                                placeholder={t(
+                                    'welcome.waitlist.emailPlaceholder',
+                                )}
+                            />
+                            <InputError message={errors.email} />
+                        </div>
+
+                        <div className="grid gap-1.5">
+                            <Label
+                                htmlFor="waitlist_phone"
+                                className="text-[13px]"
+                            >
+                                {t('welcome.waitlist.phoneLabel')}
+                            </Label>
+                            <Input
+                                id="waitlist_phone"
+                                name="phone_number"
+                                placeholder={t(
+                                    'welcome.waitlist.phonePlaceholder',
+                                )}
+                            />
+                            <InputError message={errors.phone_number} />
+                        </div>
+
+                        <Button
+                            type="submit"
+                            disabled={processing || !isDirty}
+                            className="w-full rounded-xl font-semibold"
+                        >
+                            {processing ? (
+                                <Spinner className="mr-2" />
+                            ) : (
+                                <BellRing className="mr-2 size-4" />
+                            )}
+                            {t('welcome.waitlist.submit')}
+                        </Button>
+
+                        {wasSuccessful && (
+                            <p className="text-center text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                                {t('welcome.waitlist.success')}
+                            </p>
+                        )}
+                    </>
+                )}
+            </Form>
+        </div>
     );
 }
 
@@ -450,6 +573,23 @@ function RoomCard({
                         #{room.room_number}
                     </span>
                 </div>
+
+                {room.reviews_count > 0 && (
+                    <p className="-mt-2 flex items-center gap-1 text-[13px] font-semibold text-foreground">
+                        <Star className="size-3.5 fill-amber-400 text-amber-400" />
+                        {room.average_rating}
+                        <span className="font-normal text-muted-foreground">
+                            (
+                            {t(
+                                room.reviews_count === 1
+                                    ? 'rooms.reviews.countOne'
+                                    : 'rooms.reviews.countOther',
+                                { count: room.reviews_count },
+                            )}
+                            )
+                        </span>
+                    </p>
+                )}
 
                 <p className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
                     <Users className="size-4 shrink-0" />

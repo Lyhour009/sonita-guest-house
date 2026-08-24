@@ -20,10 +20,17 @@ export type GuestDashboardInvoice = {
     room: { room_number: string };
 };
 
+export type GuestReviewableReservation = {
+    id: string;
+    room: { room_number: string; room_type: string };
+    check_out_date: string | null;
+};
+
 export type GuestDashboardData = {
     reservations: GuestDashboardReservation[];
     latestInvoice: GuestDashboardInvoice | null;
     notifications: AppNotification[];
+    reviewableReservations: GuestReviewableReservation[];
 };
 
 export type ReceptionistDashboardEntry = {

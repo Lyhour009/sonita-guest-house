@@ -1,13 +1,17 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
     BedDouble,
+    BellRing,
     CalendarCheck,
     ClipboardList,
     ConciergeBell,
     CreditCard,
     FileText,
+    History,
     LayoutGrid,
+    LineChart,
     Settings,
+    Tag,
     Users,
     Wrench,
 } from 'lucide-react';
@@ -25,12 +29,16 @@ import {
 } from '@/components/ui/sidebar';
 import { useTranslation } from '@/hooks/use-translation';
 import { dashboard } from '@/routes';
+import { index as adminActivityLogIndex } from '@/routes/admin/activity-log';
 import { index as adminDashboardIndex } from '@/routes/admin/dashboard';
 import { index as adminInvoicesIndex } from '@/routes/admin/invoices';
+import { index as adminPromoCodesIndex } from '@/routes/admin/promo-codes';
+import { index as adminReportsIndex } from '@/routes/admin/reports';
 import { index as adminRoomsIndex } from '@/routes/admin/rooms';
 import { index as adminServicesIndex } from '@/routes/admin/services';
 import { edit as adminSettingsEdit } from '@/routes/admin/settings';
 import { index as adminStaffIndex } from '@/routes/admin/staff';
+import { index as adminWaitlistIndex } from '@/routes/admin/waitlist';
 import { index as invoicesIndex } from '@/routes/invoices';
 import { index as maintenanceIndex } from '@/routes/maintenance';
 import { index as paymentsIndex } from '@/routes/payments';
@@ -84,6 +92,11 @@ function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
                             href: staffHousekeepingIndex(),
                             icon: ClipboardList,
                         },
+                        {
+                            title: t('nav.admin.waitlist'),
+                            href: adminWaitlistIndex(),
+                            icon: BellRing,
+                        },
                     ],
                 },
                 {
@@ -104,6 +117,16 @@ function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
                             title: t('nav.admin.services'),
                             href: adminServicesIndex(),
                             icon: ConciergeBell,
+                        },
+                        {
+                            title: t('nav.admin.reports'),
+                            href: adminReportsIndex(),
+                            icon: LineChart,
+                        },
+                        {
+                            title: t('nav.admin.promoCodes'),
+                            href: adminPromoCodesIndex(),
+                            icon: Tag,
                         },
                     ],
                 },
@@ -131,6 +154,11 @@ function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
                             title: t('nav.admin.settings'),
                             href: adminSettingsEdit(),
                             icon: Settings,
+                        },
+                        {
+                            title: t('nav.admin.activityLog'),
+                            href: adminActivityLogIndex(),
+                            icon: History,
                         },
                     ],
                 },

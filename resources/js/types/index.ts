@@ -1,11 +1,15 @@
+export type * from './activity-log';
 export type * from './auth';
 export type * from './billing';
 export type * from './dashboard';
 export type * from './maintenance';
 export type * from './navigation';
 export type * from './notification';
+export type * from './promo-code';
+export type * from './report';
 export type * from './reservation';
 export type * from './room';
 export type * from './service';
 export type * from './staff';
 export type * from './ui';
+export type * from './waitlist';

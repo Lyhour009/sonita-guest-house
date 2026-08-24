@@ -35,6 +35,7 @@ class ReservationResource extends JsonResource
                 'full_name' => $this->guest?->full_name ?? 'Guest',
                 'email' => $this->guest?->email ?? '',
                 'phone_number' => $this->guest?->phone_number,
+                'completed_stays_count' => $this->guest?->completed_stays_count ?? null,
             ]),
             'room' => $this->whenLoaded('room', fn () => [
                 'id' => $this->room->id,

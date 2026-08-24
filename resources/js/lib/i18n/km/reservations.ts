@@ -25,6 +25,8 @@ export const reservations: typeof reservationsEn = {
         guests: 'ចំនួនភ្ញៀវ',
         moveInDate: 'ថ្ងៃចូលនៅ',
         moveOutDateOptional: 'ថ្ងៃចេញនៅ (ស្រេចចិត្ត)',
+        promoCodeLabel: 'កូដបញ្ចុះតម្លៃ (ស្រេចចិត្ត)',
+        promoCodePlaceholder: 'SAVE10',
         submit: 'ស្នើសុំកក់បន្ទប់',
     },
 };

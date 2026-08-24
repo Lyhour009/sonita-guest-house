@@ -1,6 +1,10 @@
+import { adminActivityLog } from './adminActivityLog';
 import { adminDashboard } from './adminDashboard';
 import { adminInvoices } from './adminInvoices';
+import { adminPromoCodes } from './adminPromoCodes';
+import { adminReports } from './adminReports';
 import { adminRooms } from './adminRooms';
+import { adminWaitlist } from './adminWaitlist';
 import { auth } from './auth';
 import { common } from './common';
 import { dashboard } from './dashboard';
@@ -33,9 +37,13 @@ export const en = {
     settingsPage,
     services,
     staffAccounts,
+    adminActivityLog,
     adminDashboard,
     adminInvoices,
+    adminPromoCodes,
+    adminReports,
     adminRooms,
+    adminWaitlist,
     staff,
     toasts,
 };

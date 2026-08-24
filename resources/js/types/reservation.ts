@@ -23,6 +23,7 @@ export type ReservationGuestSummary = {
     full_name: string;
     email: string;
     phone_number?: string | null;
+    completed_stays_count?: number | null;
 };
 
 export type ReservationInvoiceSummary = {

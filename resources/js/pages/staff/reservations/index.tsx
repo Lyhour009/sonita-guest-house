@@ -11,6 +11,7 @@ import {
     LogIn,
     LogOut,
     Printer,
+    Repeat2,
     Search,
     StickyNote,
     X,
@@ -532,6 +533,23 @@ export default function StaffReservationsIndex({
                                                                         )}
                                                                     >
                                                                         <StickyNote className="size-3 shrink-0 text-amber-500" />
+                                                                    </span>
+                                                                )}
+                                                                {(reservation
+                                                                    .guest
+                                                                    .completed_stays_count ??
+                                                                    0) > 1 && (
+                                                                    <span
+                                                                        title={t(
+                                                                            'staff.reservations.table.returningGuest',
+                                                                            {
+                                                                                count: reservation
+                                                                                    .guest
+                                                                                    .completed_stays_count!,
+                                                                            },
+                                                                        )}
+                                                                    >
+                                                                        <Repeat2 className="size-3 shrink-0 text-primary" />
                                                                     </span>
                                                                 )}
                                                             </p>

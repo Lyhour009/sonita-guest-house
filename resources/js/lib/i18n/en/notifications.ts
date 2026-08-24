@@ -15,6 +15,7 @@ export const notifications = {
         payment_confirmed: 'Payment confirmed',
         maintenance_status_changed: 'Maintenance update',
         invoice_issued: 'Invoice issued',
+        stay_completed: 'How was your stay?',
     },
     messages: {
         maintenance_assigned:
@@ -26,5 +27,7 @@ export const notifications = {
             'Your maintenance request "{{title}}" is now {{status}}.',
         invoice_issued:
             'A new invoice of ${{amount}} has been issued for Room {{room}}.',
+        stay_completed:
+            'Thanks for staying with us! We’d love to hear about your stay in Room {{room}}.',
     },
 };

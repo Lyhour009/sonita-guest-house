@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\ActivityLog\RecordActivity;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SettingUpdateRequest;
 use App\Models\Setting;
@@ -36,9 +37,12 @@ class SettingController extends Controller
     /**
      * Update the settings.
      */
-    public function update(SettingUpdateRequest $request): RedirectResponse
+    public function update(SettingUpdateRequest $request, RecordActivity $recordActivity): RedirectResponse
     {
-        $this->currentSetting()->update($request->validated());
+        $setting = $this->currentSetting();
+        $setting->update($request->validated());
+
+        $recordActivity->handle($request->user(), 'settings.updated', $setting, 'Updated guest house settings.');
 
         Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.settings.updated']);
 

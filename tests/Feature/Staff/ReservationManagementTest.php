@@ -29,6 +29,25 @@ test('receptionist can view all reservations', function () {
     $response->assertOk();
 });
 
+test('a reservation reports how many completed stays its guest has', function () {
+    $receptionist = User::factory()->receptionist()->create();
+    $guest = User::factory()->create();
+
+    Reservation::factory()->create(['guest_id' => $guest->id, 'status' => 'checked_out']);
+    Reservation::factory()->create(['guest_id' => $guest->id, 'status' => 'checked_out']);
+    $currentReservation = Reservation::factory()->create(['guest_id' => $guest->id, 'status' => 'confirmed']);
+
+    $response = $this->actingAs($receptionist)->get(route('staff.reservations.index'));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->where(
+            'reservations.data',
+            fn ($reservations) => collect($reservations)
+                ->firstWhere('id', $currentReservation->id)['guest']['completed_stays_count'] === 2,
+        ));
+});
+
 test('receptionist can create a walk-in booking for an existing guest', function () {
     $receptionist = User::factory()->receptionist()->create();
     $guest = User::factory()->create();

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -27,12 +28,14 @@ use Illuminate\Support\Carbon;
  * @property int|null $num_guests
  * @property string $status
  * @property string|null $notes
+ * @property string|null $promo_code
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
 #[Fillable([
     'guest_id', 'room_id', 'reservation_type', 'check_in_date', 'check_out_date',
     'start_date', 'end_date', 'deposit_amount', 'monthly_due_day', 'num_guests', 'status', 'notes',
+    'promo_code',
 ])]
 class Reservation extends Model
 {
@@ -79,6 +82,14 @@ class Reservation extends Model
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
+    }
+
+    /**
+     * @return HasOne<Review, $this>
+     */
+    public function review(): HasOne
+    {
+        return $this->hasOne(Review::class);
     }
 
     /**

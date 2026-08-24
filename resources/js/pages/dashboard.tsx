@@ -1,4 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import ReviewDialog from '@/components/review-dialog';
 import { Badge } from '@/components/ui/badge';
 import {
     Table,
@@ -48,6 +49,7 @@ function GuestDashboard({
     reservations = [],
     latestInvoice,
     notifications = [],
+    reviewableReservations = [],
 }: Partial<GuestDashboardData>) {
     const { t } = useTranslation();
 
@@ -56,6 +58,29 @@ function GuestDashboard({
             <h1 className="text-xl font-semibold">
                 {t('dashboard.guest.title')}
             </h1>
+
+            {reviewableReservations.length > 0 && (
+                <div className="rounded-xl border p-4">
+                    <h2 className="mb-3 font-medium">
+                        {t('dashboard.guest.reviewableTitle')}
+                    </h2>
+                    <div className="space-y-2">
+                        {reviewableReservations.map((reservation) => (
+                            <div
+                                key={reservation.id}
+                                className="flex items-center justify-between text-sm"
+                            >
+                                <span>
+                                    {t('common.labels.room')}{' '}
+                                    {reservation.room.room_number} ·{' '}
+                                    {reservation.room.room_type}
+                                </span>
+                                <ReviewDialog reservation={reservation} />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             <div className="grid gap-4 md:grid-cols-2">
                 <div className="rounded-xl border p-4">
@@ -306,6 +331,7 @@ export default function Dashboard(props: Props) {
                     reservations={props.reservations}
                     latestInvoice={props.latestInvoice ?? null}
                     notifications={props.notifications}
+                    reviewableReservations={props.reviewableReservations}
                 />
             )}
         </>

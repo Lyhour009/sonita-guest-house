@@ -13,6 +13,7 @@ class GenerateLongStayInvoice
 {
     public function __construct(
         private readonly NotifyUser $notifyUser,
+        private readonly ApplyPromoDiscount $applyPromoDiscount,
     ) {}
 
     /**
@@ -33,13 +34,16 @@ class GenerateLongStayInvoice
         $serviceCharge = (float) $reservation->services()->sum('services.price');
         $utilityCharge = (($data['elec_meter_end'] - $data['elec_meter_start']) * $electricRate)
             + (($data['water_meter_end'] - $data['water_meter_start']) * $waterRate);
-        $taxAmount = round(($roomCharge + $serviceCharge + $utilityCharge) * $taxRate / 100, 2);
+        $subtotal = $roomCharge + $serviceCharge + $utilityCharge;
 
         $dueDate = $reservation->monthly_due_day
             ? $billingPeriod->copy()->day(min($reservation->monthly_due_day, $billingPeriod->daysInMonth))
             : $billingPeriod->copy()->addDays(7);
 
-        return DB::transaction(function () use ($reservation, $data, $billingPeriod, $roomCharge, $serviceCharge, $utilityCharge, $taxAmount, $dueDate) {
+        return DB::transaction(function () use ($reservation, $data, $billingPeriod, $roomCharge, $serviceCharge, $utilityCharge, $subtotal, $taxRate, $dueDate) {
+            $discountAmount = $this->applyPromoDiscount->handle($reservation->promo_code, $subtotal);
+            $taxAmount = round(($subtotal - $discountAmount) * $taxRate / 100, 2);
+
             $invoice = $reservation->invoices()->create([
                 'invoice_type' => 'long_stay',
                 'billing_period' => $billingPeriod->toDateString(),
@@ -51,7 +55,8 @@ class GenerateLongStayInvoice
                 'water_meter_start' => $data['water_meter_start'],
                 'water_meter_end' => $data['water_meter_end'],
                 'tax_amount' => $taxAmount,
-                'total_amount' => $roomCharge + $serviceCharge + $utilityCharge + $taxAmount,
+                'discount_amount' => $discountAmount,
+                'total_amount' => $subtotal - $discountAmount + $taxAmount,
                 'status' => 'unpaid',
                 'due_date' => $dueDate->toDateString(),
             ]);

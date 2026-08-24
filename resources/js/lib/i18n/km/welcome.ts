@@ -39,6 +39,18 @@ export const welcome: typeof welcomeEn = {
     empty: {
         noResults: 'មិនមានបន្ទប់ត្រូវនឹងការស្វែងរករបស់អ្នកទេ។',
     },
+    waitlist: {
+        title: 'ទទួលការជូនដំណឹងនៅពេលមានបន្ទប់ទំនេរ',
+        description:
+            'ទុកអ៊ីមែលរបស់អ្នក ហើយយើងនឹងជូនដំណឹងភ្លាមៗនៅពេលមានបន្ទប់ដែលត្រូវនឹងតម្រូវការរបស់អ្នក។',
+        emailLabel: 'អ៊ីមែល',
+        emailPlaceholder: 'you@example.com',
+        phoneLabel: 'លេខទូរស័ព្ទ (ស្រេចចិត្ត)',
+        phonePlaceholder: '012 345 678',
+        submit: 'ជូនដំណឹងខ្ញុំ',
+        success:
+            'អ្នកបានចូលក្នុងបញ្ជីរង់ចាំ — យើងនឹងផ្ញើអ៊ីមែលប្រសិនបើមានបន្ទប់ទំនេរ។',
+    },
     card: {
         perNightSuffix: '/ យប់',
         perMonthSuffix: '/ ខែ',

@@ -17,6 +17,16 @@ export type RoomSummary = {
     price_per_month: string;
     max_occupants: number;
     thumbnail: string | null;
+    average_rating: number | null;
+    reviews_count: number;
+};
+
+export type RoomReview = {
+    id: string;
+    rating: number;
+    comment: string | null;
+    guest_name: string;
+    created_at: string | null;
 };
 
 export type RoomBookedRange = {
@@ -38,6 +48,9 @@ export type RoomDetail = {
     description: string | null;
     notes: string | null;
     images: RoomImage[];
+    average_rating: number | null;
+    reviews_count: number;
+    recent_reviews: RoomReview[];
 };
 
 export type RoomOption = {

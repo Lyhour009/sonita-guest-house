@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\ActivityLog\RecordActivity;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RoomStoreRequest;
 use App\Http\Requests\Admin\RoomUpdateRequest;
@@ -59,7 +60,7 @@ class RoomController extends Controller
     /**
      * Store a newly created room.
      */
-    public function store(RoomStoreRequest $request): RedirectResponse
+    public function store(RoomStoreRequest $request, RecordActivity $recordActivity): RedirectResponse
     {
         $room = Room::create($request->safe()->except('images'));
 
@@ -70,6 +71,8 @@ class RoomController extends Controller
             }
         }
 
+        $recordActivity->handle($request->user(), 'room.created', $room, "Created room {$room->room_number}.");
+
         Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.rooms.created']);
 
         return to_route('admin.rooms.index');
@@ -78,7 +81,7 @@ class RoomController extends Controller
     /**
      * Update a room.
      */
-    public function update(RoomUpdateRequest $request, Room $room): RedirectResponse
+    public function update(RoomUpdateRequest $request, Room $room, RecordActivity $recordActivity): RedirectResponse
     {
         $room->update($request->safe()->except('images'));
 
@@ -89,6 +92,8 @@ class RoomController extends Controller
             }
         }
 
+        $recordActivity->handle($request->user(), 'room.updated', $room, "Updated room {$room->room_number}.");
+
         Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.rooms.updated']);
 
         return to_route('admin.rooms.index');
@@ -97,13 +102,16 @@ class RoomController extends Controller
     /**
      * Delete a room.
      */
-    public function destroy(Room $room): RedirectResponse
+    public function destroy(Request $request, Room $room, RecordActivity $recordActivity): RedirectResponse
     {
         foreach ($room->roomImages as $image) {
             Storage::disk('public')->delete($image->image_path);
         }
 
+        $roomNumber = $room->room_number;
         $room->delete();
+
+        $recordActivity->handle($request->user(), 'room.deleted', $room, "Deleted room {$roomNumber}.");
 
         Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.rooms.deleted']);
 

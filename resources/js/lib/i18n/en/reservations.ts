@@ -23,6 +23,8 @@ export const reservations = {
         guests: 'Guests',
         moveInDate: 'Move-in date',
         moveOutDateOptional: 'Move-out date (optional)',
+        promoCodeLabel: 'Promo code (optional)',
+        promoCodePlaceholder: 'SAVE10',
         submit: 'Request booking',
     },
 };

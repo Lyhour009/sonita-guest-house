@@ -7,11 +7,14 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentProofController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\WaitlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [RoomController::class, 'index'])->name('home');
 Route::get('rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
+Route::post('waitlist', [WaitlistController::class, 'store'])->name('waitlist.store');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -37,6 +40,8 @@ Route::middleware(['auth', 'role:guest'])->group(function () {
     Route::post('payments', [PaymentController::class, 'store'])->name('payments.store');
 
     Route::get('maintenance', [MaintenanceRequestController::class, 'index'])->name('maintenance.index');
+
+    Route::post('reservations/{reservation}/review', [ReviewController::class, 'store'])->name('reservations.review.store');
 });
 
 require __DIR__.'/settings.php';

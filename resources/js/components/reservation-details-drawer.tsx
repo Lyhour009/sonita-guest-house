@@ -18,6 +18,7 @@ import {
     X,
     ConciergeBell,
     Phone,
+    Repeat2,
     StickyNote,
 } from 'lucide-react';
 import { useEffect } from 'react';
@@ -25,6 +26,7 @@ import {
     ReservationStatusBadge,
     PaymentStatusBadge,
 } from '@/components/reservation-badges';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -142,8 +144,26 @@ export default function ReservationDetailsDrawer({
                                 {getInitials(reservation.guest.full_name)}
                             </div>
                             <div className="min-w-0 flex-1">
-                                <p className="text-base font-bold text-foreground">
-                                    {reservation.guest.full_name}
+                                <p className="flex items-center gap-1.5 text-base font-bold text-foreground">
+                                    <span className="truncate">
+                                        {reservation.guest.full_name}
+                                    </span>
+                                    {(reservation.guest.completed_stays_count ??
+                                        0) > 1 && (
+                                        <Badge
+                                            variant="outline"
+                                            className="gap-1 border-primary/40 bg-primary/10 text-[10px] font-semibold text-primary"
+                                        >
+                                            <Repeat2 className="size-3" />
+                                            {t(
+                                                'staff.reservations.details.returningGuest',
+                                                {
+                                                    count: reservation.guest
+                                                        .completed_stays_count!,
+                                                },
+                                            )}
+                                        </Badge>
+                                    )}
                                 </p>
                                 <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
                                     <Mail className="size-3" />

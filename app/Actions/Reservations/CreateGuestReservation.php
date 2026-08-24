@@ -28,6 +28,7 @@ class CreateGuestReservation
             'end_date' => $data['end_date'] ?? null,
             'num_guests' => $data['num_guests'] ?? null,
             'status' => 'pending',
+            'promo_code' => $data['promo_code'] ?? null,
         ]);
     }
 }

@@ -17,6 +17,7 @@ export const notifications: typeof notificationsEn = {
         payment_confirmed: 'ការទូទាត់បានបញ្ជាក់',
         maintenance_status_changed: 'ស្ថានភាពការជួសជុលថ្មី',
         invoice_issued: 'វិក្កយបត្របានចេញ',
+        stay_completed: 'តើការស្នាក់នៅរបស់អ្នកយ៉ាងណាដែរ?',
     },
     messages: {
         maintenance_assigned:
@@ -29,5 +30,7 @@ export const notifications: typeof notificationsEn = {
             'សំណើជួសជុល "{{title}}" របស់អ្នកឥឡូវនេះគឺ {{status}}។',
         invoice_issued:
             'វិក្កយបត្រថ្មីចំនួន ${{amount}} ត្រូវបានចេញសម្រាប់បន្ទប់ {{room}}។',
+        stay_completed:
+            'អរគុណដែលបានស្នាក់នៅជាមួយយើង! យើងចង់ដឹងអំពីការស្នាក់នៅរបស់អ្នកនៅបន្ទប់ {{room}}។',
     },
 };

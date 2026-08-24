@@ -2,9 +2,11 @@
 
 namespace App\Actions\Payments;
 
+use App\Actions\ActivityLog\RecordActivity;
 use App\Actions\Invoices\RecalculateInvoiceStatus;
 use App\Actions\Notifications\NotifyUser;
 use App\Models\Payment;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ConfirmPayment
@@ -12,6 +14,7 @@ class ConfirmPayment
     public function __construct(
         private readonly RecalculateInvoiceStatus $recalculateInvoiceStatus,
         private readonly NotifyUser $notifyUser,
+        private readonly RecordActivity $recordActivity,
     ) {}
 
     public function handle(Payment $payment): Payment
@@ -31,6 +34,8 @@ class ConfirmPayment
                 ['amount' => $payment->amount],
                 route('invoices.index'),
             );
+
+            $this->recordActivity->handle(Auth::user(), 'payment.confirmed', $payment, "Confirmed payment of \${$payment->amount}.");
 
             return $payment;
         });

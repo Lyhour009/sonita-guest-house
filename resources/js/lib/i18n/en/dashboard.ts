@@ -7,6 +7,15 @@ export const dashboard = {
         noInvoices: 'You have no invoices yet.',
         recentNotifications: 'Recent notifications',
         noNotifications: 'You have no notifications yet.',
+        reviewableTitle: 'How was your stay?',
+        leaveReview: 'Leave a review',
+        reviewDialog: {
+            title: 'Review Room {{room}}',
+            ratingLabel: 'Your rating',
+            commentLabel: 'Comment (optional)',
+            commentPlaceholder: 'Tell us about your stay...',
+            submit: 'Submit review',
+        },
     },
     receptionist: {
         title: 'Front desk dashboard',

@@ -23,8 +23,8 @@ import {
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
-import ReservationDateFields from './reservation-date-fields';
 import type { ReservationType, RoomDetail } from '@/types';
+import ReservationDateFields from './reservation-date-fields';
 
 type Props = {
     room: RoomDetail;
@@ -165,6 +165,23 @@ export default function ReservationBookDialog({
                             />
 
                             <InputError message={errors.room_id} />
+
+                            <div className="grid gap-1.5">
+                                <Label htmlFor="promo_code">
+                                    {t(
+                                        'reservations.bookDialog.promoCodeLabel',
+                                    )}
+                                </Label>
+                                <Input
+                                    id="promo_code"
+                                    name="promo_code"
+                                    placeholder={t(
+                                        'reservations.bookDialog.promoCodePlaceholder',
+                                    )}
+                                    className="uppercase"
+                                />
+                                <InputError message={errors.promo_code} />
+                            </div>
 
                             <DialogFooter>
                                 <Button

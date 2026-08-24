@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\ActivityLog\RecordActivity;
 use App\Actions\Staff\CreateStaffAccount;
 use App\Actions\Staff\UpdateStaffAccount;
 use App\Http\Controllers\Controller;
@@ -75,15 +76,17 @@ class StaffAccountController extends Controller
     /**
      * Store a newly created staff account.
      */
-    public function store(StaffAccountStoreRequest $request, CreateStaffAccount $action): RedirectResponse
+    public function store(StaffAccountStoreRequest $request, CreateStaffAccount $action, RecordActivity $recordActivity): RedirectResponse
     {
-        $action->handle([
+        $staff = $action->handle([
             'full_name' => $request->validated('full_name'),
             'email' => $request->validated('email'),
             'phone_number' => $request->validated('phone_number'),
             'role' => $request->validated('role'),
             'password' => $request->validated('password'),
         ]);
+
+        $recordActivity->handle($request->user(), 'staff.created', $staff, "Created staff account for {$staff->full_name}.");
 
         Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.staffAccounts.created']);
 
@@ -93,7 +96,7 @@ class StaffAccountController extends Controller
     /**
      * Update a staff account.
      */
-    public function update(StaffAccountUpdateRequest $request, User $staff, UpdateStaffAccount $action): RedirectResponse
+    public function update(StaffAccountUpdateRequest $request, User $staff, UpdateStaffAccount $action, RecordActivity $recordActivity): RedirectResponse
     {
         $action->handle($staff, [
             'full_name' => $request->validated('full_name'),
@@ -103,6 +106,8 @@ class StaffAccountController extends Controller
             'password' => $request->validated('password'),
         ]);
 
+        $recordActivity->handle($request->user(), 'staff.updated', $staff, "Updated staff account for {$staff->full_name}.");
+
         Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.staffAccounts.updated']);
 
         return to_route('admin.staff.index');
@@ -111,7 +116,7 @@ class StaffAccountController extends Controller
     /**
      * Delete a staff account, unless it has maintenance-request history attached.
      */
-    public function destroy(User $staff): RedirectResponse
+    public function destroy(Request $request, User $staff, RecordActivity $recordActivity): RedirectResponse
     {
         abort_unless(in_array($staff->role, ['receptionist', 'housekeeping'], true), 404);
 
@@ -121,7 +126,10 @@ class StaffAccountController extends Controller
             return to_route('admin.staff.index');
         }
 
+        $fullName = $staff->full_name;
         $staff->delete();
+
+        $recordActivity->handle($request->user(), 'staff.deleted', $staff, "Deleted staff account for {$fullName}.");
 
         Inertia::flash('toast', ['type' => 'success', 'key' => 'toasts.staffAccounts.deleted']);
 

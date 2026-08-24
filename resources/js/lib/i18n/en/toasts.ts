@@ -52,4 +52,16 @@ export const toasts = {
     housekeeping: {
         roomCleaned: 'Room marked as clean.',
     },
+    waitlist: {
+        joined: 'You’re on the waitlist — we’ll email you if a room opens up.',
+        notified: 'Waitlist entry notified.',
+    },
+    reviews: {
+        created: 'Thanks for your review!',
+    },
+    promoCodes: {
+        created: 'Promo code created.',
+        updated: 'Promo code updated.',
+        deleted: 'Promo code deleted.',
+    },
 };

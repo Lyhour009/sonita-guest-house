@@ -38,6 +38,8 @@ class RoomController extends Controller
         }
 
         $rooms = $query->with('roomImages')
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->orderBy('room_number')
             ->paginate(12)
             ->withQueryString();
@@ -63,7 +65,9 @@ class RoomController extends Controller
             'to' => ['nullable', 'date', 'after:from'],
         ]);
 
-        $room->load('roomImages');
+        $room->load(['roomImages', 'reviews' => fn ($query) => $query->with('guest:id,full_name')->latest('reviews.created_at')->limit(5)]);
+        $room->loadAvg('reviews', 'rating');
+        $room->loadCount('reviews');
 
         return Inertia::render('rooms/show', [
             'room' => (new RoomResource($room))->resolve(),

@@ -50,7 +50,9 @@ class ReservationIndexData
     {
         return Reservation::query()
             ->with([
-                'guest:id,full_name,email,phone_number',
+                'guest' => fn ($query) => $query
+                    ->select('id', 'full_name', 'email', 'phone_number')
+                    ->withCount(['reservations as completed_stays_count' => fn ($q) => $q->whereIn('status', ['checked_out', 'expired'])]),
                 'room:id,room_number,room_type,price_per_night,price_per_month',
                 'invoices' => fn ($q) => $q->latest(),
                 'services:id,name,price',

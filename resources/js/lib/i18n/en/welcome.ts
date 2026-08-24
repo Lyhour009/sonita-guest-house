@@ -38,6 +38,17 @@ export const welcome = {
     empty: {
         noResults: 'No rooms match your search.',
     },
+    waitlist: {
+        title: 'Get notified if a room opens up',
+        description:
+            'Leave your email and we’ll let you know as soon as a matching room becomes available.',
+        emailLabel: 'Email',
+        emailPlaceholder: 'you@example.com',
+        phoneLabel: 'Phone (optional)',
+        phonePlaceholder: '012 345 678',
+        submit: 'Notify me',
+        success: 'You’re on the list — we’ll email you if a room opens up.',
+    },
     card: {
         perNightSuffix: '/ night',
         perMonthSuffix: '/ month',

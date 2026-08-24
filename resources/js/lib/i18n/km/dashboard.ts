@@ -9,6 +9,15 @@ export const dashboard: typeof dashboardEn = {
         noInvoices: 'អ្នកមិនទាន់មានវិក្កយបត្រនៅឡើយទេ។',
         recentNotifications: 'ការជូនដំណឹងថ្មីៗ',
         noNotifications: 'អ្នកមិនទាន់មានការជូនដំណឹងនៅឡើយទេ។',
+        reviewableTitle: 'តើការស្នាក់នៅរបស់អ្នកយ៉ាងណាដែរ?',
+        leaveReview: 'ផ្តល់មតិវាយតម្លៃ',
+        reviewDialog: {
+            title: 'វាយតម្លៃបន្ទប់ {{room}}',
+            ratingLabel: 'ការវាយតម្លៃរបស់អ្នក',
+            commentLabel: 'មតិយោបល់ (ស្រេចចិត្ត)',
+            commentPlaceholder: 'ប្រាប់យើងអំពីការស្នាក់នៅរបស់អ្នក...',
+            submit: 'ដាក់ស្នើការវាយតម្លៃ',
+        },
     },
     receptionist: {
         title: 'ផ្ទាំងគ្រប់គ្រងផ្នែកទទួលភ្ញៀវ',

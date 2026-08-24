@@ -21,6 +21,7 @@ trait ReservationValidationRules
             'num_guests' => ['required_if:reservation_type,short_stay', 'nullable', 'integer', 'min:1'],
             'start_date' => ['required_if:reservation_type,long_stay', 'nullable', 'date', 'after_or_equal:today'],
             'end_date' => ['nullable', 'date', 'after:start_date'],
+            'promo_code' => ['nullable', 'string', 'max:50'],
         ];
     }
 }

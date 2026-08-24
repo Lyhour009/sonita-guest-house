@@ -43,6 +43,7 @@ class CreateWalkInReservation
                 'end_date' => $data['end_date'] ?? null,
                 'num_guests' => $data['num_guests'] ?? null,
                 'status' => $status,
+                'promo_code' => $data['promo_code'] ?? null,
             ]);
 
             $room->update([

@@ -36,6 +36,15 @@ class RoomResource extends JsonResource
                 ? Storage::disk('public')->url($this->roomImages->first()->image_path)
                 : null
             ),
+            'average_rating' => $this->reviews_avg_rating !== null ? round((float) $this->reviews_avg_rating, 1) : null,
+            'reviews_count' => (int) ($this->reviews_count ?? 0),
+            'recent_reviews' => $this->whenLoaded('reviews', fn () => $this->reviews->map(fn ($review) => [
+                'id' => $review->id,
+                'rating' => $review->rating,
+                'comment' => $review->comment,
+                'guest_name' => $review->guest?->full_name ?? 'Guest',
+                'created_at' => $review->created_at?->format('M d, Y'),
+            ])),
         ];
     }
 }

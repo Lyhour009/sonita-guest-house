@@ -37,4 +37,9 @@ export const rooms: typeof roomsEn = {
         heading: 'ភាពទំនេរ',
         booked: 'បានកក់',
     },
+    reviews: {
+        heading: 'មតិវាយតម្លៃពីភ្ញៀវ',
+        countOne: 'ការវាយតម្លៃ {{count}}',
+        countOther: 'ការវាយតម្លៃ {{count}}',
+    },
 };

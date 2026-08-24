@@ -20,6 +20,7 @@ class UserNotificationMail extends Mailable implements ShouldQueue
         'payment_confirmed' => 'Your payment has been confirmed',
         'maintenance_status_changed' => 'Update on your maintenance request',
         'maintenance_assigned' => 'You have a new maintenance assignment',
+        'stay_completed' => 'How was your stay?',
     ];
 
     public function __construct(

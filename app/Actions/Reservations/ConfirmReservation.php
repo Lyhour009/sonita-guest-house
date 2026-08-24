@@ -2,8 +2,10 @@
 
 namespace App\Actions\Reservations;
 
+use App\Actions\ActivityLog\RecordActivity;
 use App\Actions\Notifications\NotifyUser;
 use App\Models\Reservation;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -11,6 +13,7 @@ class ConfirmReservation
 {
     public function __construct(
         private readonly NotifyUser $notifyUser,
+        private readonly RecordActivity $recordActivity,
     ) {}
 
     public function handle(Reservation $reservation): Reservation
@@ -39,6 +42,8 @@ class ConfirmReservation
                 ['room' => $reservation->room->room_number],
                 route('reservations.index'),
             );
+
+            $this->recordActivity->handle(Auth::user(), 'reservation.confirmed', $reservation, "Confirmed reservation for Room {$reservation->room->room_number}.");
 
             return $reservation;
         });

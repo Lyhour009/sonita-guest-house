@@ -35,4 +35,9 @@ export const rooms = {
         heading: 'Availability',
         booked: 'Booked',
     },
+    reviews: {
+        heading: 'Guest reviews',
+        countOne: '{{count}} review',
+        countOther: '{{count}} reviews',
+    },
 };

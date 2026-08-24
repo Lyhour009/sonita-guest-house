@@ -25,12 +25,12 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import { Switch } from '@/components/ui/switch';
 import { useTranslation } from '@/hooks/use-translation';
-import ReservationDateFields from './reservation-date-fields';
 import type {
     ReservationGuestSummary,
     ReservationType,
     RoomOption,
 } from '@/types';
+import ReservationDateFields from './reservation-date-fields';
 
 type Props = {
     guests: ReservationGuestSummary[];
@@ -80,18 +80,28 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
     };
 
     const isFormValid = useMemo(() => {
-        if (!roomId || !type) return false;
+        if (!roomId || !type) {
+            return false;
+        }
 
         if (type === 'short_stay') {
-            if (!checkInDate || !checkOutDate || !numGuests) return false;
+            if (!checkInDate || !checkOutDate || !numGuests) {
+                return false;
+            }
         } else {
-            if (!startDate) return false;
+            if (!startDate) {
+                return false;
+            }
         }
 
         if (isNewGuest) {
-            if (!newGuestName || !newGuestEmail) return false;
+            if (!newGuestName || !newGuestEmail) {
+                return false;
+            }
         } else {
-            if (!guestId) return false;
+            if (!guestId) {
+                return false;
+            }
         }
 
         return true;
@@ -115,7 +125,10 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
             open={open}
             onOpenChange={(nextOpen) => {
                 setOpen(nextOpen);
-                if (!nextOpen) resetFormState();
+
+                if (!nextOpen) {
+                    resetFormState();
+                }
             }}
         >
             <DialogTrigger asChild>
@@ -171,6 +184,7 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                                 const found = rooms.find(
                                                     (r) => r.id === val,
                                                 );
+
                                                 if (
                                                     found &&
                                                     found.rental_mode !== 'both'
@@ -279,6 +293,25 @@ export default function ReservationWalkinDialog({ guests, rooms }: Props) {
                                     errors={errors}
                                     isStaffView={true}
                                 />
+
+                                {/* Promo Code */}
+                                <div className="grid gap-1.5">
+                                    <Label
+                                        htmlFor="promo_code"
+                                        className="text-xs font-semibold"
+                                    >
+                                        {t('staff.walkinDialog.promoCodeLabel')}
+                                    </Label>
+                                    <Input
+                                        id="promo_code"
+                                        name="promo_code"
+                                        placeholder={t(
+                                            'staff.walkinDialog.promoCodePlaceholder',
+                                        )}
+                                        className="h-10 rounded-xl border-border bg-background uppercase"
+                                    />
+                                    <InputError message={errors.promo_code} />
+                                </div>
                             </div>
 
                             {/* Section 2: Guest Details */}

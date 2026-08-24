@@ -7,6 +7,7 @@ import {
     Dumbbell,
     LogIn,
     MapPin,
+    Star,
     Tv,
     UtensilsCrossed,
     Waves,
@@ -116,7 +117,7 @@ export default function RoomShow({ room, bookedRanges, searchFilters }: Props) {
                                     number: room.room_number,
                                 })}
                             </h1>
-                            <div className="mt-2 flex items-center gap-3 text-sm font-medium text-muted-foreground">
+                            <div className="mt-2 flex flex-wrap items-center gap-3 text-sm font-medium text-muted-foreground">
                                 <span className="flex items-center gap-1">
                                     <MapPin className="size-4 text-primary" />
                                     {t('welcome.header.address')}
@@ -129,6 +130,27 @@ export default function RoomShow({ room, bookedRanges, searchFilters }: Props) {
                                           })
                                         : t('rooms.detail.groundFloor')}
                                 </span>
+                                {room.reviews_count > 0 && (
+                                    <>
+                                        <span>·</span>
+                                        <span className="flex items-center gap-1 font-semibold text-foreground">
+                                            <Star className="size-4 fill-amber-400 text-amber-400" />
+                                            {room.average_rating}
+                                            <span className="font-normal text-muted-foreground">
+                                                (
+                                                {t(
+                                                    room.reviews_count === 1
+                                                        ? 'rooms.reviews.countOne'
+                                                        : 'rooms.reviews.countOther',
+                                                    {
+                                                        count: room.reviews_count,
+                                                    },
+                                                )}
+                                                )
+                                            </span>
+                                        </span>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -253,6 +275,77 @@ export default function RoomShow({ room, bookedRanges, searchFilters }: Props) {
                                     />
                                 </div>
                             </div>
+
+                            {room.recent_reviews.length > 0 && (
+                                <>
+                                    <Separator className="bg-border/60" />
+
+                                    <div>
+                                        <h2 className="mb-4 text-xl font-semibold">
+                                            {t('rooms.reviews.heading')}
+                                        </h2>
+                                        <div className="space-y-5">
+                                            {room.recent_reviews.map(
+                                                (review) => (
+                                                    <div
+                                                        key={review.id}
+                                                        className="rounded-2xl border border-border/60 bg-card/50 p-4"
+                                                    >
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="flex items-center gap-2.5">
+                                                                <div className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                                                                    {review.guest_name
+                                                                        .charAt(
+                                                                            0,
+                                                                        )
+                                                                        .toUpperCase()}
+                                                                </div>
+                                                                <div>
+                                                                    <p className="text-sm font-semibold">
+                                                                        {
+                                                                            review.guest_name
+                                                                        }
+                                                                    </p>
+                                                                    <p className="text-xs text-muted-foreground">
+                                                                        {
+                                                                            review.created_at
+                                                                        }
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center gap-0.5">
+                                                                {[
+                                                                    1, 2, 3, 4,
+                                                                    5,
+                                                                ].map(
+                                                                    (star) => (
+                                                                        <Star
+                                                                            key={
+                                                                                star
+                                                                            }
+                                                                            className={
+                                                                                star <=
+                                                                                review.rating
+                                                                                    ? 'size-3.5 fill-amber-400 text-amber-400'
+                                                                                    : 'size-3.5 text-muted-foreground/30'
+                                                                            }
+                                                                        />
+                                                                    ),
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        {review.comment && (
+                                                            <p className="mt-3 text-sm text-muted-foreground">
+                                                                {review.comment}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                ),
+                                            )}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
 
                         {/* Right Sticky Sidebar (Booking Widget) */}

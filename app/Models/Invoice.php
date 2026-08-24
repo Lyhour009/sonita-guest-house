@@ -24,6 +24,7 @@ use Illuminate\Support\Carbon;
  * @property float|null $water_meter_start
  * @property float|null $water_meter_end
  * @property float $tax_amount
+ * @property float $discount_amount
  * @property float $total_amount
  * @property string $status
  * @property Carbon|null $due_date
@@ -33,7 +34,7 @@ use Illuminate\Support\Carbon;
 #[Fillable([
     'reservation_id', 'invoice_type', 'billing_period', 'room_charge', 'service_charge',
     'utility_charge', 'elec_meter_start', 'elec_meter_end', 'water_meter_start', 'water_meter_end',
-    'tax_amount', 'total_amount', 'status', 'due_date',
+    'tax_amount', 'discount_amount', 'total_amount', 'status', 'due_date',
 ])]
 class Invoice extends Model
 {
@@ -57,6 +58,7 @@ class Invoice extends Model
             'water_meter_start' => 'decimal:2',
             'water_meter_end' => 'decimal:2',
             'tax_amount' => 'decimal:2',
+            'discount_amount' => 'decimal:2',
             'total_amount' => 'decimal:2',
             'due_date' => 'date',
         ];
