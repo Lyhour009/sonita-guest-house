@@ -15,6 +15,7 @@ import {
     Users,
     Wrench,
 } from 'lucide-react';
+import { Fragment } from 'react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -26,6 +27,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarSeparator,
 } from '@/components/ui/sidebar';
 import { useTranslation } from '@/hooks/use-translation';
 import { dashboard } from '@/routes';
@@ -294,7 +296,7 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent className="gap-1 py-3">
+            <SidebarContent className="gap-0.5 py-3">
                 <NavMain
                     items={[
                         {
@@ -305,18 +307,26 @@ export function AppSidebar() {
                     ]}
                 />
 
-                {sections.map((section) => (
-                    <NavMain
-                        key={section.id}
-                        items={section.items}
-                        label={section.label}
-                    />
+                <SidebarSeparator className="my-2" />
+
+                {sections.map((section, index) => (
+                    <Fragment key={section.id}>
+                        <NavMain
+                            id={section.id}
+                            items={section.items}
+                            label={section.label}
+                            defaultOpen={index === 0}
+                        />
+                        {index < sections.length - 1 && (
+                            <SidebarSeparator className="my-2" />
+                        )}
+                    </Fragment>
                 ))}
             </SidebarContent>
 
             <SidebarFooter className="gap-2 border-t border-sidebar-border/50 p-3">
                 {user && (
-                    <div className="flex items-center gap-2.5 px-1 group-data-[collapsible=icon]:hidden">
+                    <div className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-colors group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent/60">
                         <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-secondary text-[12px] font-semibold text-secondary-foreground">
                             {initialsOf(user.full_name)}
                         </span>

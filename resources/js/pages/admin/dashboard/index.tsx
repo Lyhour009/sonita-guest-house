@@ -61,7 +61,10 @@ export default function AdminDashboard({
 
     // Filtered rooms in the Live Room Grid
     const filteredRooms = useMemo(() => {
-        if (selectedRoomStatusFilter === 'all') return roomsList;
+        if (selectedRoomStatusFilter === 'all') {
+            return roomsList;
+        }
+
         return roomsList.filter(
             (room) => room.status === selectedRoomStatusFilter,
         );
@@ -76,9 +79,16 @@ export default function AdminDashboard({
     };
 
     const getInitials = (name: string) => {
-        if (!name) return 'G';
+        if (!name) {
+            return 'G';
+        }
+
         const parts = name.trim().split(' ');
-        if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+
+        if (parts.length === 1) {
+            return parts[0].substring(0, 2).toUpperCase();
+        }
+
         return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     };
 
@@ -184,8 +194,8 @@ export default function AdminDashboard({
             <Head title={t('adminDashboard.title')} />
 
             <div className="w-full flex-1 space-y-5 bg-background p-4 md:p-6">
-                {/* 1. Glassmorphic Header */}
-                <div className="flex flex-col gap-4 rounded-3xl border border-border/50 bg-card/50 p-6 shadow-sm backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
+                {/* 1. Page Header */}
+                <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                     <div>
                         <h1 className="font-sans text-2xl font-bold tracking-tight text-foreground md:text-3xl">
                             {t('adminDashboard.greeting', {
