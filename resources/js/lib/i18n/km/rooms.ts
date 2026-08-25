@@ -32,6 +32,8 @@ export const rooms: typeof roomsEn = {
         description: 'ការពិពណ៌នា',
         amenities: 'សម្ភារៈបរិក្ខារ',
         staffCannotBook: 'គណនីបុគ្គលិកមិនអាចធ្វើការកក់បានទេ',
+        noPhotos: 'មិនទាន់មានរូបភាពនៅឡើយ',
+        morePhotos: '+{{count}} ទៀត',
     },
     availability: {
         heading: 'ភាពទំនេរ',

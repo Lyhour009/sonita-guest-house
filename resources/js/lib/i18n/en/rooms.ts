@@ -30,6 +30,8 @@ export const rooms = {
         description: 'Description',
         amenities: 'Amenities',
         staffCannotBook: 'Staff accounts cannot make bookings',
+        noPhotos: 'No photos yet',
+        morePhotos: '+{{count}} more',
     },
     availability: {
         heading: 'Availability',

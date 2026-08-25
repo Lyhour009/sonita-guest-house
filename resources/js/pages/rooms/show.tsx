@@ -21,6 +21,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from '@/hooks/use-translation';
+import { cn } from '@/lib/utils';
 import { home, login } from '@/routes';
 import type { RoomBookedRange, RoomDetail, RoomFilters } from '@/types';
 
@@ -91,6 +92,19 @@ export default function RoomShow({ room, bookedRanges, searchFilters }: Props) {
             ? (searchFilters.to ?? undefined)
             : undefined;
 
+    const images = room.images ?? [];
+    const hero = images[0];
+    const thumbnails = images.slice(1, 5);
+    const extraPhotoCount = Math.max(0, images.length - 5);
+    const thumbGridClass =
+        thumbnails.length >= 4
+            ? 'grid-cols-2 grid-rows-2'
+            : thumbnails.length === 3
+              ? 'grid-rows-3'
+              : thumbnails.length === 2
+                ? 'grid-rows-2'
+                : 'grid-rows-1';
+
     return (
         <>
             <Head title={`${room.room_type} · ${room.room_number}`} />
@@ -155,48 +169,70 @@ export default function RoomShow({ room, bookedRanges, searchFilters }: Props) {
                         </div>
                     </div>
 
-                    {/* Airbnb Style Photo Gallery */}
-                    <div className="grid h-[55vh] max-h-[650px] min-h-[450px] grid-cols-4 grid-rows-2 gap-2 overflow-hidden rounded-[2.5rem] border border-border/10 shadow-xl">
-                        {room.images && room.images.length > 0 ? (
-                            <>
-                                <div className="group relative col-span-4 row-span-2 overflow-hidden bg-muted sm:col-span-2">
-                                    <img
-                                        src={room.images[0].url}
-                                        alt={`${room.room_type} main view`}
-                                        className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-                                    />
-                                </div>
-                                {room.images.slice(1, 5).map((image, index) => (
-                                    <div
-                                        key={image.id}
-                                        className="group relative hidden overflow-hidden bg-muted sm:block"
-                                    >
-                                        <img
-                                            src={image.url}
-                                            alt={`${room.room_type} view ${index + 2}`}
-                                            className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-                                        />
-                                    </div>
-                                ))}
-                                {/* Fill remaining slots if < 5 images */}
-                                {Array.from({
-                                    length: Math.max(
-                                        0,
-                                        4 - (room.images.length - 1),
-                                    ),
-                                }).map((_, i) => (
-                                    <div
-                                        key={`empty-${i}`}
-                                        className="hidden bg-muted/30 sm:block"
-                                    />
-                                ))}
-                            </>
-                        ) : (
-                            <div className="col-span-4 row-span-2 flex items-center justify-center bg-muted text-muted-foreground">
-                                <BedDouble className="mb-2 size-16 opacity-30" />
+                    {/* Photo gallery — layout adapts to however many photos this room actually has */}
+                    {hero ? (
+                        <div
+                            className={cn(
+                                'grid h-[55vh] max-h-[650px] min-h-[450px] gap-2 overflow-hidden rounded-[2.5rem] border border-border/10 shadow-xl',
+                                thumbnails.length > 0
+                                    ? 'grid-cols-1 sm:grid-cols-[2fr_1fr]'
+                                    : 'grid-cols-1',
+                            )}
+                        >
+                            <div className="group relative overflow-hidden bg-muted">
+                                <img
+                                    src={hero.url}
+                                    alt={`${room.room_type} main view`}
+                                    className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                                />
                             </div>
-                        )}
-                    </div>
+
+                            {thumbnails.length > 0 && (
+                                <div
+                                    className={cn(
+                                        'hidden gap-2 sm:grid',
+                                        thumbGridClass,
+                                    )}
+                                >
+                                    {thumbnails.map((image, index) => {
+                                        const isLastTile =
+                                            index === thumbnails.length - 1;
+
+                                        return (
+                                            <div
+                                                key={image.id}
+                                                className="group relative overflow-hidden bg-muted"
+                                            >
+                                                <img
+                                                    src={image.url}
+                                                    alt={`${room.room_type} view ${index + 2}`}
+                                                    className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                                                />
+                                                {isLastTile &&
+                                                    extraPhotoCount > 0 && (
+                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/55 text-base font-semibold text-white">
+                                                            {t(
+                                                                'rooms.detail.morePhotos',
+                                                                {
+                                                                    count: extraPhotoCount,
+                                                                },
+                                                            )}
+                                                        </div>
+                                                    )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="flex h-[55vh] max-h-[650px] min-h-[450px] flex-col items-center justify-center gap-2 rounded-[2.5rem] border border-border/10 bg-muted text-muted-foreground shadow-xl">
+                            <BedDouble className="size-16 opacity-30" />
+                            <span className="text-sm font-medium opacity-60">
+                                {t('rooms.detail.noPhotos')}
+                            </span>
+                        </div>
+                    )}
 
                     <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_380px]">
                         {/* Left Content Column */}
@@ -240,7 +276,7 @@ export default function RoomShow({ room, bookedRanges, searchFilters }: Props) {
                                     <h2 className="mb-4 text-xl font-semibold">
                                         {t('rooms.detail.amenities')}
                                     </h2>
-                                    <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                         {room.amenities
                                             .split(',')
                                             .map((amenity, index) => {
@@ -250,10 +286,12 @@ export default function RoomShow({ room, bookedRanges, searchFilters }: Props) {
                                                 return (
                                                     <div
                                                         key={index}
-                                                        className="flex items-center gap-3 text-muted-foreground"
+                                                        className="flex items-center gap-3 rounded-xl border border-border/50 bg-card/50 px-4 py-3"
                                                     >
-                                                        <Icon className="size-5 text-emerald-500" />
-                                                        <span className="capitalize">
+                                                        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
+                                                            <Icon className="size-4.5" />
+                                                        </span>
+                                                        <span className="text-sm font-medium capitalize">
                                                             {amenity.trim()}
                                                         </span>
                                                     </div>
