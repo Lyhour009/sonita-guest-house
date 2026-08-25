@@ -26,6 +26,8 @@ return new class extends Migration
             $table->enum('status', [
                 'pending', 'confirmed', 'checked_in', 'checked_out', 'active', 'expired', 'cancelled', 'terminated',
             ]);
+            $table->text('notes')->nullable();
+            $table->string('promo_code')->nullable();
             $table->timestamps();
         });
     }

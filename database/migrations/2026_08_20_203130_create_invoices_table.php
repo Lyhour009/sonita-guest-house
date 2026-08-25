@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal('water_meter_start', 10, 2)->nullable();
             $table->decimal('water_meter_end', 10, 2)->nullable();
             $table->decimal('tax_amount', 10, 2)->default(0);
+            $table->decimal('discount_amount', 10, 2)->default(0);
             $table->decimal('total_amount', 10, 2);
             $table->enum('status', ['unpaid', 'partial', 'paid'])->default('unpaid');
             $table->date('due_date')->nullable();

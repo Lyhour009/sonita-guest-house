@@ -102,6 +102,9 @@ Table users {
   id_card_image varchar
   email_verified_at timestamp
   password varchar
+  two_factor_secret text [note: 'nullable']
+  two_factor_recovery_codes text [note: 'nullable']
+  two_factor_confirmed_at timestamp [note: 'nullable']
   remember_token varchar
   created_at timestamp
   updated_at timestamp
@@ -121,6 +124,7 @@ Table rooms {
   max_occupants int
   amenities text
   description text
+  notes text [note: 'nullable']
   created_at timestamp
   updated_at timestamp
 }
@@ -146,6 +150,7 @@ Table reservations {
   monthly_due_day int [note: 'long-stay only']
   num_guests int
   status reservation_status
+  notes text [note: 'nullable']
   promo_code varchar [note: 'nullable, captured at booking time']
   created_at timestamp
   updated_at timestamp
@@ -224,6 +229,7 @@ Table notifications {
   user_id uuid [ref: > users.id]
   type varchar
   message text
+  data json [note: 'nullable']
   link varchar
   is_read boolean
   created_at timestamp
@@ -332,3 +338,10 @@ Table promo_codes {
 - `id_card_image` on `users` and `email_verified_at`/`password`/`remember_token` are present in the
   actual table (see `database/migrations/0001_01_01_000000_create_users_table.php`) and included
   above for completeness.
+- `users.two_factor_secret`/`two_factor_recovery_codes`/`two_factor_confirmed_at` back Fortify's
+  2FA feature — unlike other Fortify infrastructure (`passkeys`, `sessions`), these are columns on
+  the domain `users` table itself, so they're included here rather than omitted.
+- `notifications.data` (nullable JSON) carries structured payload for a notification (e.g. IDs to
+  build the link/translation params) alongside the human-readable `message`.
+- `rooms.notes` and `reservations.notes` are free-text staff annotations, distinct from the
+  guest-facing `description`/room fields.

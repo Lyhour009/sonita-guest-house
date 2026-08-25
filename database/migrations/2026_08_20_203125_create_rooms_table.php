@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('max_occupants')->default(1);
             $table->text('amenities')->nullable();
             $table->text('description')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

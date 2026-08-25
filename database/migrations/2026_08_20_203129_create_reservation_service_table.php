@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignUuid('reservation_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('service_id')->constrained();
             $table->integer('quantity')->default(1);
+            $table->decimal('unit_price', 10, 2);
             $table->timestamps();
         });
     }

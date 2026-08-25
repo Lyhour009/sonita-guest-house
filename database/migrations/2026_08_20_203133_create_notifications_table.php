@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->string('type');
             $table->text('message');
+            $table->json('data')->nullable();
             $table->string('link')->nullable();
             $table->boolean('is_read')->default(false);
             $table->timestamps();
