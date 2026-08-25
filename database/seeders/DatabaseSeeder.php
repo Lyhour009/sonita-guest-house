@@ -2,11 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Actions\Maintenance\AssignMaintenanceRequest;
-use App\Actions\Maintenance\SubmitMaintenanceRequest;
-use App\Actions\Maintenance\UpdateMaintenanceRequestStatus;
 use App\Models\PromoCode;
-use App\Models\Room;
 use App\Models\Service;
 use App\Models\Setting;
 use App\Models\User;
@@ -32,30 +28,39 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@example.com',
         ]);
 
-        $receptionist = User::factory()->receptionist()->create([
+        User::factory()->receptionist()->create([
             'full_name' => 'Receptionist Staff',
             'email' => 'receptionist@example.com',
         ]);
 
-        $housekeeper = User::factory()->housekeeping()->create([
+        User::factory()->housekeeping()->create([
             'full_name' => 'Housekeeping Staff',
             'email' => 'housekeeping@example.com',
         ]);
 
-        $mainGuest = User::factory()->create([
+        User::factory()->create([
             'full_name' => 'Demo Guest',
             'email' => 'guest@example.com',
         ]);
 
-        $otherGuests = User::factory(2)->create();
         User::factory(2)->create();
 
         // Call Room Seeder
         $this->call(RoomSeeder::class);
+        $this->call(RoomImageSeeder::class);
 
-        collect(['Breakfast', 'Laundry', 'Airport Pickup'])->each(
-            fn (string $name) => Service::factory()->create(['name' => $name]),
-        );
+        collect([
+            ['name' => 'Breakfast', 'price' => 3.00],
+            ['name' => 'Laundry Service', 'price' => 2.50],
+            ['name' => 'Airport Pickup', 'price' => 12.00],
+            ['name' => 'Tuk Tuk Rental (Half-Day)', 'price' => 8.00],
+            ['name' => 'Motorbike Rental (Per Day)', 'price' => 6.00],
+            ['name' => 'Bicycle Rental (Per Day)', 'price' => 3.00],
+            ['name' => 'Late Check-out', 'price' => 5.00],
+            ['name' => 'Extra Bed', 'price' => 7.00],
+            ['name' => 'SIM Card & Wi-Fi Setup', 'price' => 3.00],
+            ['name' => 'Traditional Khmer Massage', 'price' => 15.00],
+        ])->each(fn (array $service) => Service::create($service));
 
         Setting::create([
             'currency' => 'USD',
@@ -93,57 +98,56 @@ class DatabaseSeeder extends Seeder
             'expires_at' => now()->subDays(10),
         ]);
 
-        WaitlistEntry::create([
-            'email' => 'waiting.guest1@example.com',
-            'phone_number' => '012345678',
-            'stay_type' => 'short_stay',
-            'from_date' => now()->addDays(5)->toDateString(),
-            'to_date' => now()->addDays(8)->toDateString(),
+        PromoCode::create([
+            'code' => 'KHMERNEWYEAR15',
+            'discount_type' => 'percent',
+            'discount_value' => 15,
+            'active' => true,
+            'expires_at' => now()->addMonths(3),
         ]);
 
-        WaitlistEntry::create([
-            'email' => 'waiting.guest2@example.com',
-            'stay_type' => 'long_stay',
-            'from_date' => now()->addDays(14)->toDateString(),
-            'notified_at' => now()->subDay(),
+        PromoCode::create([
+            'code' => 'LONGSTAY50',
+            'discount_type' => 'fixed',
+            'discount_value' => 50,
+            'active' => true,
         ]);
 
-        // Call Reservation Seeder for 50 realistic reservations
+        PromoCode::create([
+            'code' => 'FLASH25',
+            'discount_type' => 'percent',
+            'discount_value' => 25,
+            'active' => true,
+            'max_uses' => 5,
+        ]);
+
+        PromoCode::create([
+            'code' => 'RETIRED10',
+            'discount_type' => 'percent',
+            'discount_value' => 10,
+            'active' => false,
+        ]);
+
+        // A spread of guests who searched a fully-booked date range and left their contact info.
+        collect(['Sreymom', 'Vibol', 'Chenda', 'Pisach', 'Ratha', 'Malis', 'Sopheak', 'Kunthea', 'Vantha', 'Sreyneang', 'Bunthoeun', 'Channary'])
+            ->each(function (string $name, int $index) {
+                $stayType = $index % 3 === 0 ? 'long_stay' : 'short_stay';
+                $fromDate = now()->addDays(rand(3, 30));
+
+                WaitlistEntry::create([
+                    'email' => strtolower($name).'.waitlist@example.com',
+                    'phone_number' => rand(0, 1) ? '0'.rand(1, 9).rand(1000000, 9999999) : null,
+                    'stay_type' => $stayType,
+                    'from_date' => $fromDate->toDateString(),
+                    'to_date' => $stayType === 'short_stay' ? $fromDate->copy()->addDays(rand(1, 5))->toDateString() : null,
+                    'notified_at' => rand(1, 100) <= 40 ? now()->subDays(rand(1, 10)) : null,
+                ]);
+            });
+
+        // Call Reservation Seeder for ~50 realistic reservations
         $this->call(ReservationSeeder::class);
 
-        $submitMaintenanceRequest = app(SubmitMaintenanceRequest::class);
-        $assignMaintenanceRequest = app(AssignMaintenanceRequest::class);
-        $updateMaintenanceRequestStatus = app(UpdateMaintenanceRequestStatus::class);
-
-        // Maintenance: create a few maintenance requests on random rooms
-        $rooms = Room::all();
-        if ($rooms->isNotEmpty()) {
-            $maintenanceRoom1 = $rooms->random();
-            $submitMaintenanceRequest->handle($mainGuest, [
-                'room_id' => $maintenanceRoom1->id,
-                'title' => 'Air conditioner not cooling',
-                'description' => 'The AC in the room blows warm air.',
-                'priority' => 'high',
-            ]);
-
-            $maintenanceRoom2 = $rooms->random();
-            $maintenance2 = $submitMaintenanceRequest->handle($otherGuests[0], [
-                'room_id' => $maintenanceRoom2->id,
-                'title' => 'Leaking bathroom faucet',
-                'priority' => 'medium',
-            ]);
-            $assignMaintenanceRequest->handle($maintenance2, $housekeeper);
-            $updateMaintenanceRequestStatus->handle($maintenance2, 'in_progress');
-
-            $maintenanceRoom3 = $rooms->random();
-            $maintenance3 = $submitMaintenanceRequest->handle($receptionist, [
-                'room_id' => $maintenanceRoom3->id,
-                'title' => 'Light bulb replacement',
-                'priority' => 'low',
-            ]);
-            $assignMaintenanceRequest->handle($maintenance3, $housekeeper);
-            $updateMaintenanceRequestStatus->handle($maintenance3, 'in_progress');
-            $updateMaintenanceRequestStatus->handle($maintenance3, 'resolved');
-        }
+        // Maintenance: ~50 requests spread across rooms in varied states
+        $this->call(MaintenanceRequestSeeder::class);
     }
 }

@@ -51,7 +51,7 @@ class ReservationSeeder extends Seeder
         }
 
         $guests = [];
-        for ($i = 0; $i < 40; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $firstName = $firstNames[array_rand($firstNames)];
             $lastName = $lastNames[array_rand($lastNames)];
             $fullName = $lastName.' '.$firstName;
@@ -71,7 +71,9 @@ class ReservationSeeder extends Seeder
         $guaranteedPaidInvoiceDone = false;
         $guaranteedLongStayInvoiceDone = false;
 
-        for ($i = 0; $i < 50; $i++) {
+        // Attempt more bookings than the ~50 we want to land, since a chunk are
+        // skipped on date-overlap collisions (see the catch block below).
+        for ($i = 0; $i < 100; $i++) {
             $guest = $guests[array_rand($guests)];
             // Get random available room to avoid conflicts if they are concurrent
             $room = $rooms->random();
@@ -137,9 +139,6 @@ class ReservationSeeder extends Seeder
                                 ]);
                                 $confirmPayment->handle($payment);
                                 $guaranteedPaidInvoiceDone = true;
-
-                                $rating = rand(3, 5);
-                                $createReview->handle($reservation, $guest, $rating, $reviewComments[array_rand($reviewComments)]);
                             } elseif ($roll <= 75) {
                                 $payment = $submitPayment->handle($guest, $invoice, [
                                     'amount' => round(((float) $invoice->total_amount) * 0.5, 2),
@@ -152,6 +151,11 @@ class ReservationSeeder extends Seeder
                                     'amount' => $invoice->total_amount,
                                     'method' => $paymentMethods[array_rand($paymentMethods)],
                                 ]);
+                            }
+
+                            // Reviews are independent of payment status — a guest can rate a stay either way.
+                            if (rand(1, 100) <= 65) {
+                                $createReview->handle($reservation, $guest, rand(3, 5), $reviewComments[array_rand($reviewComments)]);
                             }
                         }
                     }
