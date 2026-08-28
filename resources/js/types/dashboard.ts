@@ -42,6 +42,7 @@ export type ReceptionistDashboardEntry = {
 export type ReceptionistDashboardRoom = {
     id: string;
     room_number: string;
+    room_type: string;
     status: string;
 };
 

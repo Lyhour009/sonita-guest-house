@@ -124,7 +124,7 @@ class DashboardController extends Controller
                 'guest' => ['full_name' => $reservation->guest->full_name],
                 'room' => ['room_number' => $reservation->room->room_number],
             ]),
-            'rooms' => Room::query()->orderBy('room_number')->get(['id', 'room_number', 'status']),
+            'rooms' => Room::query()->orderBy('room_number')->get(['id', 'room_number', 'room_type', 'status']),
         ];
     }
 

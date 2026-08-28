@@ -177,11 +177,6 @@ function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
                             href: staffReservationsIndex(),
                             icon: CalendarCheck,
                         },
-                        {
-                            title: t('nav.staff.roomStatus'),
-                            href: staffHousekeepingIndex(),
-                            icon: ClipboardList,
-                        },
                     ],
                 },
                 {
