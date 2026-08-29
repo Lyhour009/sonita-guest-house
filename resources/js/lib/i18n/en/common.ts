@@ -30,6 +30,7 @@ export const common = {
         createdAt: 'Created',
         optional: 'optional',
         loading: 'Loading…',
+        new: 'New',
     },
     empty: {
         noResults: 'Nothing to show yet.',

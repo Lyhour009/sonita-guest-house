@@ -332,7 +332,12 @@ export default function StaffPaymentsIndex({
                                     payments.data.map((payment) => (
                                         <TableRow
                                             key={payment.id}
-                                            className="h-16 transition-all duration-300 hover:bg-primary/5"
+                                            className={cn(
+                                                'h-16 transition-all duration-300 hover:bg-primary/5',
+                                                payment.status ===
+                                                    'pending' &&
+                                                    'border-l-2 border-l-warning bg-warning/5 hover:bg-warning/10',
+                                            )}
                                         >
                                             <TableCell className="py-3.5 pl-6">
                                                 <div className="flex items-center gap-3">
@@ -345,11 +350,22 @@ export default function StaffPaymentsIndex({
                                                         </AvatarFallback>
                                                     </Avatar>
                                                     <div className="min-w-0">
-                                                        <p className="truncate font-sans text-sm font-bold text-foreground">
-                                                            {
-                                                                payment.guest
-                                                                    .full_name
-                                                            }
+                                                        <p className="flex items-center gap-1.5 truncate font-sans text-sm font-bold text-foreground">
+                                                            <span className="truncate">
+                                                                {
+                                                                    payment
+                                                                        .guest
+                                                                        .full_name
+                                                                }
+                                                            </span>
+                                                            {payment.status ===
+                                                                'pending' && (
+                                                                <span className="shrink-0 rounded-full bg-warning/15 px-1.5 py-0.5 font-sans text-[10px] font-bold tracking-wide text-amber-700 uppercase dark:text-amber-300">
+                                                                    {t(
+                                                                        'common.labels.new',
+                                                                    )}
+                                                                </span>
+                                                            )}
                                                         </p>
                                                         <p className="truncate font-sans text-xs text-muted-foreground">
                                                             {

@@ -88,10 +88,20 @@ export default function InvoicesIndex({ invoices }: Props) {
                                         invoice.status,
                                     );
 
+                                    const needsPayment = [
+                                        'unpaid',
+                                        'partial',
+                                        'overdue',
+                                    ].includes(invoice.status);
+
                                     return (
                                         <TableRow
                                             key={invoice.id}
-                                            className="h-16 transition-all duration-300 hover:bg-primary/5"
+                                            className={cn(
+                                                'h-16 transition-all duration-300 hover:bg-primary/5',
+                                                needsPayment &&
+                                                    'border-l-2 border-l-warning bg-warning/5 hover:bg-warning/10',
+                                            )}
                                         >
                                             <TableCell className="py-3.5 pl-6">
                                                 <span className="flex h-8 min-w-10 items-center justify-center rounded-xl border border-border/90 bg-background px-2.5 text-[13px] font-bold text-foreground shadow-2xs">

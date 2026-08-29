@@ -49,7 +49,7 @@ import { index as staffHousekeepingIndex } from '@/routes/staff/housekeeping';
 import { index as staffMaintenanceIndex } from '@/routes/staff/maintenance';
 import { index as staffPaymentsIndex } from '@/routes/staff/payments';
 import { index as staffReservationsIndex } from '@/routes/staff/reservations';
-import type { NavItem, User } from '@/types';
+import type { NavItem, SidebarBadgeCounts, User } from '@/types';
 
 type Role = User['role'];
 
@@ -71,7 +71,11 @@ type NavSection = {
  * routes for — the admin nav. Roles are mutually exclusive, so a switch keeps
  * the permitted surface for each one readable in a single place.
  */
-function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
+function navSectionsFor(
+    role: Role | undefined,
+    t: Translate,
+    badges: SidebarBadgeCounts,
+): NavSection[] {
     switch (role) {
         case 'admin':
             return [
@@ -83,6 +87,7 @@ function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
                             title: t('nav.staff.reservations'),
                             href: staffReservationsIndex(),
                             icon: CalendarCheck,
+                            badge: badges.reservationsPending,
                         },
                         {
                             title: t('nav.admin.rooms'),
@@ -93,6 +98,7 @@ function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
                             title: t('nav.staff.roomStatus'),
                             href: staffHousekeepingIndex(),
                             icon: ClipboardList,
+                            badge: badges.roomsAwaitingCleaning,
                         },
                         {
                             title: t('nav.admin.waitlist'),
@@ -114,6 +120,7 @@ function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
                             title: t('nav.staff.payments'),
                             href: staffPaymentsIndex(),
                             icon: CreditCard,
+                            badge: badges.paymentsPending,
                         },
                         {
                             title: t('nav.admin.services'),
@@ -140,6 +147,7 @@ function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
                             title: t('nav.staff.maintenance'),
                             href: staffMaintenanceIndex(),
                             icon: Wrench,
+                            badge: badges.maintenanceOpen,
                         },
                     ],
                 },
@@ -176,6 +184,7 @@ function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
                             title: t('nav.staff.reservations'),
                             href: staffReservationsIndex(),
                             icon: CalendarCheck,
+                            badge: badges.reservationsPending,
                         },
                     ],
                 },
@@ -187,6 +196,7 @@ function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
                             title: t('nav.staff.payments'),
                             href: staffPaymentsIndex(),
                             icon: CreditCard,
+                            badge: badges.paymentsPending,
                         },
                     ],
                 },
@@ -202,6 +212,7 @@ function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
                             title: t('nav.staff.roomStatus'),
                             href: staffHousekeepingIndex(),
                             icon: ClipboardList,
+                            badge: badges.roomsAwaitingCleaning,
                         },
                     ],
                 },
@@ -213,6 +224,7 @@ function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
                             title: t('nav.staff.maintenance'),
                             href: staffMaintenanceIndex(),
                             icon: Wrench,
+                            badge: badges.maintenanceOpen,
                         },
                     ],
                 },
@@ -233,6 +245,7 @@ function navSectionsFor(role: Role | undefined, t: Translate): NavSection[] {
                             title: t('nav.guest.myInvoices'),
                             href: invoicesIndex(),
                             icon: FileText,
+                            badge: badges.unpaidInvoices,
                         },
                         {
                             title: t('nav.guest.myPayments'),
@@ -260,14 +273,14 @@ function initialsOf(name: string): string {
 }
 
 export function AppSidebar() {
-    const { auth } = usePage().props;
+    const { auth, sidebarBadges } = usePage().props;
     const { t } = useTranslation();
 
     const user = auth.user;
     const role = user?.role;
     const dashboardHref =
         role === 'admin' ? adminDashboardIndex() : dashboard();
-    const sections = navSectionsFor(role, t);
+    const sections = navSectionsFor(role, t, sidebarBadges ?? {});
 
     return (
         <Sidebar collapsible="icon">

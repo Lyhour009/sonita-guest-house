@@ -1,5 +1,6 @@
 export const nav = {
     dashboard: 'Dashboard',
+    notifications: 'Notifications',
     groups: {
         reservations: 'Reservations',
         staff: 'Staff',

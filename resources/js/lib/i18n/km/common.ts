@@ -32,6 +32,7 @@ export const common: Dictionary['common'] = {
         createdAt: 'បង្កើតនៅ',
         optional: 'ស្រេចចិត្ត',
         loading: 'កំពុងផ្ទុក...',
+        new: 'ថ្មី',
     },
     empty: {
         noResults: 'មិនទាន់មានអ្វីត្រូវបង្ហាញនៅឡើយទេ។',

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Actions\Navigation\ResolveSidebarBadgeCounts;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -51,6 +52,9 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'unreadNotificationsCount' => $request->user()?->notifications()->where('is_read', false)->count() ?? 0,
+            'sidebarBadges' => $request->user()
+                ? app(ResolveSidebarBadgeCounts::class)->handle($request->user())
+                : [],
         ];
     }
 }

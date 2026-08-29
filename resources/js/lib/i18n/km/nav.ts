@@ -2,6 +2,7 @@ import type { Dictionary } from '../translate';
 
 export const nav: Dictionary['nav'] = {
     dashboard: 'ផ្ទាំងគ្រប់គ្រង',
+    notifications: 'ការជូនដំណឹង',
     groups: {
         reservations: 'ការកក់',
         staff: 'បុគ្គលិក',

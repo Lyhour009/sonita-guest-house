@@ -497,7 +497,12 @@ export default function StaffReservationsIndex({
                                         reservations.data.map((reservation) => (
                                             <TableRow
                                                 key={reservation.id}
-                                                className="group h-16 cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/5 hover:shadow-sm"
+                                                className={cn(
+                                                    'group h-16 cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/5 hover:shadow-sm',
+                                                    reservation.status ===
+                                                        'pending' &&
+                                                        'border-l-2 border-l-warning bg-warning/5 hover:bg-warning/10',
+                                                )}
                                                 onClick={() => {
                                                     setSelectedReservation(
                                                         reservation,
@@ -526,6 +531,14 @@ export default function StaffReservationsIndex({
                                                                             .full_name
                                                                     }
                                                                 </span>
+                                                                {reservation.status ===
+                                                                    'pending' && (
+                                                                    <span className="shrink-0 rounded-full bg-warning/15 px-1.5 py-0.5 font-sans text-[10px] font-bold tracking-wide text-amber-700 uppercase dark:text-amber-300">
+                                                                        {t(
+                                                                            'common.labels.new',
+                                                                        )}
+                                                                    </span>
+                                                                )}
                                                                 {reservation.notes && (
                                                                     <span
                                                                         title={t(

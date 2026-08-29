@@ -387,7 +387,12 @@ export default function StaffMaintenanceIndex({
                                     requests.data.map((request) => (
                                         <TableRow
                                             key={request.id}
-                                            className="h-16 transition-all duration-300 hover:bg-primary/5"
+                                            className={cn(
+                                                'h-16 transition-all duration-300 hover:bg-primary/5',
+                                                request.status ===
+                                                    'pending' &&
+                                                    'border-l-2 border-l-warning bg-warning/5 hover:bg-warning/10',
+                                            )}
                                         >
                                             <TableCell className="px-4 py-3.5 pl-6 font-sans text-sm font-semibold text-foreground">
                                                 {request.room.room_number}
@@ -397,6 +402,14 @@ export default function StaffMaintenanceIndex({
                                                     <p className="font-sans text-sm font-bold text-foreground">
                                                         {request.title}
                                                     </p>
+                                                    {request.status ===
+                                                        'pending' && (
+                                                        <span className="shrink-0 rounded-full bg-warning/15 px-1.5 py-0.5 font-sans text-[10px] font-bold tracking-wide text-amber-700 uppercase dark:text-amber-300">
+                                                            {t(
+                                                                'common.labels.new',
+                                                            )}
+                                                        </span>
+                                                    )}
                                                     {request.is_overdue && (
                                                         <Badge
                                                             variant="outline"

@@ -1,4 +1,6 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import { useEffect } from 'react';
+import { Badge } from '@/components/ui/badge';
 import {
     SidebarGroup,
     SidebarGroupLabel,
@@ -7,8 +9,86 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
-import { cn } from '@/lib/utils';
+import { useDismissibleBadge } from '@/hooks/use-dismissible-badge';
+import { cn, toUrl } from '@/lib/utils';
 import type { NavItem } from '@/types';
+
+function NavMainItem({ item }: { item: NavItem }) {
+    const { isCurrentUrl } = useCurrentUrl();
+    const { auth } = usePage().props;
+    const { isVisible, dismiss, hydrate } = useDismissibleBadge(
+        auth.user?.id,
+    );
+
+    const active = isCurrentUrl(item.href);
+    const urlKey = toUrl(item.href);
+    const showBadge = isVisible(urlKey, item.badge);
+
+    // Pull in a previously-dismissed count from localStorage — only from an
+    // effect, never during render, so the first paint still matches the
+    // server-rendered markup (see use-dismissible-badge.ts).
+    useEffect(() => {
+        hydrate(urlKey);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [urlKey]);
+
+    // Landing directly on an already-active page counts as having seen its badge too.
+    useEffect(() => {
+        if (active) {
+            dismiss(urlKey, item.badge);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [active, urlKey, item.badge]);
+
+    return (
+        <SidebarMenuItem>
+            <SidebarMenuButton
+                asChild
+                isActive={active}
+                tooltip={{ children: item.title }}
+                className={cn(
+                    // !-forced: the base variant's own
+                    // data-[active=true]:bg-sidebar-accent has equal specificity
+                    // and isn't guaranteed to lose the cascade on class order alone,
+                    // so this must win via !important rather than specificity/order.
+                    'group/btn relative flex h-10.5 w-full items-center gap-3 rounded-xl px-3.5 text-[15px] font-medium text-muted-foreground transition-all duration-150 ease-out hover:bg-accent/70 hover:text-foreground',
+                    'data-[active=true]:bg-primary! data-[active=true]:font-semibold! data-[active=true]:text-primary-foreground! data-[active=true]:shadow-2xs! data-[active=true]:hover:bg-primary/95! data-[active=true]:hover:text-primary-foreground!',
+                )}
+            >
+                <Link
+                    href={item.href}
+                    prefetch="click"
+                    className="flex items-center gap-3"
+                    onClick={() => dismiss(urlKey, item.badge)}
+                >
+                    {item.icon && (
+                        <item.icon
+                            className={cn(
+                                'size-5 shrink-0 transition-transform duration-150 group-hover/btn:scale-105',
+                                active
+                                    ? 'text-primary-foreground'
+                                    : 'text-muted-foreground group-hover/btn:text-foreground',
+                            )}
+                        />
+                    )}
+                    <span className="truncate font-sans leading-relaxed tracking-normal">
+                        {item.title}
+                    </span>
+                    {showBadge && (
+                        <Badge
+                            variant="destructive"
+                            className="ml-auto flex h-5 min-w-5 shrink-0 animate-badge-pulse items-center justify-center rounded-full px-1.5 text-[11px] font-bold"
+                        >
+                            {item.badge && item.badge > 99
+                                ? '99+'
+                                : item.badge}
+                        </Badge>
+                    )}
+                </Link>
+            </SidebarMenuButton>
+        </SidebarMenuItem>
+    );
+}
 
 export function NavMain({
     items = [],
@@ -17,51 +97,11 @@ export function NavMain({
     items: NavItem[];
     label?: string;
 }) {
-    const { isCurrentUrl } = useCurrentUrl();
-
     const menu = (
         <SidebarMenu className="gap-1">
-            {items.map((item) => {
-                const active = isCurrentUrl(item.href);
-
-                return (
-                    <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton
-                            asChild
-                            isActive={active}
-                            tooltip={{ children: item.title }}
-                            className={cn(
-                                // !-forced: the base variant's own
-                                // data-[active=true]:bg-sidebar-accent has equal specificity
-                                // and isn't guaranteed to lose the cascade on class order alone,
-                                // so this must win via !important rather than specificity/order.
-                                'group/btn relative flex h-10.5 w-full items-center gap-3 rounded-xl px-3.5 text-[15px] font-medium text-muted-foreground transition-all duration-150 ease-out hover:bg-accent/70 hover:text-foreground',
-                                'data-[active=true]:bg-primary! data-[active=true]:font-semibold! data-[active=true]:text-primary-foreground! data-[active=true]:shadow-2xs! data-[active=true]:hover:bg-primary/95! data-[active=true]:hover:text-primary-foreground!',
-                            )}
-                        >
-                            <Link
-                                href={item.href}
-                                prefetch="click"
-                                className="flex items-center gap-3"
-                            >
-                                {item.icon && (
-                                    <item.icon
-                                        className={cn(
-                                            'size-5 shrink-0 transition-transform duration-150 group-hover/btn:scale-105',
-                                            active
-                                                ? 'text-primary-foreground'
-                                                : 'text-muted-foreground group-hover/btn:text-foreground',
-                                        )}
-                                    />
-                                )}
-                                <span className="truncate font-sans leading-relaxed tracking-normal">
-                                    {item.title}
-                                </span>
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                );
-            })}
+            {items.map((item) => (
+                <NavMainItem key={item.title} item={item} />
+            ))}
         </SidebarMenu>
     );
 
