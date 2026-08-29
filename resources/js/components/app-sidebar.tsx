@@ -306,12 +306,7 @@ export function AppSidebar() {
 
                 {sections.map((section, index) => (
                     <Fragment key={section.id}>
-                        <NavMain
-                            id={section.id}
-                            items={section.items}
-                            label={section.label}
-                            defaultOpen={index === 0}
-                        />
+                        <NavMain items={section.items} label={section.label} />
                         {index < sections.length - 1 && (
                             <SidebarSeparator className="my-2" />
                         )}

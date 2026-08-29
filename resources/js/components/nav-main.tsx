@@ -1,42 +1,23 @@
 import { Link } from '@inertiajs/react';
-import { ChevronRight } from 'lucide-react';
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@/components/ui/collapsible';
 import {
     SidebarGroup,
     SidebarGroupLabel,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    useSidebar,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
-import { useNavGroupState } from '@/hooks/use-nav-group-state';
 import { cn } from '@/lib/utils';
 import type { NavItem } from '@/types';
 
 export function NavMain({
     items = [],
     label,
-    id,
-    defaultOpen = true,
 }: {
     items: NavItem[];
     label?: string;
-    id?: string;
-    defaultOpen?: boolean;
 }) {
     const { isCurrentUrl } = useCurrentUrl();
-    const { state, isMobile } = useSidebar();
-    const [storedOpen, setOpen] = useNavGroupState(id, defaultOpen);
-    // The group's label/chevron — the only way to toggle it — is hidden
-    // whenever the sidebar itself is collapsed to an icon-only rail, so a
-    // group the user previously closed must still show its icons there.
-    const isIconRail = !isMobile && state === 'collapsed';
-    const open = isIconRail ? true : storedOpen;
 
     const menu = (
         <SidebarMenu className="gap-1">
@@ -89,33 +70,11 @@ export function NavMain({
     }
 
     return (
-        <Collapsible
-            open={open}
-            onOpenChange={setOpen}
-            className="group/collapsible px-2.5 py-0.5"
-        >
-            <SidebarGroup className="p-0">
-                <CollapsibleTrigger asChild>
-                    <SidebarGroupLabel className="cursor-pointer px-3 pt-3.5 pb-1 text-[12px] font-bold tracking-wider text-muted-foreground/60 uppercase select-none hover:text-muted-foreground">
-                        {label}
-                        <ChevronRight className="ml-auto size-3.5 shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                    </SidebarGroupLabel>
-                </CollapsibleTrigger>
-                <CollapsibleContent
-                    className={cn(
-                        'overflow-hidden',
-                        // Skip the animation when the icon rail is forcing this
-                        // group open — otherwise every group that was collapsed
-                        // plays an "opening" transition on rail toggle, while
-                        // already-open groups don't, making the toggle look
-                        // inconsistent from group to group.
-                        !isIconRail &&
-                            'data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down',
-                    )}
-                >
-                    {menu}
-                </CollapsibleContent>
-            </SidebarGroup>
-        </Collapsible>
+        <SidebarGroup className="px-2.5 py-0.5">
+            <SidebarGroupLabel className="px-3 pt-3.5 pb-1 text-[12px] font-bold tracking-wider text-muted-foreground/60 uppercase select-none">
+                {label}
+            </SidebarGroupLabel>
+            {menu}
+        </SidebarGroup>
     );
 }
