@@ -24,7 +24,7 @@ export default function Login({ status }: Props) {
             <Head title={t('auth.login.headTitle')} />
 
             {status && (
-                <div className="mb-5 rounded-xl border border-green-500/20 bg-green-500/10 p-3.5 text-center text-sm font-medium text-green-600 dark:text-green-400 animate-in fade-in-0 duration-200">
+                <div className="mb-5 animate-in rounded-xl border border-green-500/20 bg-green-500/10 p-3.5 text-center text-sm font-medium text-green-600 duration-200 fade-in-0 dark:text-green-400">
                     {status}
                 </div>
             )}
@@ -39,7 +39,10 @@ export default function Login({ status }: Props) {
                         <div className="space-y-4.5">
                             {/* Email */}
                             <div className="space-y-2">
-                                <Label htmlFor="email" className="text-sm font-semibold text-foreground/90 font-sans">
+                                <Label
+                                    htmlFor="email"
+                                    className="font-sans text-sm font-semibold text-foreground/90"
+                                >
                                     {t('auth.login.emailLabel')}
                                 </Label>
                                 <div className="relative">
@@ -54,8 +57,10 @@ export default function Login({ status }: Props) {
                                         autoFocus
                                         tabIndex={1}
                                         autoComplete="email"
-                                        placeholder={t('auth.login.emailPlaceholder')}
-                                        className="h-12 rounded-xl pl-11 text-[15px] font-sans transition-all focus-visible:ring-primary/20"
+                                        placeholder={t(
+                                            'auth.login.emailPlaceholder',
+                                        )}
+                                        className="h-12 rounded-xl pl-11 font-sans text-[15px] transition-all focus-visible:ring-primary/20"
                                     />
                                 </div>
                                 <InputError message={errors.email} />
@@ -64,7 +69,10 @@ export default function Login({ status }: Props) {
                             {/* Password */}
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <Label htmlFor="password" className="text-sm font-semibold text-foreground/90 font-sans">
+                                    <Label
+                                        htmlFor="password"
+                                        className="font-sans text-sm font-semibold text-foreground/90"
+                                    >
                                         {t('auth.login.passwordLabel')}
                                     </Label>
                                 </div>
@@ -78,8 +86,10 @@ export default function Login({ status }: Props) {
                                         required
                                         tabIndex={2}
                                         autoComplete="current-password"
-                                        placeholder={t('auth.login.passwordPlaceholder')}
-                                        className="h-12 rounded-xl pl-11 text-[15px] font-sans transition-all focus-visible:ring-primary/20"
+                                        placeholder={t(
+                                            'auth.login.passwordPlaceholder',
+                                        )}
+                                        className="h-12 rounded-xl pl-11 font-sans text-[15px] transition-all focus-visible:ring-primary/20"
                                     />
                                 </div>
                                 <InputError message={errors.password} />
@@ -93,7 +103,10 @@ export default function Login({ status }: Props) {
                                     tabIndex={3}
                                     className="size-4.5 rounded-md border-border/80 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
                                 />
-                                <Label htmlFor="remember" className="cursor-pointer text-sm font-normal text-muted-foreground select-none font-sans">
+                                <Label
+                                    htmlFor="remember"
+                                    className="cursor-pointer font-sans text-sm font-normal text-muted-foreground select-none"
+                                >
                                     {t('auth.login.rememberMe')}
                                 </Label>
                             </div>
@@ -101,7 +114,7 @@ export default function Login({ status }: Props) {
                             {/* Submit Button */}
                             <Button
                                 type="submit"
-                                className="h-12 w-full rounded-xl text-base font-semibold shadow-md shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.99] cursor-pointer mt-1 font-sans"
+                                className="mt-1 h-12 w-full cursor-pointer rounded-xl font-sans text-base font-semibold shadow-md shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.99]"
                                 tabIndex={4}
                                 disabled={processing}
                                 data-test="login-button"
@@ -112,9 +125,13 @@ export default function Login({ status }: Props) {
                         </div>
 
                         {/* Sign Up Link */}
-                        <div className="border-t border-border/60 pt-5 text-center text-sm text-muted-foreground font-sans">
+                        <div className="border-t border-border/60 pt-5 text-center font-sans text-sm text-muted-foreground">
                             {t('auth.login.noAccountPrefix')}{' '}
-                            <TextLink href={register()} tabIndex={6} className="font-semibold text-primary hover:underline">
+                            <TextLink
+                                href={register()}
+                                tabIndex={6}
+                                className="font-semibold text-primary hover:underline"
+                            >
                                 {t('auth.login.signUpLink')}
                             </TextLink>
                         </div>

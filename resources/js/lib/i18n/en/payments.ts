@@ -1,7 +1,9 @@
 export const payments = {
     page: {
         title: 'My payments',
+        subtitle: 'Payments you have submitted, and their confirmation status.',
         empty: "You haven't submitted any payments yet.",
+        emptyDescription: 'Pay an invoice to see your payments here.',
     },
     table: {
         amount: 'Amount',

@@ -37,11 +37,11 @@ export function NavUser() {
                         href={logout()}
                         as="button"
                         onClick={handleLogout}
-                        className="flex w-full items-center gap-3 cursor-pointer"
+                        className="flex w-full cursor-pointer items-center gap-3"
                         data-test="logout-button"
                     >
-                        <LogOut className="size-5 shrink-0 transition-transform duration-200 group-hover:scale-110 group-hover:-translate-x-0.5 text-muted-foreground group-hover:text-destructive" />
-                        <span className="truncate font-sans font-medium text-left">
+                        <LogOut className="size-5 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:-translate-x-0.5 group-hover:scale-110 group-hover:text-destructive" />
+                        <span className="truncate text-left font-sans font-medium">
                             {t('nav.logout')}
                         </span>
                     </Link>

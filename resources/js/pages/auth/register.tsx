@@ -32,7 +32,10 @@ export default function Register({ passwordRules }: Props) {
                         <div className="space-y-4">
                             {/* Full Name */}
                             <div className="space-y-2">
-                                <Label htmlFor="full_name" className="text-sm font-semibold text-foreground/90 font-sans">
+                                <Label
+                                    htmlFor="full_name"
+                                    className="font-sans text-sm font-semibold text-foreground/90"
+                                >
                                     {t('auth.register.nameLabel')}
                                 </Label>
                                 <div className="relative">
@@ -47,8 +50,10 @@ export default function Register({ passwordRules }: Props) {
                                         tabIndex={1}
                                         autoComplete="name"
                                         name="full_name"
-                                        placeholder={t('auth.register.namePlaceholder')}
-                                        className="h-12 rounded-xl pl-11 text-[15px] font-sans transition-all focus-visible:ring-primary/20"
+                                        placeholder={t(
+                                            'auth.register.namePlaceholder',
+                                        )}
+                                        className="h-12 rounded-xl pl-11 font-sans text-[15px] transition-all focus-visible:ring-primary/20"
                                     />
                                 </div>
                                 <InputError message={errors.full_name} />
@@ -56,7 +61,10 @@ export default function Register({ passwordRules }: Props) {
 
                             {/* Email */}
                             <div className="space-y-2">
-                                <Label htmlFor="email" className="text-sm font-semibold text-foreground/90 font-sans">
+                                <Label
+                                    htmlFor="email"
+                                    className="font-sans text-sm font-semibold text-foreground/90"
+                                >
                                     {t('auth.register.emailLabel')}
                                 </Label>
                                 <div className="relative">
@@ -70,8 +78,10 @@ export default function Register({ passwordRules }: Props) {
                                         tabIndex={2}
                                         autoComplete="email"
                                         name="email"
-                                        placeholder={t('auth.register.emailPlaceholder')}
-                                        className="h-12 rounded-xl pl-11 text-[15px] font-sans transition-all focus-visible:ring-primary/20"
+                                        placeholder={t(
+                                            'auth.register.emailPlaceholder',
+                                        )}
+                                        className="h-12 rounded-xl pl-11 font-sans text-[15px] transition-all focus-visible:ring-primary/20"
                                     />
                                 </div>
                                 <InputError message={errors.email} />
@@ -79,7 +89,10 @@ export default function Register({ passwordRules }: Props) {
 
                             {/* Password */}
                             <div className="space-y-2">
-                                <Label htmlFor="password" className="text-sm font-semibold text-foreground/90 font-sans">
+                                <Label
+                                    htmlFor="password"
+                                    className="font-sans text-sm font-semibold text-foreground/90"
+                                >
                                     {t('auth.register.passwordLabel')}
                                 </Label>
                                 <div className="relative">
@@ -92,9 +105,11 @@ export default function Register({ passwordRules }: Props) {
                                         tabIndex={3}
                                         autoComplete="new-password"
                                         name="password"
-                                        placeholder={t('auth.register.passwordPlaceholder')}
+                                        placeholder={t(
+                                            'auth.register.passwordPlaceholder',
+                                        )}
                                         passwordrules={passwordRules}
-                                        className="h-12 rounded-xl pl-11 text-[15px] font-sans transition-all focus-visible:ring-primary/20"
+                                        className="h-12 rounded-xl pl-11 font-sans text-[15px] transition-all focus-visible:ring-primary/20"
                                     />
                                 </div>
                                 <InputError message={errors.password} />
@@ -102,7 +117,10 @@ export default function Register({ passwordRules }: Props) {
 
                             {/* Confirm Password */}
                             <div className="space-y-2">
-                                <Label htmlFor="password_confirmation" className="text-sm font-semibold text-foreground/90 font-sans">
+                                <Label
+                                    htmlFor="password_confirmation"
+                                    className="font-sans text-sm font-semibold text-foreground/90"
+                                >
                                     {t('auth.register.confirmPasswordLabel')}
                                 </Label>
                                 <div className="relative">
@@ -115,18 +133,22 @@ export default function Register({ passwordRules }: Props) {
                                         tabIndex={4}
                                         autoComplete="new-password"
                                         name="password_confirmation"
-                                        placeholder={t('auth.register.confirmPasswordPlaceholder')}
+                                        placeholder={t(
+                                            'auth.register.confirmPasswordPlaceholder',
+                                        )}
                                         passwordrules={passwordRules}
-                                        className="h-12 rounded-xl pl-11 text-[15px] font-sans transition-all focus-visible:ring-primary/20"
+                                        className="h-12 rounded-xl pl-11 font-sans text-[15px] transition-all focus-visible:ring-primary/20"
                                     />
                                 </div>
-                                <InputError message={errors.password_confirmation} />
+                                <InputError
+                                    message={errors.password_confirmation}
+                                />
                             </div>
 
                             {/* Submit Button */}
                             <Button
                                 type="submit"
-                                className="h-12 w-full rounded-xl text-base font-semibold shadow-md shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.99] cursor-pointer mt-2 font-sans"
+                                className="mt-2 h-12 w-full cursor-pointer rounded-xl font-sans text-base font-semibold shadow-md shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.99]"
                                 tabIndex={5}
                                 disabled={processing}
                                 data-test="register-user-button"
@@ -137,9 +159,13 @@ export default function Register({ passwordRules }: Props) {
                         </div>
 
                         {/* Login Link */}
-                        <div className="border-t border-border/60 pt-5 text-center text-sm text-muted-foreground font-sans">
+                        <div className="border-t border-border/60 pt-5 text-center font-sans text-sm text-muted-foreground">
                             {t('auth.register.hasAccountPrefix')}{' '}
-                            <TextLink href={login()} tabIndex={6} className="font-semibold text-primary hover:underline">
+                            <TextLink
+                                href={login()}
+                                tabIndex={6}
+                                className="font-semibold text-primary hover:underline"
+                            >
                                 {t('auth.register.loginLink')}
                             </TextLink>
                         </div>

@@ -13,8 +13,8 @@ import {
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
-import ServiceForm from './service-form';
 import type { Service } from '@/types';
+import ServiceForm from './service-form';
 
 type Props = {
     service: Service | null;

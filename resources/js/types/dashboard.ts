@@ -52,9 +52,27 @@ export type ReceptionistDashboardData = {
     rooms: ReceptionistDashboardRoom[];
 };
 
+export type HousekeepingCleaningRoom = {
+    id: string;
+    room_number: string;
+    room_type: string;
+    floor: number | null;
+};
+
+export type HousekeepingMaintenanceItem = {
+    id: string;
+    title: string;
+    priority: string;
+    status: string;
+    created_at: string | null;
+    room: { id: string; room_number: string };
+};
+
 export type HousekeepingDashboardData = {
     roomsAwaitingCleaning: number;
     openAssignedMaintenance: number;
+    cleaningRooms: HousekeepingCleaningRoom[];
+    assignedMaintenance: HousekeepingMaintenanceItem[];
 };
 
 export type RevenueTrendPoint = {

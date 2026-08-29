@@ -21,7 +21,7 @@ export function NotificationBell() {
                 {unreadNotificationsCount > 0 && (
                     <Badge
                         variant="destructive"
-                        className="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full px-1 text-[10px] font-bold shadow-xs animate-in zoom-in-50 duration-200"
+                        className="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 animate-in items-center justify-center rounded-full px-1 text-[10px] font-bold shadow-xs duration-200 zoom-in-50"
                     >
                         {unreadNotificationsCount > 9
                             ? '9+'

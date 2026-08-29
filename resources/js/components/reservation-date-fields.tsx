@@ -12,7 +12,6 @@ import {
 import { useTranslation } from '@/hooks/use-translation';
 import type { ReservationType } from '@/types';
 
-
 type Props = {
     type: ReservationType;
     checkInDate: string;
@@ -52,17 +51,25 @@ export default function ReservationDateFields({
     const labelClass = isStaffView ? 'text-xs font-semibold' : '';
     const gridCols = isStaffView ? 'sm:grid-cols-3' : 'grid-cols-2';
     const gridColsLong = isStaffView ? 'sm:grid-cols-2' : 'grid-cols-2';
-    const inputClass = isStaffView ? 'h-10 rounded-xl border-border bg-background' : '';
+    const inputClass = isStaffView
+        ? 'h-10 rounded-xl border-border bg-background'
+        : '';
 
     return (
         <>
             {type === 'short_stay' ? (
                 <>
-                    <div className={`grid grid-cols-1 gap-4 ${isStaffView ? 'pt-1' : ''} ${gridCols}`}>
+                    <div
+                        className={`grid grid-cols-1 gap-4 ${isStaffView ? 'pt-1' : ''} ${gridCols}`}
+                    >
                         <div className="grid gap-1.5">
-                            <Label htmlFor="check_in_date" className={labelClass}>
+                            <Label
+                                htmlFor="check_in_date"
+                                className={labelClass}
+                            >
                                 {isStaffView
-                                    ? t('staff.walkinDialog.checkInLabel') + ' *'
+                                    ? t('staff.walkinDialog.checkInLabel') +
+                                      ' *'
                                     : t('reservations.bookDialog.checkIn')}
                             </Label>
                             <DatePicker
@@ -77,9 +84,13 @@ export default function ReservationDateFields({
                         </div>
 
                         <div className="grid gap-1.5">
-                            <Label htmlFor="check_out_date" className={labelClass}>
+                            <Label
+                                htmlFor="check_out_date"
+                                className={labelClass}
+                            >
                                 {isStaffView
-                                    ? t('staff.walkinDialog.checkOutLabel') + ' *'
+                                    ? t('staff.walkinDialog.checkOutLabel') +
+                                      ' *'
                                     : t('reservations.bookDialog.checkOut')}
                             </Label>
                             <DatePicker
@@ -95,7 +106,10 @@ export default function ReservationDateFields({
 
                         {setNumGuests && (
                             <div className="grid gap-1.5">
-                                <Label htmlFor="num_guests" className={labelClass}>
+                                <Label
+                                    htmlFor="num_guests"
+                                    className={labelClass}
+                                >
                                     {isStaffView
                                         ? t('staff.walkinDialog.numGuestsLabel')
                                         : t('reservations.bookDialog.guests')}
@@ -107,7 +121,10 @@ export default function ReservationDateFields({
                                         onValueChange={setNumGuests}
                                         required
                                     >
-                                        <SelectTrigger id="num_guests" className={inputClass}>
+                                        <SelectTrigger
+                                            id="num_guests"
+                                            className={inputClass}
+                                        >
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent className="z-[100] max-h-48 rounded-xl border-border shadow-xl">
@@ -115,7 +132,10 @@ export default function ReservationDateFields({
                                                 { length: maxOccupants },
                                                 (_, i) => i + 1,
                                             ).map((num) => (
-                                                <SelectItem key={num} value={num.toString()}>
+                                                <SelectItem
+                                                    key={num}
+                                                    value={num.toString()}
+                                                >
                                                     {num}
                                                 </SelectItem>
                                             ))}
@@ -138,7 +158,9 @@ export default function ReservationDateFields({
                     </div>
                 </>
             ) : (
-                <div className={`grid grid-cols-1 gap-4 ${isStaffView ? 'pt-1' : ''} ${gridColsLong}`}>
+                <div
+                    className={`grid grid-cols-1 gap-4 ${isStaffView ? 'pt-1' : ''} ${gridColsLong}`}
+                >
                     <div className="grid gap-1.5">
                         <Label htmlFor="start_date" className={labelClass}>
                             {isStaffView
@@ -160,7 +182,9 @@ export default function ReservationDateFields({
                         <Label htmlFor="end_date" className={labelClass}>
                             {isStaffView
                                 ? t('staff.walkinDialog.moveOutDateLabel')
-                                : t('reservations.bookDialog.moveOutDateOptional')}
+                                : t(
+                                      'reservations.bookDialog.moveOutDateOptional',
+                                  )}
                         </Label>
                         <DatePicker
                             id="end_date"

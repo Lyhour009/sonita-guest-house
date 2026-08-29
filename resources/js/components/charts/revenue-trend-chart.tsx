@@ -127,6 +127,7 @@ export function RevenueTrendChart({
                                             .payload as RevenueTrendPoint & {
                                             label: string;
                                         };
+
                                         return (
                                             <div className="rounded-xl border border-border bg-popover p-2.5 shadow-lg">
                                                 <p className="font-sans text-xs font-medium text-muted-foreground">
@@ -141,6 +142,7 @@ export function RevenueTrendChart({
                                             </div>
                                         );
                                     }
+
                                     return null;
                                 }}
                             />

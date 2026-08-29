@@ -65,15 +65,29 @@ test('the receptionist dashboard reports today\'s arrivals and departures', func
 test('the housekeeping dashboard reports cleaning and assigned maintenance counts', function () {
     $housekeeper = User::factory()->housekeeping()->create();
 
-    Room::factory()->create(['status' => 'cleaning']);
+    $cleaningRoom = Room::factory()->create(['status' => 'cleaning']);
     Room::factory()->create(['status' => 'available']);
 
-    MaintenanceRequest::factory()->create(['assigned_to' => $housekeeper->id, 'status' => 'in_progress']);
+    $lowPriorityRequest = MaintenanceRequest::factory()->create([
+        'assigned_to' => $housekeeper->id,
+        'status' => 'in_progress',
+        'priority' => 'low',
+    ]);
+    $highPriorityRequest = MaintenanceRequest::factory()->create([
+        'assigned_to' => $housekeeper->id,
+        'status' => 'pending',
+        'priority' => 'high',
+    ]);
     MaintenanceRequest::factory()->create(['assigned_to' => $housekeeper->id, 'status' => 'resolved']);
 
     $response = $this->actingAs($housekeeper)->get(route('dashboard'));
 
     $response->assertInertia(fn ($page) => $page
         ->where('roomsAwaitingCleaning', 1)
-        ->where('openAssignedMaintenance', 1));
+        ->where('openAssignedMaintenance', 2)
+        ->where('cleaningRooms', fn ($rooms) => count($rooms) === 1
+            && $rooms[0]['id'] === $cleaningRoom->id)
+        ->where('assignedMaintenance', fn ($requests) => count($requests) === 2
+            && $requests[0]['id'] === $highPriorityRequest->id
+            && $requests[1]['id'] === $lowPriorityRequest->id));
 });

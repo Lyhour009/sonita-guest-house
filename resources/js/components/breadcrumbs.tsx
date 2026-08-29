@@ -12,25 +12,25 @@ import { useTranslation } from '@/hooks/use-translation';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
 
 const titleKeyMap: Record<string, string> = {
-    'dashboard': 'nav.dashboard',
+    dashboard: 'nav.dashboard',
     'admin dashboard': 'adminDashboard.title',
-    'reservations': 'nav.staff.reservations',
+    reservations: 'nav.staff.reservations',
     'my reservations': 'nav.guest.myReservations',
-    'invoices': 'nav.admin.invoices',
+    invoices: 'nav.admin.invoices',
     'my invoices': 'nav.guest.myInvoices',
-    'payments': 'nav.staff.payments',
+    payments: 'nav.staff.payments',
     'my payments': 'nav.guest.myPayments',
-    'rooms': 'nav.admin.rooms',
+    rooms: 'nav.admin.rooms',
     'room status': 'nav.staff.roomStatus',
-    'services': 'nav.admin.services',
-    'staff': 'nav.admin.staffAccounts',
+    services: 'nav.admin.services',
+    staff: 'nav.admin.staffAccounts',
     'staff accounts': 'nav.admin.staffAccounts',
-    'maintenance': 'nav.staff.maintenance',
-    'settings': 'nav.admin.settings',
-    'profile': 'settingsPage.profile.title',
-    'security': 'settingsPage.security.title',
-    'appearance': 'settingsPage.appearance.title',
-    'notifications': 'notifications.title',
+    maintenance: 'nav.staff.maintenance',
+    settings: 'nav.admin.settings',
+    profile: 'settingsPage.profile.title',
+    security: 'settingsPage.security.title',
+    appearance: 'settingsPage.appearance.title',
+    notifications: 'notifications.title',
 };
 
 export function Breadcrumbs({
@@ -41,11 +41,16 @@ export function Breadcrumbs({
     const { t } = useTranslation();
 
     const getTranslatedTitle = (title: string) => {
-        if (!title) return '';
+        if (!title) {
+            return '';
+        }
+
         const mappedKey = titleKeyMap[title.toLowerCase().trim()];
+
         if (mappedKey) {
             return t(mappedKey);
         }
+
         return title;
     };
 
@@ -62,11 +67,14 @@ export function Breadcrumbs({
                                 <Fragment key={index}>
                                     <BreadcrumbItem>
                                         {isLast ? (
-                                            <BreadcrumbPage className="font-sans font-medium text-foreground text-[15px]">
+                                            <BreadcrumbPage className="font-sans text-[15px] font-medium text-foreground">
                                                 {displayTitle}
                                             </BreadcrumbPage>
                                         ) : (
-                                            <BreadcrumbLink asChild className="font-sans text-[15px]">
+                                            <BreadcrumbLink
+                                                asChild
+                                                className="font-sans text-[15px]"
+                                            >
                                                 <Link href={item.href}>
                                                     {displayTitle}
                                                 </Link>

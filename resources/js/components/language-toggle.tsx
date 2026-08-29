@@ -28,10 +28,14 @@ export default function LanguageToggle({
     ...props
 }: HTMLAttributes<HTMLDivElement>) {
     const { locale, updateLocale } = useTranslation();
-    const currentLang = languages.find((l) => l.code === locale) ?? languages[0];
+    const currentLang =
+        languages.find((l) => l.code === locale) ?? languages[0];
 
     return (
-        <div className={cn('relative inline-flex items-center', className)} {...props}>
+        <div
+            className={cn('relative inline-flex items-center', className)}
+            {...props}
+        >
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
@@ -40,13 +44,19 @@ export default function LanguageToggle({
                         className="group flex h-9.5 items-center gap-2 rounded-lg border-sidebar-border/80 bg-background/80 px-3 text-[13.5px] font-medium shadow-2xs backdrop-blur-xs transition-all duration-200 hover:border-sidebar-border hover:bg-accent hover:text-accent-foreground data-[state=open]:border-primary/50 data-[state=open]:bg-accent"
                     >
                         <Globe className="size-4 text-muted-foreground transition-colors group-hover:text-foreground" />
-                        <span className="font-semibold">{currentLang.shortName}</span>
+                        <span className="font-semibold">
+                            {currentLang.shortName}
+                        </span>
                         <ChevronDown className="size-3.5 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-40 rounded-xl p-1.5 shadow-lg border-sidebar-border/80">
+                <DropdownMenuContent
+                    align="end"
+                    className="w-40 rounded-xl border-sidebar-border/80 p-1.5 shadow-lg"
+                >
                     {languages.map(({ code, name }) => {
                         const isSelected = locale === code;
+
                         return (
                             <DropdownMenuItem
                                 key={code}
@@ -60,7 +70,7 @@ export default function LanguageToggle({
                             >
                                 <span className="font-sans">{name}</span>
                                 {isSelected && (
-                                    <Check className="size-4 text-primary animate-in fade-in-0 zoom-in-75 duration-150" />
+                                    <Check className="size-4 animate-in text-primary duration-150 fade-in-0 zoom-in-75" />
                                 )}
                             </DropdownMenuItem>
                         );

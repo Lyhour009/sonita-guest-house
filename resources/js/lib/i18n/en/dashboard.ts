@@ -36,7 +36,13 @@ export const dashboard = {
     },
     housekeeping: {
         title: 'Housekeeping dashboard',
+        subtitle:
+            'Rooms that need attention and your assigned maintenance work.',
         roomsAwaitingCleaning: 'Rooms awaiting cleaning',
-        openAssignedMaintenance: 'Open assigned maintenance',
+        openAssignedMaintenance: 'My open maintenance tasks',
+        cleaningListTitle: 'Rooms to clean',
+        noCleaningRooms: 'No rooms are waiting on cleaning right now.',
+        maintenanceListTitle: 'My assigned maintenance',
+        noAssignedMaintenance: 'You have no open maintenance tasks.',
     },
 };

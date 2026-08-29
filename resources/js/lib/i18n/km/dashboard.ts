@@ -39,7 +39,13 @@ export const dashboard: typeof dashboardEn = {
     },
     housekeeping: {
         title: 'ផ្ទាំងគ្រប់គ្រងផ្នែកសម្អាត',
+        subtitle:
+            'បន្ទប់ដែលត្រូវការការយកចិត្តទុកដាក់ និងការងារជួសជុលដែលបានចាត់តាំងឱ្យអ្នក។',
         roomsAwaitingCleaning: 'បន្ទប់រង់ចាំសម្អាត',
-        openAssignedMaintenance: 'ការជួសជុលដែលបានចាត់តាំង',
+        openAssignedMaintenance: 'ការជួសជុលដែលកំពុងបើករបស់ខ្ញុំ',
+        cleaningListTitle: 'បន្ទប់ត្រូវសម្អាត',
+        noCleaningRooms: 'មិនមានបន្ទប់រង់ចាំសម្អាតទេនាពេលនេះ។',
+        maintenanceListTitle: 'ការជួសជុលដែលបានចាត់តាំងឱ្យខ្ញុំ',
+        noAssignedMaintenance: 'អ្នកមិនមានការងារជួសជុលដែលកំពុងបើកនោះទេ។',
     },
 };

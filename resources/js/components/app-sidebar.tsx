@@ -281,7 +281,7 @@ export function AppSidebar() {
                         >
                             <Link
                                 href={dashboardHref}
-                                prefetch
+                                prefetch="click"
                                 className="group/logo"
                             >
                                 <AppLogo />

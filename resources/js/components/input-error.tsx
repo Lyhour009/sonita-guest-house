@@ -10,14 +10,19 @@ export default function InputError({
 }: HTMLAttributes<HTMLParagraphElement> & { message?: string }) {
     const { locale } = useTranslation();
 
-    if (!message) return null;
+    if (!message) {
+        return null;
+    }
 
     const localizedMessage = translateValidationError(message, locale);
 
     return (
         <p
             {...props}
-            className={cn('text-xs font-medium font-sans text-destructive dark:text-red-400 mt-1', className)}
+            className={cn(
+                'mt-1 font-sans text-xs font-medium text-destructive dark:text-red-400',
+                className,
+            )}
         >
             {localizedMessage}
         </p>

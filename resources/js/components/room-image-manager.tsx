@@ -83,7 +83,6 @@ export default function RoomImageManager({ roomId, images }: Props) {
                     </p>
                 )}
             </div>
-
         </div>
     );
 }

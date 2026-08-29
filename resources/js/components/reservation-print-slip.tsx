@@ -23,7 +23,9 @@ export default function ReservationPrintSlip({
 }: Props) {
     const { t } = useTranslation();
 
-    if (!reservation) return null;
+    if (!reservation) {
+        return null;
+    }
 
     const handlePrint = () => {
         window.print();

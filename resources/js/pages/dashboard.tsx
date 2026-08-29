@@ -1,24 +1,34 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
-    AlertTriangle,
     ArrowUpRight,
     BedDouble,
     Bell,
     CalendarCheck,
     CheckCircle2,
-    Clock,
     FileText,
     LogIn,
     LogOut,
     Sparkles,
     Star,
-    Wallet,
+    Wrench,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import HousekeepingController from '@/actions/App/Http/Controllers/Staff/HousekeepingController';
+import {
+    MaintenancePriorityBadge,
+    MaintenanceStatusBadge,
+} from '@/components/maintenance-badges';
 import ReviewDialog from '@/components/review-dialog';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import { usePendingAction } from '@/hooks/use-pending-action';
 import { useTranslation } from '@/hooks/use-translation';
 import { resolveNotificationMessage } from '@/lib/notification-message';
+import {
+    getInvoiceStatusInfo,
+    getReservationStatusInfo,
+} from '@/lib/status-badges';
 import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import { index as invoicesIndex } from '@/routes/invoices';
@@ -94,103 +104,9 @@ function getRoomStatusInfo(t: TranslateFn, status: string) {
     }
 }
 
-/** Same status → color mapping used on the admin dashboard's recent-bookings feed. */
-function getReservationStatusInfo(t: TranslateFn, status: string) {
-    const label = t(`common.reservationStatus.${status}`);
-
-    switch (status) {
-        case 'confirmed':
-            return {
-                className: 'border-primary/40 bg-primary/10 text-primary',
-                pulse: false,
-                label,
-            };
-        case 'checked_in':
-        case 'active':
-            return {
-                className:
-                    'border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
-                pulse: true,
-                label,
-            };
-        case 'checked_out':
-        case 'expired':
-            return {
-                className: 'border-border bg-muted/50 text-muted-foreground',
-                pulse: false,
-                label,
-            };
-        case 'cancelled':
-        case 'terminated':
-            return {
-                className:
-                    'border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400',
-                pulse: false,
-                label,
-            };
-        default:
-            return {
-                className:
-                    'border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300',
-                pulse: false,
-                label,
-            };
-    }
-}
-
-/** Same status → color mapping used on the admin invoices page's summary cards. */
-function getInvoiceStatusInfo(t: TranslateFn, status: string) {
-    switch (status) {
-        case 'paid':
-            return {
-                icon: CheckCircle2,
-                iconClass:
-                    'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-                label: t('common.invoiceStatus.paid'),
-            };
-        case 'partial':
-            return {
-                icon: Wallet,
-                iconClass: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
-                label: t('common.invoiceStatus.partial'),
-            };
-        case 'overdue':
-            return {
-                icon: AlertTriangle,
-                iconClass: 'bg-rose-500/10 text-rose-600 dark:text-rose-400',
-                label: t('common.invoiceStatus.overdue'),
-            };
-        default:
-            return {
-                icon: Clock,
-                iconClass: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-                label: t('common.invoiceStatus.unpaid'),
-            };
-    }
-}
-
 type Props = Partial<
     GuestDashboardData & ReceptionistDashboardData & HousekeepingDashboardData
 >;
-
-function StatCard({
-    label,
-    value,
-    href,
-}: {
-    label: string;
-    value: number | string;
-    href?: string;
-}) {
-    const content = (
-        <div className="rounded-xl border p-4">
-            <p className="text-sm text-muted-foreground">{label}</p>
-            <p className="text-2xl font-semibold">{value}</p>
-        </div>
-    );
-
-    return href ? <Link href={href}>{content}</Link> : content;
-}
 
 function GuestDashboard({
     reservations = [],
@@ -784,26 +700,180 @@ function ReceptionistDashboard({
 function HousekeepingDashboard({
     roomsAwaitingCleaning = 0,
     openAssignedMaintenance = 0,
+    cleaningRooms = [],
+    assignedMaintenance = [],
 }: Partial<HousekeepingDashboardData>) {
     const { t } = useTranslation();
+    const { isPending, withPending } = usePendingAction();
+
+    const markClean = (roomId: string) => {
+        router.patch(
+            HousekeepingController.markClean.url(roomId),
+            {},
+            withPending(`clean-${roomId}`, { preserveScroll: true }),
+        );
+    };
 
     return (
-        <div className="space-y-6 p-4">
-            <h1 className="text-xl font-semibold">
-                {t('dashboard.housekeeping.title')}
-            </h1>
+        <div className="w-full flex-1 space-y-5 bg-background p-4 md:p-6">
+            <div>
+                <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+                    {t('dashboard.housekeeping.title')}
+                </h1>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                    {t('dashboard.housekeeping.subtitle')}
+                </p>
+            </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-                <StatCard
-                    label={t('dashboard.housekeeping.roomsAwaitingCleaning')}
-                    value={roomsAwaitingCleaning}
-                    href={staffHousekeepingIndex().url}
-                />
-                <StatCard
-                    label={t('dashboard.housekeeping.openAssignedMaintenance')}
-                    value={openAssignedMaintenance}
-                    href={staffMaintenanceIndex().url}
-                />
+            {/* Snapshot */}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Link
+                    href={staffHousekeepingIndex()}
+                    className="flex items-center gap-3.5 rounded-3xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-xl"
+                >
+                    <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                        <Sparkles className="size-5" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="truncate text-xs font-medium text-muted-foreground">
+                            {t('dashboard.housekeeping.roomsAwaitingCleaning')}
+                        </p>
+                        <p className="text-xl font-bold tracking-tight text-foreground">
+                            {roomsAwaitingCleaning}
+                        </p>
+                    </div>
+                </Link>
+
+                <Link
+                    href={staffMaintenanceIndex()}
+                    className="flex items-center gap-3.5 rounded-3xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-rose-500/40 hover:shadow-xl"
+                >
+                    <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                        <Wrench className="size-5" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="truncate text-xs font-medium text-muted-foreground">
+                            {t(
+                                'dashboard.housekeeping.openAssignedMaintenance',
+                            )}
+                        </p>
+                        <p className="text-xl font-bold tracking-tight text-foreground">
+                            {openAssignedMaintenance}
+                        </p>
+                    </div>
+                </Link>
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-2">
+                {/* Rooms to clean */}
+                <div className="overflow-hidden rounded-3xl border border-border/50 bg-card shadow-sm">
+                    <div className="flex items-center justify-between border-b border-border/50 p-4 pb-3">
+                        <h2 className="text-base font-bold text-foreground">
+                            {t('dashboard.housekeeping.cleaningListTitle')}
+                        </h2>
+                        <Link
+                            href={staffHousekeepingIndex()}
+                            className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary"
+                        >
+                            {t('common.actions.viewAll')}
+                            <ArrowUpRight className="size-3.5" />
+                        </Link>
+                    </div>
+                    {cleaningRooms.length === 0 ? (
+                        <p className="p-6 text-center text-sm text-muted-foreground">
+                            {t('dashboard.housekeeping.noCleaningRooms')}
+                        </p>
+                    ) : (
+                        <div className="divide-y divide-border/50">
+                            {cleaningRooms.map((room) => (
+                                <div
+                                    key={room.id}
+                                    className="flex items-center justify-between gap-3 p-3.5"
+                                >
+                                    <div className="flex min-w-0 items-center gap-3">
+                                        <div className="flex size-9.5 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                                            <BedDouble className="size-4.5" />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className="truncate text-sm font-bold text-foreground">
+                                                #{room.room_number} ·{' '}
+                                                {room.room_type}
+                                            </p>
+                                            {room.floor !== null && (
+                                                <p className="text-xs text-muted-foreground">
+                                                    {t(
+                                                        'staff.housekeeping.table.floor',
+                                                    )}{' '}
+                                                    {room.floor}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <Button
+                                        size="sm"
+                                        className="h-8 shrink-0 gap-1.5 rounded-full bg-primary text-xs font-semibold text-primary-foreground shadow-2xs transition-transform hover:scale-105"
+                                        disabled={isPending(`clean-${room.id}`)}
+                                        onClick={() => markClean(room.id)}
+                                    >
+                                        {isPending(`clean-${room.id}`) ? (
+                                            <Spinner className="size-3.5" />
+                                        ) : (
+                                            <CheckCircle2 className="size-3.5" />
+                                        )}
+                                        {t('staff.housekeeping.markClean')}
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* My assigned maintenance */}
+                <div className="overflow-hidden rounded-3xl border border-border/50 bg-card shadow-sm">
+                    <div className="flex items-center justify-between border-b border-border/50 p-4 pb-3">
+                        <h2 className="text-base font-bold text-foreground">
+                            {t('dashboard.housekeeping.maintenanceListTitle')}
+                        </h2>
+                        <Link
+                            href={staffMaintenanceIndex()}
+                            className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary"
+                        >
+                            {t('common.actions.viewAll')}
+                            <ArrowUpRight className="size-3.5" />
+                        </Link>
+                    </div>
+                    {assignedMaintenance.length === 0 ? (
+                        <p className="p-6 text-center text-sm text-muted-foreground">
+                            {t('dashboard.housekeeping.noAssignedMaintenance')}
+                        </p>
+                    ) : (
+                        <div className="divide-y divide-border/50">
+                            {assignedMaintenance.map((request) => (
+                                <div
+                                    key={request.id}
+                                    className="flex items-center justify-between gap-3 p-3.5"
+                                >
+                                    <div className="flex min-w-0 items-center gap-3">
+                                        <div className="flex size-9.5 shrink-0 items-center justify-center rounded-xl bg-rose-500/10 text-xs font-bold text-rose-600 dark:text-rose-400">
+                                            #{request.room.room_number}
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className="truncate text-sm font-bold text-foreground">
+                                                {request.title}
+                                            </p>
+                                            <MaintenanceStatusBadge
+                                                status={request.status}
+                                            />
+                                        </div>
+                                    </div>
+                                    <MaintenancePriorityBadge
+                                        priority={request.priority}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
@@ -828,6 +898,8 @@ export default function Dashboard(props: Props) {
                 <HousekeepingDashboard
                     roomsAwaitingCleaning={props.roomsAwaitingCleaning}
                     openAssignedMaintenance={props.openAssignedMaintenance}
+                    cleaningRooms={props.cleaningRooms}
+                    assignedMaintenance={props.assignedMaintenance}
                 />
             )}
             {role === 'guest' && (

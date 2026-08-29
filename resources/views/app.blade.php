@@ -25,15 +25,29 @@
 
              The @font-face rules are duplicated from app.css on purpose: a font-family name only
              resolves once its @font-face is registered, and app.css itself hasn't loaded yet during
-             this window, so referencing 'Kantumruy Pro' below would otherwise fall through to the
-             OS's default font until app.css catches up. --}}
+             this window, so referencing 'Siemreap'/'Moul' below would otherwise fall through to the
+             OS's default font until app.css catches up.
+
+             Siemreap and Moul each only ship a single static weight, so both are registered across
+             the full 100-900 range to keep bold/semibold text on the face's real design instead of
+             the browser's synthesized faux-bold — see app.css. Moul is reserved for <h1> page titles
+             (matching app.css's `h1 { font-family: var(--font-heading) }` base rule), so it's applied
+             here too to avoid a flash of the wrong font on page titles. --}}
         <style>
             @font-face {
-                font-family: 'Kantumruy Pro';
+                font-family: 'Siemreap';
                 font-style: normal;
                 font-weight: 100 900;
                 font-display: swap;
-                src: url('{{ Vite::asset('resources/fonts/KantumruyPro.ttf') }}') format('truetype');
+                src: url('{{ Vite::asset('resources/fonts/Siemreap-Regular.ttf') }}') format('truetype');
+            }
+
+            @font-face {
+                font-family: 'Moul';
+                font-style: normal;
+                font-weight: 100 900;
+                font-display: swap;
+                src: url('{{ Vite::asset('resources/fonts/Moul-Regular.ttf') }}') format('truetype');
             }
 
             @font-face {
@@ -54,10 +68,14 @@
 
             body {
                 font-family:
-                    'Kantumruy Pro', 'Inter', ui-sans-serif, system-ui,
+                    'Siemreap', 'Inter', ui-sans-serif, system-ui,
                     sans-serif;
                 background-color: inherit;
                 color: oklch(0.18 0.025 260);
+            }
+
+            h1 {
+                font-family: 'Moul', 'Siemreap', 'Inter', ui-sans-serif, sans-serif !important;
             }
 
             html.dark body {
@@ -67,7 +85,8 @@
 
         {{-- Preload the font files themselves so the fetch starts immediately, in parallel with
              the @font-face rules above being parsed. --}}
-        <link rel="preload" as="font" type="font/ttf" href="{{ Vite::asset('resources/fonts/KantumruyPro.ttf') }}" crossorigin>
+        <link rel="preload" as="font" type="font/ttf" href="{{ Vite::asset('resources/fonts/Siemreap-Regular.ttf') }}" crossorigin>
+        <link rel="preload" as="font" type="font/ttf" href="{{ Vite::asset('resources/fonts/Moul-Regular.ttf') }}" crossorigin>
         <link rel="preload" as="font" type="font/ttf" href="{{ Vite::asset('resources/fonts/Inter.ttf') }}" crossorigin>
 
         <link rel="icon" href="/favicon.ico" sizes="any">

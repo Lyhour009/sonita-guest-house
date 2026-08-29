@@ -1,4 +1,3 @@
-
 import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,7 +17,11 @@ type StaffFormProps = {
     isEdit?: boolean;
 };
 
-export default function StaffForm({ staff, errors, isEdit = false }: StaffFormProps) {
+export default function StaffForm({
+    staff,
+    errors,
+    isEdit = false,
+}: StaffFormProps) {
     const { t } = useTranslation();
 
     return (
@@ -62,7 +65,10 @@ export default function StaffForm({ staff, errors, isEdit = false }: StaffFormPr
 
             <div className="grid gap-1.5">
                 <Label htmlFor="role">{t('staffAccounts.form.role')}</Label>
-                <Select name="role" defaultValue={staff?.role ?? 'receptionist'}>
+                <Select
+                    name="role"
+                    defaultValue={staff?.role ?? 'receptionist'}
+                >
                     <SelectTrigger id="role" className="w-full">
                         <SelectValue />
                     </SelectTrigger>
@@ -80,21 +86,29 @@ export default function StaffForm({ staff, errors, isEdit = false }: StaffFormPr
 
             <div className="grid gap-1.5">
                 <Label htmlFor="password">
-                    {isEdit ? t('staffAccounts.form.newPassword') : t('staffAccounts.form.password')}
+                    {isEdit
+                        ? t('staffAccounts.form.newPassword')
+                        : t('staffAccounts.form.password')}
                 </Label>
                 <Input
                     id="password"
                     name="password"
                     type="password"
                     required={!isEdit}
-                    placeholder={isEdit ? t('staffAccounts.form.newPasswordPlaceholder') : ''}
+                    placeholder={
+                        isEdit
+                            ? t('staffAccounts.form.newPasswordPlaceholder')
+                            : ''
+                    }
                 />
                 <InputError message={errors.password} />
             </div>
 
             <div className="grid gap-1.5">
                 <Label htmlFor="password_confirmation">
-                    {isEdit ? t('staffAccounts.form.confirmNewPassword') : t('staffAccounts.form.confirmPassword')}
+                    {isEdit
+                        ? t('staffAccounts.form.confirmNewPassword')
+                        : t('staffAccounts.form.confirmPassword')}
                 </Label>
                 <Input
                     id="password_confirmation"

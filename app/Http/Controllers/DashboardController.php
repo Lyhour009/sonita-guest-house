@@ -133,12 +133,39 @@ class DashboardController extends Controller
      */
     private function housekeepingData(User $user): array
     {
+        $priorityRank = ['high' => 0, 'medium' => 1, 'low' => 2];
+
+        $assignedMaintenance = MaintenanceRequest::query()
+            ->where('assigned_to', $user->id)
+            ->whereIn('status', ['pending', 'in_progress'])
+            ->with('room:id,room_number')
+            ->latest()
+            ->get()
+            ->sortBy(fn (MaintenanceRequest $request) => $priorityRank[$request->priority] ?? 3)
+            ->take(5);
+
         return [
             'roomsAwaitingCleaning' => Room::query()->where('status', 'cleaning')->count(),
             'openAssignedMaintenance' => MaintenanceRequest::query()
                 ->where('assigned_to', $user->id)
                 ->whereIn('status', ['pending', 'in_progress'])
                 ->count(),
+            'cleaningRooms' => Room::query()
+                ->where('status', 'cleaning')
+                ->orderBy('room_number')
+                ->limit(5)
+                ->get(['id', 'room_number', 'room_type', 'floor']),
+            'assignedMaintenance' => $assignedMaintenance->map(fn (MaintenanceRequest $request) => [
+                'id' => $request->id,
+                'title' => $request->title,
+                'priority' => $request->priority,
+                'status' => $request->status,
+                'created_at' => $request->created_at?->toDateString(),
+                'room' => [
+                    'id' => $request->room->id,
+                    'room_number' => $request->room->room_number,
+                ],
+            ])->values(),
         ];
     }
 }

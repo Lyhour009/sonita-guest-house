@@ -3,7 +3,9 @@ import type { reservations as reservationsEn } from '../en/reservations';
 export const reservations: typeof reservationsEn = {
     page: {
         title: 'ការកក់របស់ខ្ញុំ',
+        subtitle: 'ការស្នាក់នៅកន្លងមក និងខាងមុខរបស់អ្នកនៅ Sonita Guest House។',
         empty: 'អ្នកមិនទាន់មានការកក់នៅឡើយទេ។',
+        emptyDescription: 'កក់បន្ទប់ដើម្បីមើលការកក់របស់អ្នកនៅទីនេះ។',
     },
     table: {
         dates: 'កាលបរិច្ឆេទ',

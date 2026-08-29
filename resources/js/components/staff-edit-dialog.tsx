@@ -12,8 +12,8 @@ import {
 } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
-import StaffForm from './staff-form';
 import type { StaffAccount } from '@/types';
+import StaffForm from './staff-form';
 
 type Props = {
     staff: StaffAccount | null;

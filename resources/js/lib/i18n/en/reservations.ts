@@ -1,7 +1,9 @@
 export const reservations = {
     page: {
         title: 'My reservations',
+        subtitle: 'Your upcoming and past stays at Sonita Guest House.',
         empty: 'You have no reservations yet.',
+        emptyDescription: 'Book a room to see your reservations here.',
     },
     table: {
         dates: 'Dates',

@@ -3,7 +3,9 @@ import type { payments as paymentsEn } from '../en/payments';
 export const payments: typeof paymentsEn = {
     page: {
         title: 'ការទូទាត់របស់ខ្ញុំ',
+        subtitle: 'ការទូទាត់ដែលអ្នកបានដាក់ស្នើ និងស្ថានភាពបញ្ជាក់របស់វា។',
         empty: 'អ្នកមិនទាន់បានដាក់ស្នើការទូទាត់ណាមួយនៅឡើយទេ។',
+        emptyDescription: 'ទូទាត់វិក្កយបត្រដើម្បីមើលការទូទាត់របស់អ្នកនៅទីនេះ។',
     },
     table: {
         amount: 'ចំនួនទឹកប្រាក់',

@@ -25,7 +25,11 @@ export default function Pagination<T>({ meta }: Props<T>) {
     // Support both raw paginators and API Resources
     const paginationMeta = meta.meta ? meta.meta : meta;
 
-    if (!paginationMeta || !paginationMeta.links || paginationMeta.last_page <= 1) {
+    if (
+        !paginationMeta ||
+        !paginationMeta.links ||
+        paginationMeta.last_page <= 1
+    ) {
         return null;
     }
 

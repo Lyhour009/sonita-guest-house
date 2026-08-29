@@ -41,7 +41,7 @@ export function NavMain({
                         >
                             <Link
                                 href={item.href}
-                                prefetch
+                                prefetch="click"
                                 className="flex items-center gap-3"
                             >
                                 {item.icon && (

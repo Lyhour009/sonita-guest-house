@@ -32,7 +32,9 @@ export default function ReservationCheckinDialog({
     const [keyCard, setKeyCard] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    if (!reservation) return null;
+    if (!reservation) {
+        return null;
+    }
 
     const handleConfirmCheckin = () => {
         setIsSubmitting(true);

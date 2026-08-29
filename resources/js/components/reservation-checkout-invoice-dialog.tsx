@@ -36,11 +36,13 @@ export default function ReservationCheckoutInvoiceDialog({
 }: Props) {
     const { t } = useTranslation();
 
-    if (!invoice) return null;
+    if (!invoice) {
+        return null;
+    }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-md font-sans">
+            <DialogContent className="font-sans sm:max-w-md">
                 <DialogHeader className="text-center">
                     <div className="mx-auto mb-3 flex size-14 items-center justify-center rounded-full bg-emerald-500/10">
                         <CheckCircle2 className="size-7 text-emerald-500" />
@@ -56,13 +58,19 @@ export default function ReservationCheckoutInvoiceDialog({
                 {/* Guest & Room info */}
                 <div className="flex items-center justify-between rounded-xl border border-border/80 bg-muted/40 px-4 py-3 text-sm">
                     <div>
-                        <p className="font-bold text-foreground">{invoice.guest_name}</p>
-                        <p className="text-xs text-muted-foreground">Room #{invoice.room_number}</p>
+                        <p className="font-bold text-foreground">
+                            {invoice.guest_name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                            Room #{invoice.room_number}
+                        </p>
                     </div>
                     {invoice.due_date && (
                         <div className="text-right text-xs text-muted-foreground">
                             <p>{t('staff.reservations.details.dueDate')}</p>
-                            <p className="font-semibold text-foreground">{invoice.due_date}</p>
+                            <p className="font-semibold text-foreground">
+                                {invoice.due_date}
+                            </p>
                         </div>
                     )}
                 </div>
@@ -77,7 +85,9 @@ export default function ReservationCheckoutInvoiceDialog({
                     <div className="space-y-2 text-xs">
                         <div className="flex items-center justify-between">
                             <span className="text-muted-foreground">
-                                {t('staff.reservations.checkoutInvoice.roomCharge')}
+                                {t(
+                                    'staff.reservations.checkoutInvoice.roomCharge',
+                                )}
                             </span>
                             <span className="font-semibold text-foreground">
                                 ${Number(invoice.room_charge).toFixed(2)}
@@ -87,7 +97,9 @@ export default function ReservationCheckoutInvoiceDialog({
                         {invoice.service_charge > 0 && (
                             <div className="flex items-center justify-between">
                                 <span className="text-muted-foreground">
-                                    {t('staff.reservations.checkoutInvoice.serviceCharge')}
+                                    {t(
+                                        'staff.reservations.checkoutInvoice.serviceCharge',
+                                    )}
                                 </span>
                                 <span className="font-semibold text-foreground">
                                     ${Number(invoice.service_charge).toFixed(2)}
@@ -98,7 +110,9 @@ export default function ReservationCheckoutInvoiceDialog({
                         {invoice.tax_amount > 0 && (
                             <div className="flex items-center justify-between">
                                 <span className="text-muted-foreground">
-                                    {t('staff.reservations.checkoutInvoice.taxAmount')}
+                                    {t(
+                                        'staff.reservations.checkoutInvoice.taxAmount',
+                                    )}
                                 </span>
                                 <span className="font-semibold text-foreground">
                                     ${Number(invoice.tax_amount).toFixed(2)}
@@ -139,7 +153,9 @@ export default function ReservationCheckoutInvoiceDialog({
                             }}
                         >
                             <ExternalLink className="size-4" />
-                            {t('staff.reservations.checkoutInvoice.viewInvoice')}
+                            {t(
+                                'staff.reservations.checkoutInvoice.viewInvoice',
+                            )}
                         </Button>
                     )}
                 </div>

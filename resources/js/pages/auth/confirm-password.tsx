@@ -19,7 +19,10 @@ export default function ConfirmPassword() {
                 {({ processing, errors }) => (
                     <div className="space-y-5">
                         <div className="space-y-1.5">
-                            <Label htmlFor="password" className="text-xs font-semibold text-foreground/85">
+                            <Label
+                                htmlFor="password"
+                                className="text-xs font-semibold text-foreground/85"
+                            >
                                 {t('auth.confirmPassword.passwordLabel')}
                             </Label>
                             <div className="relative">
@@ -29,7 +32,9 @@ export default function ConfirmPassword() {
                                 <PasswordInput
                                     id="password"
                                     name="password"
-                                    placeholder={t('auth.confirmPassword.passwordPlaceholder')}
+                                    placeholder={t(
+                                        'auth.confirmPassword.passwordPlaceholder',
+                                    )}
                                     autoComplete="current-password"
                                     autoFocus
                                     className="h-10.5 rounded-xl pl-9.5 text-sm transition-all focus-visible:ring-primary/20"
@@ -40,7 +45,7 @@ export default function ConfirmPassword() {
 
                         <Button
                             type="submit"
-                            className="h-11 w-full rounded-xl text-sm font-semibold shadow-md shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.99] cursor-pointer"
+                            className="h-11 w-full cursor-pointer rounded-xl text-sm font-semibold shadow-md shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.99]"
                             disabled={processing}
                             data-test="confirm-password-button"
                         >
