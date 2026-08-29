@@ -64,4 +64,9 @@ export const toasts = {
         updated: 'Promo code updated.',
         deleted: 'Promo code deleted.',
     },
+    auth: {
+        loggedIn: 'Welcome back!',
+        registered: 'Account created — welcome!',
+        loggedOut: 'You have been logged out.',
+    },
 };

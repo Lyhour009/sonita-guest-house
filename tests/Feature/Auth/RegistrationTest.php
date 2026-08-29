@@ -23,6 +23,7 @@ test('new users can register', function () {
 
     $this->assertAuthenticated();
     $response->assertRedirect(route('home', absolute: false));
+    $response->assertInertiaFlash('toast.key', 'toasts.auth.registered');
 
     $user = User::whereEmail('test@example.com')->firstOrFail();
 

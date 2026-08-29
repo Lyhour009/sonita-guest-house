@@ -48,6 +48,7 @@
                 font-weight: 100 900;
                 font-display: swap;
                 src: url('{{ Vite::asset('resources/fonts/Moul-Regular.ttf') }}') format('truetype');
+                size-adjust: 78%;
             }
 
             @font-face {

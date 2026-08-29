@@ -26,13 +26,20 @@
     src: url('../fonts/Siemreap-Regular.ttf') format('truetype');
 }
 
-/* Moul: a heavy, decorative Khmer display face reserved for page-level <h1> titles (see --font-heading below) — not meant for body text or sub-headings. */
+/*
+ * Moul: a heavy, decorative Khmer display face reserved for page-level <h1>
+ * titles (see --font-heading below) — not meant for body text or sub-headings.
+ * Its glyphs fill far more of the em-square than Siemreap's, so at the same
+ * declared font-size it renders noticeably larger/heavier; size-adjust scales
+ * that down so <h1>'s existing text-2xl/text-3xl classes still look right.
+ */
 @font-face {
     font-family: 'Moul';
     font-style: normal;
     font-weight: 100 900;
     font-display: swap;
     src: url('../fonts/Moul-Regular.ttf') format('truetype');
+    size-adjust: 78%;
 }
 
 @source '../views';
@@ -283,4 +290,29 @@
     h1 {
         font-family: var(--font-heading) !important;
     }
+}
+
+/*
+ * Sonner (the toast library) injects its own <style> tag at runtime with a
+ * hardcoded font-family and a small 13px font-size directly on these data
+ * attributes — it can load after app.css, so the .toaster/font-sans class on
+ * the wrapper isn't a reliable way to override it. !important here targets
+ * the same attributes sonner itself uses, so this always wins regardless of
+ * injection order.
+ */
+[data-sonner-toaster] {
+    font-family: var(--font-sans) !important;
+}
+
+[data-sonner-toast] {
+    font-size: 1rem !important;
+}
+
+[data-sonner-toast] [data-title] {
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+}
+
+[data-sonner-toast] [data-description] {
+    font-size: 0.95rem !important;
 }

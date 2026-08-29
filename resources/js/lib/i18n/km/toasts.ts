@@ -66,4 +66,9 @@ export const toasts: typeof toastsEn = {
         updated: 'កូដបញ្ចុះតម្លៃត្រូវបានកែប្រែ។',
         deleted: 'កូដបញ្ចុះតម្លៃត្រូវបានលុប។',
     },
+    auth: {
+        loggedIn: 'សូមស្វាគមន៍មកវិញ!',
+        registered: 'គណនីត្រូវបានបង្កើត — សូមស្វាគមន៍!',
+        loggedOut: 'អ្នកបានចាកចេញរួចរាល់។',
+    },
 };

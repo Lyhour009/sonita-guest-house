@@ -2,65 +2,66 @@
 
 namespace Database\Seeders;
 
-use App\Models\Room;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class RoomSeeder extends Seeder
 {
     public function run(): void
     {
         $rooms = [];
-        $floors = 5;
-        $roomsPerFloor = 10;
-        
-        $types = ['Standard', 'Deluxe', 'Suite', 'Family'];
-        
+        $floors = 4;
+        $roomsPerFloor = 6;
+
         for ($f = 1; $f <= $floors; $f++) {
             for ($r = 1; $r <= $roomsPerFloor; $r++) {
-                $type = $types[array_rand($types)];
-                // Evenly distribute modes based on type or random
-                $mode = rand(1, 100) > 60 ? 'both' : (rand(1, 100) > 50 ? 'long_stay' : 'short_stay');
-                
-                $pricePerNight = match($type) {
-                    'Standard' => 15.00,
-                    'Deluxe' => 25.00,
-                    'Family' => 35.00,
-                    'Suite' => 45.00,
-                };
-                
-                $pricePerMonth = match($type) {
-                    'Standard' => 250.00,
-                    'Deluxe' => 350.00,
-                    'Family' => 450.00,
-                    'Suite' => 600.00,
-                };
-                
-                $maxOccupants = match($type) {
-                    'Standard' => 2,
-                    'Deluxe' => 2,
-                    'Family' => 4,
-                    'Suite' => 3,
-                };
-                
+                $roomNumber = sprintf('%d%02d', $f, $r);
+
+                if ($f === 1) {
+                    $type = $r <= 4 ? 'Standard' : 'Deluxe';
+                    $mode = 'both';
+                    $priceNight = $type === 'Standard' ? 12.00 : 18.00;
+                    $priceMonth = $type === 'Standard' ? 120.00 : 160.00;
+                    $maxOccupants = 2;
+                } elseif ($f === 2) {
+                    $type = 'Standard';
+                    $mode = 'short_stay';
+                    $priceNight = 18.00;
+                    $priceMonth = 160.00;
+                    $maxOccupants = 2;
+                } elseif ($f === 3) {
+                    $type = 'Deluxe';
+                    $mode = 'long_stay';
+                    $priceNight = 25.00;
+                    $priceMonth = 220.00;
+                    $maxOccupants = 2;
+                } else {
+                    $type = $r <= 4 ? 'Deluxe' : 'Family';
+                    $mode = 'both';
+                    $priceNight = $type === 'Deluxe' ? 25.00 : 40.00;
+                    $priceMonth = $type === 'Deluxe' ? 220.00 : 320.00;
+                    $maxOccupants = $type === 'Deluxe' ? 2 : 4;
+                }
+
                 $rooms[] = [
-                    'id' => \Illuminate\Support\Str::uuid(),
-                    'room_number' => sprintf('%d%02d', $f, $r),
+                    'id' => (string) Str::uuid(),
+                    'room_number' => $roomNumber,
                     'room_type' => $type,
                     'rental_mode' => $mode,
-                    'price_per_night' => $pricePerNight,
-                    'price_per_month' => $pricePerMonth,
+                    'price_per_night' => $priceNight,
+                    'price_per_month' => $priceMonth,
                     'status' => 'available',
                     'floor' => $f,
                     'max_occupants' => $maxOccupants,
                     'amenities' => 'Wi-Fi, Air Conditioning, Hot Water, Smart TV, Fridge',
-                    'description' => 'A comfortable ' . strtolower($type) . ' room perfect for your stay.',
+                    'description' => "A comfortable {$type} room equipped with all basic amenities.",
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
             }
         }
-        
+
         DB::table('rooms')->insert($rooms);
     }
 }

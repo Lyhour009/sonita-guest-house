@@ -34,24 +34,22 @@ class ReservationSeeder extends Seeder
         $paymentMethods = ['cash', 'bank_transfer', 'qr'];
         $reviewComments = [
             'Very clean room and friendly staff, would stay again!',
-            'Great location and comfortable bed.',
+            'Great location in Phnom Penh and comfortable bed.',
             'Good value for the price, AC worked well.',
-            'Quiet and relaxing stay, exactly what we needed.',
+            'Quiet stay, smooth check-in process.',
             null,
         ];
 
-        $firstNames = ['Sokha', 'Chea', 'Sovann', 'Bopha', 'Nita', 'Dara', 'Panha', 'Vibol', 'Sophea', 'Chann', 'Rithy', 'Vanny', 'Mony', 'Kesor', 'Sok', 'Sao', 'Mao', 'Chan', 'Kim', 'Pich', 'Piseth', 'Sreypich', 'Sreyleak', 'Rathana'];
-        $lastNames = ['Seng', 'Chhun', 'Sok', 'Pen', 'Keo', 'Meas', 'Ros', 'Chhan', 'Khieu', 'Nget', 'Prak', 'Kong', 'Men', 'Tep', 'Lim', 'Heng', 'Ouk', 'Cheam', 'Bou'];
+        $firstNames = ['Sokha', 'Chea', 'Sovann', 'Bopha', 'Nita', 'Dara', 'Panha', 'Vibol', 'Sophea', 'Chann', 'Rithy', 'Vanny'];
+        $lastNames = ['Seng', 'Chhun', 'Sok', 'Pen', 'Keo', 'Meas', 'Ros', 'Chhan', 'Prak', 'Kong', 'Heng', 'Cheam'];
 
         $rooms = Room::all();
         if ($rooms->isEmpty()) {
-            $this->command->warn('No rooms found. Skipping reservation seeding.');
-
             return;
         }
 
         $guests = [];
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $firstName = $firstNames[array_rand($firstNames)];
             $lastName = $lastNames[array_rand($lastNames)];
             $fullName = $lastName.' '.$firstName;
@@ -62,42 +60,36 @@ class ReservationSeeder extends Seeder
                 'email' => $email,
                 'password' => Hash::make('password'),
                 'role' => 'guest',
-                'phone_number' => '0'.rand(1, 9).rand(1000000, 9999999),
+                'phone_number' => '0'.rand(12, 99).rand(100000, 999999),
             ]);
         }
 
-        // Guarantee at least one paid short-stay invoice and one unpaid long-stay
-        // invoice regardless of RNG, per the build spec's demo-readiness requirement.
         $guaranteedPaidInvoiceDone = false;
         $guaranteedLongStayInvoiceDone = false;
 
-        // Attempt more bookings than the ~50 we want to land, since a chunk are
-        // skipped on date-overlap collisions (see the catch block below).
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 35; $i++) {
             $guest = $guests[array_rand($guests)];
-            // Get random available room to avoid conflicts if they are concurrent
             $room = $rooms->random();
 
-            // Generate realistic dates
             $daysAgo = rand(0, 30);
-            $duration = rand(1, 5);
+            $duration = rand(1, 4);
 
             $checkInDate = now()->subDays($daysAgo);
             $checkOutDate = (clone $checkInDate)->addDays($duration);
 
             $type = ($room->rental_mode === 'both')
-                ? (rand(1, 10) > 8 ? 'long_stay' : 'short_stay')
-                : $room->rental_mode;
+              ? (rand(1, 10) > 7 ? 'long_stay' : 'short_stay')
+              : $room->rental_mode;
 
             if ($type === 'long_stay') {
-                $durationMonths = rand(1, 6);
+                $durationMonths = rand(1, 3);
                 $checkOutDate = (clone $checkInDate)->addMonths($durationMonths);
 
                 $data = [
                     'room_id' => $room->id,
                     'reservation_type' => 'long_stay',
                     'start_date' => $checkInDate->toDateString(),
-                    'end_date' => (rand(1, 10) > 5) ? $checkOutDate->toDateString() : null, // some open ended
+                    'end_date' => (rand(1, 10) > 5) ? $checkOutDate->toDateString() : null,
                     'monthly_due_day' => $checkInDate->day <= 28 ? $checkInDate->day : 1,
                 ];
             } else {
@@ -115,7 +107,6 @@ class ReservationSeeder extends Seeder
             }
 
             try {
-                // If it's in the past and checkout is in the past, it should be checked out
                 $reservation = $createGuestReservation->handle($guest, $data);
                 $confirmReservation->handle($reservation);
 
@@ -124,7 +115,6 @@ class ReservationSeeder extends Seeder
 
                     if ($checkOutDate->isPast()) {
                         $checkOutReservation->handle($reservation);
-                        // Room is 'cleaning' now, reset to 'available' to allow next bookings
                         $room->update(['status' => 'available']);
 
                         $invoice = $reservation->invoices()->latest()->first();
@@ -132,29 +122,21 @@ class ReservationSeeder extends Seeder
                         if ($invoice) {
                             $roll = rand(1, 100);
 
-                            if (! $guaranteedPaidInvoiceDone || $roll <= 55) {
+                            if (! $guaranteedPaidInvoiceDone || $roll <= 60) {
                                 $payment = $submitPayment->handle($guest, $invoice, [
                                     'amount' => $invoice->total_amount,
                                     'method' => $paymentMethods[array_rand($paymentMethods)],
                                 ]);
                                 $confirmPayment->handle($payment);
                                 $guaranteedPaidInvoiceDone = true;
-                            } elseif ($roll <= 75) {
-                                $payment = $submitPayment->handle($guest, $invoice, [
-                                    'amount' => round(((float) $invoice->total_amount) * 0.5, 2),
-                                    'method' => $paymentMethods[array_rand($paymentMethods)],
-                                ]);
-                                $confirmPayment->handle($payment);
-                            } elseif ($roll <= 90) {
-                                // Left pending, so staff have a real payment to review/confirm.
+                            } elseif ($roll <= 80) {
                                 $submitPayment->handle($guest, $invoice, [
                                     'amount' => $invoice->total_amount,
                                     'method' => $paymentMethods[array_rand($paymentMethods)],
                                 ]);
                             }
 
-                            // Reviews are independent of payment status — a guest can rate a stay either way.
-                            if (rand(1, 100) <= 65) {
+                            if (rand(1, 100) <= 60) {
                                 $createReview->handle($reservation, $guest, rand(3, 5), $reviewComments[array_rand($reviewComments)]);
                             }
                         }
@@ -163,19 +145,17 @@ class ReservationSeeder extends Seeder
 
                 if ($type === 'long_stay' && $reservation->status === 'active') {
                     if (! $guaranteedLongStayInvoiceDone || rand(1, 100) <= 70) {
-                        $elecStart = rand(1000, 5000);
-                        $waterStart = rand(100, 500);
+                        $elecStart = rand(1000, 3000);
+                        $waterStart = rand(100, 300);
 
                         $longStayInvoice = $generateLongStayInvoice->handle($reservation, [
                             'billing_period' => now()->startOfMonth()->toDateString(),
                             'elec_meter_start' => $elecStart,
-                            'elec_meter_end' => $elecStart + rand(80, 250),
+                            'elec_meter_end' => $elecStart + rand(80, 200),
                             'water_meter_start' => $waterStart,
-                            'water_meter_end' => $waterStart + rand(10, 40),
+                            'water_meter_end' => $waterStart + rand(5, 25),
                         ]);
 
-                        // Keep the very first guaranteed invoice unpaid, per the build spec's
-                        // "one active long-stay with an unpaid invoice" demo requirement.
                         if ($guaranteedLongStayInvoiceDone && rand(1, 100) <= 50) {
                             $payment = $submitPayment->handle($guest, $longStayInvoice, [
                                 'amount' => $longStayInvoice->total_amount,
@@ -188,7 +168,6 @@ class ReservationSeeder extends Seeder
                     }
                 }
             } catch (\Exception $e) {
-                // Room might be occupied during this exact date overlap due to randomization, just skip
                 continue;
             }
         }

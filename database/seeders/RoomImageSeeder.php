@@ -11,12 +11,6 @@ use Illuminate\Support\Str;
 
 class RoomImageSeeder extends Seeder
 {
-    /**
-     * Wikimedia Commons search queries per room type — real, freely-licensed photos
-     * (not tied to any specific business) fetched at a fixed 900px width.
-     *
-     * @var array<string, array<int, string>>
-     */
     private const SEARCH_QUERIES = [
         'Standard' => ['budget hotel bedroom interior', 'guesthouse room Cambodia'],
         'Deluxe' => ['hotel deluxe room interior', 'hotel double room interior'],
@@ -27,7 +21,7 @@ class RoomImageSeeder extends Seeder
 
     private const IMAGES_PER_ROOM = 3;
 
-    private const USER_AGENT = 'SonitaGuestHouseThesisSeeder/1.0 (thesis demo project; contact: lyhouromega855@gmail.com)';
+    private const USER_AGENT = 'SonitaGuestHouseThesisSeeder/1.0 (thesis demo project)';
 
     public function run(): void
     {
@@ -42,7 +36,7 @@ class RoomImageSeeder extends Seeder
         $pool = $this->buildPool();
 
         if (collect($pool)->flatten()->isEmpty()) {
-            $this->command->warn('Could not fetch any room photos (no network access?). Skipping room image seeding.');
+            $this->command->warn('Could not fetch external images. Skipping room image seeding.');
 
             return;
         }
@@ -57,7 +51,7 @@ class RoomImageSeeder extends Seeder
 
                 Storage::disk('public')->put(
                     $destination,
-                    Storage::disk('local')->get($poolPath),
+                    Storage::disk('local')->get($poolPath)
                 );
 
                 RoomImage::create([
@@ -68,36 +62,23 @@ class RoomImageSeeder extends Seeder
         }
     }
 
-    /**
-     * @return array<string, array<int, string>>
-     */
     private function buildPool(): array
     {
         $pool = [];
-
         foreach (self::SEARCH_QUERIES as $category => $queries) {
             $images = [];
-
             foreach ($queries as $query) {
                 $images = [...$images, ...$this->fetchQuery($query)];
             }
-
             $pool[$category] = $images;
         }
 
         return $pool;
     }
 
-    /**
-     * Downloads (or reuses a previously cached download of) the top real photos for one
-     * search query, and returns their local pool paths on the private disk.
-     *
-     * @return array<int, string>
-     */
     private function fetchQuery(string $query): array
     {
         $cacheDir = 'room-image-pool/'.Str::slug($query);
-
         $cached = Storage::disk('local')->exists($cacheDir) ? Storage::disk('local')->files($cacheDir) : [];
 
         if ($cached !== []) {
@@ -106,12 +87,12 @@ class RoomImageSeeder extends Seeder
 
         try {
             $response = Http::withHeaders(['User-Agent' => self::USER_AGENT])
-                ->timeout(15)
+                ->timeout(10)
                 ->get('https://commons.wikimedia.org/w/api.php', [
                     'action' => 'query',
                     'generator' => 'search',
                     'gsrsearch' => $query,
-                    'gsrlimit' => 4,
+                    'gsrlimit' => 3,
                     'gsrnamespace' => 6,
                     'prop' => 'imageinfo',
                     'iiprop' => 'url|mime',
@@ -127,7 +108,6 @@ class RoomImageSeeder extends Seeder
         }
 
         $paths = [];
-
         foreach ($response->json('query.pages', []) as $page) {
             $info = $page['imageinfo'][0] ?? null;
             $mime = $info['mime'] ?? null;
@@ -138,7 +118,7 @@ class RoomImageSeeder extends Seeder
             }
 
             try {
-                $imageResponse = Http::withHeaders(['User-Agent' => self::USER_AGENT])->timeout(15)->get($url);
+                $imageResponse = Http::withHeaders(['User-Agent' => self::USER_AGENT])->timeout(10)->get($url);
             } catch (\Throwable) {
                 continue;
             }
@@ -155,15 +135,9 @@ class RoomImageSeeder extends Seeder
         return $paths;
     }
 
-    /**
-     * @param  array<int, string>  $primary
-     * @param  array<int, string>  $fallback
-     * @return array<int, string>
-     */
     private function pickImages(array $primary, array $fallback, int $count): array
     {
         $combined = array_values(array_unique([...$primary, ...$fallback]));
-
         if ($combined === []) {
             return [];
         }
